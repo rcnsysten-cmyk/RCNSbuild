@@ -24,6 +24,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../ui/alert-dialog';
 import { Skeleton } from '../ui/skeleton';
 import { ScrollArea } from '../ui/scroll-area';
+import Image from 'next/image';
 
 const attributeConfigSchema = z.object({
   levelRange: z.string(),
@@ -259,7 +260,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                 description: `A build para ${data.class} - ${data.name} foi salva com sucesso.`,
               });
         } else { // Creating new build
-            await createOrUpdateBuild(data.buildName, { class: data.class, ...dataToSave });
+            await createOrUpdateBuild(data.buildName, { class: data.class, name: data.name, skills: dataToSave.skills });
             toast({
                 title: `Build Criada!`,
                 description: `A build ${data.buildName} foi criada com sucesso.`,
@@ -439,37 +440,52 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                         {fieldInfo?.description}
                     </FormDescription>
                     {loadingSkills ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+                        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4">
                             {Array.from({ length: 8 }).map((_, i) => (
-                                <div key={i} className="flex items-center justify-between">
-                                    <Skeleton className="h-5 w-32" />
-                                    <Skeleton className="h-10 w-24" />
+                                <div key={i} className="flex flex-col items-center gap-2">
+                                    <Skeleton className="h-20 w-20 rounded-md" />
+                                    <Skeleton className="h-4 w-16" />
+                                    <Skeleton className="h-8 w-20" />
                                 </div>
                              ))}
                         </div>
                     ) : (
-                    <ScrollArea className="h-[450px] pr-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
-                            {skillFields.map((item, index) => (
+                    <ScrollArea className="h-[550px] pr-4">
+                        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-6">
+                            {skillFields.map((item, index) => {
+                                const skillInfo = availableSkills.find(s => s.name === item.name);
+                                if (!skillInfo) return null;
+                                return (
                                 <FormField
                                     key={item.id}
                                     control={form.control}
                                     name={`skills.${index}.points`}
                                     render={({ field }) => (
-                                        <FormItem className="flex items-center justify-between">
-                                            <FormLabel>{item.name}</FormLabel>
+                                        <FormItem className="flex flex-col items-center gap-2">
+                                            <Image
+                                                src={skillInfo.imagePath}
+                                                alt={item.name}
+                                                width={80}
+                                                height={80}
+                                                className="rounded-md border-2 border-muted"
+                                                unoptimized
+                                            />
+                                            <FormLabel className="text-center text-xs h-8">
+                                                {item.name}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input 
                                                     type="number" 
                                                     placeholder="0" 
                                                     {...field} 
-                                                    className="w-24"
+                                                    className="w-20 text-center"
                                                 />
                                             </FormControl>
                                         </FormItem>
                                     )}
                                 />
-                            ))}
+                                );
+                            })}
                         </div>
                     </ScrollArea>
                     )}
@@ -515,5 +531,3 @@ export function BuildForm({ buildId, buildData, category, className, children }:
 
   return formContent;
 }
-
-    
