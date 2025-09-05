@@ -562,8 +562,6 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                         
 
                         {exclusiveSkills.length > 0 && (
-                            <>
-                            <Separator />
                             <div className="border border-input rounded-md p-4 space-y-4">
                             <div className="grid grid-cols-4 gap-1 justify-center">
                                 {skillFields.map((item, index) => {
@@ -604,7 +602,6 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                                 })}
                             </div>
                             </div>
-                            </>
                         )}
                         </div>
                     </ScrollArea>
