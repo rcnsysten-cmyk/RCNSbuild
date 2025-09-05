@@ -474,7 +474,8 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                         </div>
                     ) : (
                     <ScrollArea className="h-[550px] pr-4">
-                      <div className="border border-input rounded-md p-4 space-y-4">
+                      <div className="space-y-4">
+                        <div className="border border-input rounded-md p-4 space-y-4">
                             <div className="grid grid-cols-4 gap-1">
                                 {skillFields.map((item, index) => {
                                     const skillInfo = baseSkills.find(s => s.name === item.name);
@@ -513,10 +514,12 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                                     );
                                 })}
                             </div>
+                        </div>
 
                             {exclusiveSkills.length > 0 && (
                                 <>
                                 <Separator />
+                                <div className="border border-input rounded-md p-4 space-y-4">
                                 <div className="grid grid-cols-4 gap-1 justify-center">
                                     {skillFields.map((item, index) => {
                                         const skillInfo = exclusiveSkills.find(s => s.name === item.name);
@@ -554,6 +557,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                                             />
                                         );
                                     })}
+                                </div>
                                 </div>
                                 </>
                             )}
