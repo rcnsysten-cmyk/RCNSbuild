@@ -5,11 +5,16 @@ export interface AttributeConfig {
     vit: number;
     ene: number;
   }
+
+  export interface SkillConfig {
+    name: string;
+    points: number;
+  }
   
   export interface SubClass {
     name: string;
     runes: string[];
-    skills: string[];
+    skills: SkillConfig[];
     properties: string[];
     config: AttributeConfig[];
     constellation: string[];

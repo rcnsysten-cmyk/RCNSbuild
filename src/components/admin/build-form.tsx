@@ -22,6 +22,8 @@ import { Button } from '../ui/button';
 import { createOrUpdateBuild, updateBuild } from '@/lib/firestore';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../ui/alert-dialog';
+import { Skeleton } from '../ui/skeleton';
+import { ScrollArea } from '../ui/scroll-area';
 
 const attributeConfigSchema = z.object({
   levelRange: z.string(),
@@ -31,13 +33,18 @@ const attributeConfigSchema = z.object({
   ene: z.coerce.number().min(0, "Deve ser um número positivo."),
 });
 
+const skillConfigSchema = z.object({
+    name: z.string(),
+    points: z.coerce.number().min(0, "Deve ser um número positivo.").default(0),
+});
+
 const formSchema = z.object({
   buildName: z.string().min(1, "O nome da build é obrigatório."),
   class: z.string().min(1, "Selecione uma classe."),
   name: z.string().min(1, "Selecione uma subclasse."),
   config: z.array(attributeConfigSchema),
   runes: z.array(z.string()),
-  skills: z.array(z.string()),
+  skills: z.array(skillConfigSchema),
   properties: z.array(z.string()),
   constellation: z.array(z.string()),
   sets: z.array(z.string()),
@@ -45,6 +52,12 @@ const formSchema = z.object({
 
 
 type BuildFormValues = z.infer<typeof formSchema>;
+
+interface AvailableSkill {
+    name: string;
+    imagePath: string;
+    className: string;
+}
 
 const classSubclassMap: { [key: string]: string[] } = {
     'Dark Wizard': ['ENE', 'AGI'],
@@ -57,7 +70,7 @@ const classNames = Object.keys(classSubclassMap);
 
 const allFields: { name: keyof Omit<BuildFormValues, 'class' | 'name' | 'buildName'>; label: string; description: string, isMultiSelect?: boolean }[] = [
     { name: 'config', label: 'Atributos', description: 'Defina os pontos de atributos para cada faixa de nível.' },
-    { name: 'skills', label: 'Habilidades', description: 'Adicione as habilidades. Ex: Evil Spirit', isMultiSelect: true },
+    { name: 'skills', label: 'Habilidades', description: 'Defina os pontos para cada habilidade.' },
     { name: 'constellation', label: 'Constelação', description: 'Adicione os pontos da constelação.', isMultiSelect: true },
     { name: 'properties', label: 'Propriedade', description: 'Adicione as propriedades. Ex: Aumento de Dano Mágico: 20%', isMultiSelect: true },
     { name: 'sets', label: 'Conjuntos', description: 'Adicione os conjuntos (sets). Ex: Grand Soul', isMultiSelect: true },
@@ -89,40 +102,92 @@ export function BuildForm({ buildId, buildData, category, className, children }:
   const { toast } = useToast();
   const router = useRouter();
   const [isExitConfirmOpen, setIsExitConfirmOpen] = useState(false);
+  const [availableSkills, setAvailableSkills] = useState<AvailableSkill[]>([]);
+  const [loadingSkills, setLoadingSkills] = useState(false);
 
-  const defaultValues: BuildFormValues = buildData ? {
-    buildName: buildId || '',
-    class: className || '',
-    name: buildData.name,
-    config: levelRanges.map(range => {
-        const existingConfig = buildData.config?.find(c => c.levelRange === range);
-        return existingConfig || { levelRange: range, str: 0, agi: 0, vit: 0, ene: 0 };
-    }),
-    runes: buildData.runes || [],
-    skills: buildData.skills || [],
-    properties: buildData.properties || [],
-    constellation: buildData.constellation || [],
-    sets: buildData.sets || [],
-  } : {
-    buildName: '',
-    class: '',
-    name: '',
-    config: levelRanges.map(range => ({ levelRange: range, str: 0, agi: 0, vit: 0, ene: 0 })),
-    runes: [],
-    skills: [],
-    properties: [],
-    constellation: [],
-    sets: [],
-  };
+  // Fetch available skills for the class when category is 'skills'
+  useEffect(() => {
+    async function fetchSkills() {
+        if (category !== 'skills' || !className) return;
+
+        setLoadingSkills(true);
+        try {
+            const response = await fetch('/api/skills');
+            if (!response.ok) throw new Error('Failed to fetch skills');
+            const allSkills: AvailableSkill[] = await response.json();
+            const classSkills = allSkills.filter(
+                skill => skill.className.toLowerCase() === className.toLowerCase()
+            );
+            setAvailableSkills(classSkills);
+        } catch (error) {
+            console.error("Failed to fetch skills:", error);
+            toast({
+                title: "Erro ao buscar Habilidades",
+                description: "Não foi possível carregar a lista de habilidades.",
+                variant: "destructive",
+            });
+        } finally {
+            setLoadingSkills(false);
+        }
+    }
+    fetchSkills();
+  }, [category, className, toast]);
+
+
+  const defaultValues: BuildFormValues = React.useMemo(() => {
+    const baseValues = buildData ? {
+        buildName: buildId || '',
+        class: className || '',
+        name: buildData.name,
+        config: levelRanges.map(range => {
+            const existingConfig = buildData.config?.find(c => c.levelRange === range);
+            return existingConfig || { levelRange: range, str: 0, agi: 0, vit: 0, ene: 0 };
+        }),
+        runes: buildData.runes || [],
+        skills: buildData.skills || [],
+        properties: buildData.properties || [],
+        constellation: buildData.constellation || [],
+        sets: buildData.sets || [],
+      } : {
+        buildName: '',
+        class: '',
+        name: '',
+        config: levelRanges.map(range => ({ levelRange: range, str: 0, agi: 0, vit: 0, ene: 0 })),
+        runes: [],
+        skills: [],
+        properties: [],
+        constellation: [],
+        sets: [],
+      };
+      
+    // Populate skills with all available skills for the class if editing skills
+    if (category === 'skills' && availableSkills.length > 0) {
+        const skillMap = new Map(baseValues.skills.map(s => [s.name, s.points]));
+        baseValues.skills = availableSkills.map(skill => ({
+            name: skill.name,
+            points: skillMap.get(skill.name) || 0
+        }));
+    }
+
+    return baseValues;
+  }, [buildData, buildId, className, category, availableSkills]);
+
 
   const form = useForm<BuildFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues,
+    // This is important to re-initialize the form when defaultValues change
+    enableReinitialize: true,
   });
 
-  const { fields } = useFieldArray({
+  const { fields: configFields } = useFieldArray({
     control: form.control,
     name: "config",
+  });
+
+  const { fields: skillFields } = useFieldArray({
+    control: form.control,
+    name: "skills",
   });
   
   const { formState: { isDirty } } = form;
@@ -162,14 +227,20 @@ export function BuildForm({ buildId, buildData, category, className, children }:
 
   async function onSubmit(data: BuildFormValues) {
     try {
+        // Filter out skills with 0 points before saving
+        const dataToSave = {
+            ...data,
+            skills: data.skills.filter(skill => skill.points > 0),
+        };
+
         if (buildId) { // Editing existing build
-            await updateBuild(buildId, data.name, data);
+            await updateBuild(buildId, data.name, dataToSave);
             toast({
                 title: `Build Atualizada!`,
                 description: `A build para ${data.class} - ${data.name} foi salva com sucesso.`,
               });
         } else { // Creating new build
-            await createOrUpdateBuild(data.buildName, { class: data.class, ...data });
+            await createOrUpdateBuild(data.buildName, { class: data.class, ...dataToSave });
             toast({
                 title: `Build Criada!`,
                 description: `A build ${data.buildName} foi criada com sucesso.`,
@@ -287,7 +358,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
             <>
             {category === 'config' ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {fields.map((item, index) => (
+                    {configFields.map((item, index) => (
                         <div key={item.id} className="flex flex-col gap-4 p-4 rounded-lg bg-muted/30 border border-muted/50">
                             <h3 className="text-center font-bold">{getLevelRangeLabel(item.levelRange)}</h3>
                             <div className="flex flex-col gap-2">
@@ -343,6 +414,47 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                         </div>
                     ))}
                 </div>
+            ) : category === 'skills' ? (
+                <div className="space-y-4">
+                     <FormDescription>
+                        {fieldInfo?.description}
+                    </FormDescription>
+                    {loadingSkills ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+                            {Array.from({ length: 8 }).map((_, i) => (
+                                <div key={i} className="flex items-center justify-between">
+                                    <Skeleton className="h-5 w-32" />
+                                    <Skeleton className="h-10 w-24" />
+                                </div>
+                             ))}
+                        </div>
+                    ) : (
+                    <ScrollArea className="h-[450px] pr-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+                            {skillFields.map((item, index) => (
+                                <FormField
+                                    key={item.id}
+                                    control={form.control}
+                                    name={`skills.${index}.points`}
+                                    render={({ field }) => (
+                                        <FormItem className="flex items-center justify-between">
+                                            <FormLabel>{item.name}</FormLabel>
+                                            <FormControl>
+                                                <Input 
+                                                    type="number" 
+                                                    placeholder="0" 
+                                                    {...field} 
+                                                    className="w-24"
+                                                />
+                                            </FormControl>
+                                        </FormItem>
+                                    )}
+                                />
+                            ))}
+                        </div>
+                    </ScrollArea>
+                    )}
+                </div>
             ) : fieldInfo ? (
                 <FormField
                     control={form.control}
@@ -357,7 +469,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                                         onChange={field.onChange}
                                         placeholder={`Adicione ${fieldInfo.label.toLowerCase()}...`}
                                         className="min-h-48"
-                                        itemType={fieldInfo.name === 'skills' ? 'skill' : 'text'}
+                                        itemType={'text'}
                                         classNameProp={className}
                                     />
                                 ) : null}

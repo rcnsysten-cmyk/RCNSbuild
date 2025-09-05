@@ -35,14 +35,14 @@ export async function getBuildByClassName(className: string): Promise<Build | nu
 }
 
 // Create a new build or add a new subclass to an existing build
-export async function createOrUpdateBuild(buildName: string, data: { class: string; name: string }) {
+export async function createOrUpdateBuild(buildName: string, data: { class: string; name: string, skills: any[] }) {
     const buildDocRef = doc(db, 'builds', buildName);
     const docSnap = await getDoc(buildDocRef);
 
     const subClassData: SubClass = {
         name: data.name,
         runes: [],
-        skills: [],
+        skills: data.skills || [],
         properties: [],
         config: [],
         constellation: [],
@@ -64,7 +64,7 @@ export async function createOrUpdateBuild(buildName: string, data: { class: stri
 }
 
 // Update a specific category within a subclass
-export async function updateBuild(buildId: string, subClassName: string, data: Partial<SubClass>) {
+export async function updateBuild(buildId: string, subClassName: string, data: Partial<Omit<SubClass, 'name'>>) {
     const buildDocRef = doc(db, 'builds', buildId);
     const docSnap = await getDoc(buildDocRef);
 
