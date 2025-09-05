@@ -446,7 +446,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                         {fieldInfo?.description}
                     </FormDescription>
                     {loadingSkills ? (
-                        <div className="grid grid-cols-4 gap-6">
+                        <div className="grid grid-cols-4 gap-1">
                             {Array.from({ length: 8 }).map((_, i) => (
                                 <div key={i} className="flex flex-col items-center gap-2">
                                     <Skeleton className="h-20 w-20 rounded-md" />
@@ -457,7 +457,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                         </div>
                     ) : (
                     <ScrollArea className="h-[550px] pr-4">
-                      <div className="grid grid-cols-4 gap-3 p-4 border border-input rounded-md">
+                      <div className="grid grid-cols-4 gap-1 p-4 border border-input rounded-md">
                             {skillFields.map((item, index) => {
                                 const skillInfo = availableSkills.find(s => s.name === item.name);
                                 if (!skillInfo) return null;
@@ -468,7 +468,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                                     name={`skills.${index}.points`}
                                     render={({ field }) => (
                                         <FormItem className="flex flex-col items-center justify-start gap-2 p-2 rounded-md bg-card">
-                                            <div className="w-20 h-20 rounded-md overflow-hidden relative border border-input">
+                                            <div className="w-20 h-20 rounded-md overflow-hidden relative">
                                                 <Image
                                                     src={skillInfo.imagePath}
                                                     alt={item.name}
