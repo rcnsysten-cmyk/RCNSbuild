@@ -36,8 +36,8 @@ export default function AdminPage() {
         {builds.map((build) => {
           const Icon = iconMap[build.class];
           return (
-            <Card key={build.class} className="flex flex-col">
-              <CardHeader>
+            <Card key={build.class} className="flex flex-col text-center">
+              <CardHeader className="items-center">
                 <CardTitle className="flex items-center gap-2">
                   {Icon && <Icon className="h-6 w-6" />}
                   {build.class}
@@ -46,13 +46,13 @@ export default function AdminPage() {
                   Selecione uma subclasse para editar.
                 </CardDescription>
               </CardHeader>
-              <CardContent className="flex flex-col flex-grow">
-                <div className="space-y-2">
+              <CardContent className="flex flex-col flex-grow items-center">
+                <div className="space-y-2 w-full max-w-xs">
                   {build.subclasses.map((subClass) => (
                     <Button
                       key={subClass.name}
                       variant="outline"
-                      className="w-full justify-start"
+                      className="w-full justify-center"
                       asChild
                     >
                       <Link
