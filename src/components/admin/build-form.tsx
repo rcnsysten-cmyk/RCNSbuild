@@ -520,13 +520,14 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                                 <div className="border border-input rounded-md p-4 space-y-4">
                                     <div className="grid grid-cols-4 gap-1">
                                         {skillFields.slice(8).map((item, index) => {
+                                             const actualIndex = index + 8;
                                              const skillInfo = baseSkills.find(s => s.name === item.name);
-                                             if (!skillInfo || index < 8) return null; // Skip first 8 and non-base skills
+                                             if (!skillInfo) return null;
                                              return (
                                                  <FormField
                                                      key={item.id}
                                                      control={form.control}
-                                                     name={`skills.${index}.points`}
+                                                     name={`skills.${actualIndex}.points`}
                                                      render={({ field }) => (
                                                          <FormItem className="flex flex-col items-center justify-start p-2 rounded-md bg-card">
                                                              <div className="w-20 h-20 rounded-md overflow-hidden relative">
@@ -560,6 +561,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                             </>
                         )}
                         
+                        <Separator className="my-4" />
 
                         {exclusiveSkills.length > 0 && (
                             <div className="border border-input rounded-md p-4 space-y-4">
