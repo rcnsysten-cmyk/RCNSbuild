@@ -101,7 +101,7 @@ const getLevelRangeLabel = (levelRange: string) => {
 }
 
 // Skill Lists
-const dwBaseSkillOrder = ["Meteorito", "Pilar De Chamas", "Fogo Infernal", "Espirito Maligno", "Impulso De Mana", "Lampejo Aquatico", "Veneno Mortal", "Barreira Da Alma"];
+const dwBaseSkillOrder = ["Meteorito", "Pilar De Chamas", "Fogo Infernal", "Espirito Maligno", "Impulso De Mana", "Lampejo Aquatico", "Veneno Mortal", "Barreira Da Alma", "Lanca Venenosa", "Sensacao De Veneno", "Maldicao", "Enxame De Veneno", "Meteoro", "Selo De Gelo", "Teletransporte", "Nevasca"];
 const dwEneExclusiveSkills = ["Conhecimento Espaco Temporal", "Controle Espaco Temporal"];
 const dwAgiExclusiveSkills = ["Veterania Do Escudo De Veneno", "Veterania Em Veneno"];
 
