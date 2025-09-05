@@ -1,6 +1,3 @@
-import type { ReactNode } from 'react';
-import { DwIcon, DkIcon, ElfaIcon, DlIcon } from '@/components/icons';
-
 export interface SubClass {
   name: string;
   runes: string[];
@@ -11,14 +8,12 @@ export interface SubClass {
 
 export interface Build {
   class: string;
-  icon: ReactNode;
   subclasses: SubClass[];
 }
 
 export const builds: Build[] = [
   {
     class: 'DW',
-    icon: DwIcon,
     subclasses: [
       {
         name: 'Ene',
@@ -38,7 +33,6 @@ export const builds: Build[] = [
   },
   {
     class: 'DK',
-    icon: DkIcon,
     subclasses: [
       {
         name: 'Str',
@@ -58,7 +52,6 @@ export const builds: Build[] = [
   },
   {
     class: 'Elfa',
-    icon: ElfaIcon,
     subclasses: [
       {
         name: 'Ene',
@@ -78,7 +71,6 @@ export const builds: Build[] = [
   },
   {
     class: 'DL',
-    icon: DlIcon,
     subclasses: [
       {
         name: 'Str',

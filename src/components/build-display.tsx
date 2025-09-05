@@ -21,6 +21,7 @@ import { translateBuildInfo } from '@/ai/flows/translate-build-info';
 import { Skeleton } from './ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
 import { Gem, Swords, ShieldCheck, Settings, BrainCircuit } from 'lucide-react';
+import { DkIcon, DlIcon, DwIcon, ElfaIcon } from './icons';
 
 type Language = 'Portuguese' | 'English' | 'Spanish';
 
@@ -72,6 +73,13 @@ function TranslatedView({ content }: { content: string | null }) {
     </Card>
   );
 }
+
+const iconMap: { [key: string]: React.ReactNode } = {
+  DW: <DwIcon />,
+  DK: <DkIcon />,
+  Elfa: <ElfaIcon />,
+  DL: <DlIcon />,
+};
 
 export function BuildDisplay({ builds }: { builds: Build[] }) {
   const [activeClass, setActiveClass] = useState(builds[0].class);
@@ -166,7 +174,7 @@ ${currentBuildData.config.map((c) => `- ${c}`).join('\n')}
               value={build.class}
               className="flex gap-2 items-center"
             >
-              <div className="h-5 w-5">{build.icon}</div>
+              <div className="h-5 w-5">{iconMap[build.class]}</div>
               {build.class}
             </TabsTrigger>
           ))}
