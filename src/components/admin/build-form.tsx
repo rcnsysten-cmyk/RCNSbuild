@@ -448,8 +448,8 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                         {fieldInfo?.description}
                     </FormDescription>
                     {loadingSkills ? (
-                        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4">
-                            {Array.from({ length: 8 }).map((_, i) => (
+                        <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
+                            {Array.from({ length: 12 }).map((_, i) => (
                                 <div key={i} className="flex flex-col items-center gap-2">
                                     <Skeleton className="h-20 w-20 rounded-md" />
                                     <Skeleton className="h-4 w-16" />
@@ -459,7 +459,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                         </div>
                     ) : (
                     <ScrollArea className="h-[550px] pr-4">
-                        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-6">
+                        <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 xl:grid-cols-8 gap-4">
                             {skillFields.map((item, index) => {
                                 const skillInfo = availableSkills.find(s => s.name === item.name);
                                 if (!skillInfo) return null;
@@ -469,18 +469,15 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                                     control={form.control}
                                     name={`skills.${index}.points`}
                                     render={({ field }) => (
-                                        <FormItem className="flex flex-col items-center justify-start gap-2 p-2 rounded-md hover:bg-muted/50 transition-colors">
-                                            <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-muted flex items-center justify-center">
-                                                <Image
-                                                    src={skillInfo.imagePath}
-                                                    alt={item.name}
-                                                    width={80} // Width of the original image square
-                                                    height={80} // Height of the original image square
-                                                    className="object-cover object-left" // This will focus on the left part of the image
-                                                    style={{ transform: 'scale(2.5)' }} // Zoom in to make the icon bigger
-                                                    unoptimized
-                                                />
-                                            </div>
+                                        <FormItem className="flex flex-col items-center justify-start gap-2">
+                                            <Image
+                                                src={skillInfo.imagePath}
+                                                alt={item.name}
+                                                width={64}
+                                                height={64}
+                                                className="rounded-md border-2 border-muted/50 w-16 h-16 object-cover"
+                                                unoptimized
+                                            />
                                             <FormLabel className="text-center text-xs h-8 leading-tight">
                                                 {item.name}
                                             </FormLabel>
@@ -489,7 +486,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                                                     type="number" 
                                                     placeholder="0" 
                                                     {...field} 
-                                                    className="w-20 text-center"
+                                                    className="w-16 h-8 text-center px-1"
                                                 />
                                             </FormControl>
                                         </FormItem>
