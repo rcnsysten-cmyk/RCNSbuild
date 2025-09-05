@@ -130,10 +130,10 @@ export function BuildForm({ buildData, category, children }: BuildFormProps) {
                       control={form.control}
                       name={`config.${index}.str`}
                       render={({ field }) => (
-                        <FormItem className="flex items-center gap-4">
+                        <FormItem className="flex items-center justify-between">
                           <FormLabel>FOR</FormLabel>
                           <FormControl>
-                            <Input type="number" {...field} className="flex-1 bg-transparent border-0 text-right" />
+                            <Input type="number" {...field} className="flex-1 bg-transparent border-0 text-right max-w-24" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -143,10 +143,10 @@ export function BuildForm({ buildData, category, children }: BuildFormProps) {
                       control={form.control}
                       name={`config.${index}.agi`}
                       render={({ field }) => (
-                        <FormItem className="flex items-center gap-4">
+                        <FormItem className="flex items-center justify-between">
                            <FormLabel>AGI</FormLabel>
                            <FormControl>
-                             <Input type="number" {...field} className="flex-1 bg-transparent border-0 text-right" />
+                             <Input type="number" {...field} className="flex-1 bg-transparent border-0 text-right max-w-24" />
                            </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -156,10 +156,10 @@ export function BuildForm({ buildData, category, children }: BuildFormProps) {
                       control={form.control}
                       name={`config.${index}.vit`}
                       render={({ field }) => (
-                        <FormItem className="flex items-center gap-4">
+                        <FormItem className="flex items-center justify-between">
                            <FormLabel>VIT</FormLabel>
                            <FormControl>
-                             <Input type="number" {...field} className="flex-1 bg-transparent border-0 text-right" />
+                             <Input type="number" {...field} className="flex-1 bg-transparent border-0 text-right max-w-24" />
                            </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -169,10 +169,10 @@ export function BuildForm({ buildData, category, children }: BuildFormProps) {
                       control={form.control}
                       name={`config.${index}.ene`}
                       render={({ field }) => (
-                        <FormItem className="flex items-center gap-4">
+                        <FormItem className="flex items-center justify-between">
                            <FormLabel>ENE</FormLabel>
                            <FormControl>
-                             <Input type="number" {...field} className="flex-1 bg-transparent border-0 text-right" />
+                             <Input type="number" {...field} className="flex-1 bg-transparent border-0 text-right max-w-24" />
                            </FormControl>
                            <FormMessage />
                         </FormItem>
