@@ -19,9 +19,7 @@ function getSkillImagePath(skillName: string, className?: string) {
     if (!className) return "/placeholder.png"; // Fallback image
     const formattedClassName = className.toLowerCase().replace(/\s+/g, '-');
     const formattedSkillName = skillName.toLowerCase().replace(/\s+/g, '-');
-    // Handle potential typo in folder name
-    const finalClassName = formattedClassName === 'dark-knight' ? 'dark-kinight' : formattedClassName;
-    return `/${finalClassName}/skill/imagens/${formattedSkillName}.png`;
+    return `/${formattedClassName}/skill/imagens/${formattedSkillName}.png`;
 }
 
 
@@ -99,10 +97,7 @@ export function MultiSelect({
                         width={20}
                         height={20}
                         className="rounded-sm"
-                        onError={(e) => {
-                            // Hide image on error
-                            e.currentTarget.style.display = 'none';
-                        }}
+                        unoptimized
                     />
                 )}
                 {option}
@@ -163,9 +158,7 @@ export function MultiSelect({
                             width={20}
                             height={20}
                             className="rounded-sm"
-                            onError={(e) => {
-                               e.currentTarget.style.display = 'none';
-                            }}
+                            unoptimized
                         />
                     )}
                   Adicionar "{inputValue}"
