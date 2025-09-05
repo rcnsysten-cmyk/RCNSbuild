@@ -1,7 +1,6 @@
 'use client';
 
 import { BuildForm } from '@/components/admin/build-form';
-import { Button } from '@/components/ui/button';
 import { builds } from '@/lib/data';
 import { notFound, useParams } from 'next/navigation';
 import React from 'react';
@@ -55,7 +54,7 @@ export default function EditCategoryPage() {
         buildData={subClass}
         category={category as any}
       >
-        {(form) => (
+        {(form, submitButton) => (
           <>
             <div className="flex justify-between items-center mb-6">
                 <div>
@@ -64,7 +63,7 @@ export default function EditCategoryPage() {
                     </h1>
                     <p className="text-muted-foreground mt-2">Adicione ou remova os itens abaixo.</p>
                 </div>
-                <Button type="submit" form="build-form">Salvar Alterações</Button>
+                {submitButton}
             </div>
             {form}
           </>

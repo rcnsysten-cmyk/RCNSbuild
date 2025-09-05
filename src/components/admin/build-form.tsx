@@ -19,6 +19,7 @@ import { SubClass } from '@/lib/data';
 import { Input } from '../ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import React from 'react';
+import { Button } from '../ui/button';
 
 const attributeConfigSchema = z.object({
   levelRange: z.string(),
@@ -51,7 +52,7 @@ const allFields: { name: keyof BuildFormValues; label: string; description: stri
 interface BuildFormProps {
     buildData: SubClass;
     category: keyof Omit<BuildFormValues, 'class' | 'name'>;
-    children: (form: React.ReactNode) => React.ReactNode;
+    children: (form: React.ReactNode, submitButton: React.ReactNode) => React.ReactNode;
 }
 
 const levelRanges = [
@@ -104,6 +105,8 @@ export function BuildForm({ buildData, category, children }: BuildFormProps) {
   if (!fieldInfo) {
     return <div>Categoria de formulário inválida.</div>
   }
+  
+  const submitButton = <Button type="submit" form="build-form">Salvar Alterações</Button>;
 
   const formContent = (
     <Form {...form}>
@@ -111,7 +114,7 @@ export function BuildForm({ buildData, category, children }: BuildFormProps) {
         {category === 'config' ? (
              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
              {fields.map((item, index) => (
-               <Card key={item.id} className="bg-transparent border-muted">
+               <Card key={item.id} className="bg-muted/30 border-muted/50">
                  <CardHeader>
                    <CardTitle>{getLevelRangeLabel(item.levelRange)}</CardTitle>
                  </CardHeader>
@@ -209,5 +212,5 @@ export function BuildForm({ buildData, category, children }: BuildFormProps) {
     </Form>
   );
 
-  return <>{children(formContent)}</>;
+  return <>{children(formContent, submitButton)}</>;
 }
