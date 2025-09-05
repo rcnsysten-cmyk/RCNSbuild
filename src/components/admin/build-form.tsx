@@ -50,8 +50,8 @@ const allFields: { name: keyof BuildFormValues; label: string; description: stri
 ];
 
 interface BuildFormProps {
-    buildData: SubClass;
-    category: keyof Omit<BuildFormValues, 'class' | 'name'>;
+    buildData?: SubClass;
+    category?: keyof Omit<BuildFormValues, 'class' | 'name'>;
     children: (form: React.ReactNode, submitButton: React.ReactNode) => React.ReactNode;
 }
 
@@ -72,12 +72,19 @@ export function BuildForm({ buildData, category, children }: BuildFormProps) {
   const { toast } = useToast();
   const router = useRouter();
 
-  const defaultValues = {
+  const defaultValues = buildData ? {
     ...buildData,
     config: levelRanges.map(range => {
         const existingConfig = buildData.config.find(c => c.levelRange === range);
         return existingConfig || { levelRange: range, str: 0, agi: 0, vit: 0, ene: 0 };
     })
+  } : {
+    config: levelRanges.map(range => ({ levelRange: range, str: 0, agi: 0, vit: 0, ene: 0 })),
+    runes: [],
+    skills: [],
+    properties: [],
+    constellation: [],
+    sets: [],
   };
 
   const form = useForm<BuildFormValues>({
@@ -95,14 +102,14 @@ export function BuildForm({ buildData, category, children }: BuildFormProps) {
 
     toast({
       title: `Build Atualizada (Simulação)`,
-      description: `A build para ${buildData.name} foi salva com sucesso.`,
+      description: `A build para ${buildData?.name} foi salva com sucesso.`,
     });
     router.back();
   }
 
   const fieldInfo = allFields.find(f => f.name === category);
 
-  if (!fieldInfo) {
+  if (category && !fieldInfo) {
     return <div>Categoria de formulário inválida.</div>
   }
   
@@ -123,14 +130,12 @@ export function BuildForm({ buildData, category, children }: BuildFormProps) {
                       control={form.control}
                       name={`config.${index}.str`}
                       render={({ field }) => (
-                        <FormItem>
-                          <div className="flex items-center gap-4">
-                            <FormLabel className="w-8">FOR</FormLabel>
-                            <FormControl>
-                              <Input type="number" {...field} className="max-w-[120px] bg-transparent border-0" />
-                            </FormControl>
-                          </div>
-                          <FormMessage className="ml-12" />
+                        <FormItem className="flex items-center justify-between">
+                          <FormLabel>FOR</FormLabel>
+                          <FormControl>
+                            <Input type="number" {...field} className="max-w-[120px] bg-transparent border-0 text-right" />
+                          </FormControl>
+                          <FormMessage />
                         </FormItem>
                       )}
                     />
@@ -138,14 +143,12 @@ export function BuildForm({ buildData, category, children }: BuildFormProps) {
                       control={form.control}
                       name={`config.${index}.agi`}
                       render={({ field }) => (
-                        <FormItem>
-                           <div className="flex items-center gap-4">
-                            <FormLabel className="w-8">AGI</FormLabel>
-                            <FormControl>
-                              <Input type="number" {...field} className="max-w-[120px] bg-transparent border-0" />
-                            </FormControl>
-                          </div>
-                          <FormMessage className="ml-12" />
+                        <FormItem className="flex items-center justify-between">
+                           <FormLabel>AGI</FormLabel>
+                           <FormControl>
+                             <Input type="number" {...field} className="max-w-[120px] bg-transparent border-0 text-right" />
+                           </FormControl>
+                          <FormMessage />
                         </FormItem>
                       )}
                     />
@@ -153,14 +156,12 @@ export function BuildForm({ buildData, category, children }: BuildFormProps) {
                       control={form.control}
                       name={`config.${index}.vit`}
                       render={({ field }) => (
-                        <FormItem>
-                           <div className="flex items-center gap-4">
-                            <FormLabel className="w-8">VIT</FormLabel>
-                            <FormControl>
-                              <Input type="number" {...field} className="max-w-[120px] bg-transparent border-0" />
-                            </FormControl>
-                          </div>
-                          <FormMessage className="ml-12" />
+                        <FormItem className="flex items-center justify-between">
+                           <FormLabel>VIT</FormLabel>
+                           <FormControl>
+                             <Input type="number" {...field} className="max-w-[120px] bg-transparent border-0 text-right" />
+                           </FormControl>
+                          <FormMessage />
                         </FormItem>
                       )}
                     />
@@ -168,14 +169,12 @@ export function BuildForm({ buildData, category, children }: BuildFormProps) {
                       control={form.control}
                       name={`config.${index}.ene`}
                       render={({ field }) => (
-                        <FormItem>
-                          <div className="flex items-center gap-4">
-                            <FormLabel className="w-8">ENE</FormLabel>
-                            <FormControl>
-                              <Input type="number" {...field} className="max-w-[120px] bg-transparent border-0" />
-                            </FormControl>
-                          </div>
-                          <FormMessage className="ml-12" />
+                        <FormItem className="flex items-center justify-between">
+                           <FormLabel>ENE</FormLabel>
+                           <FormControl>
+                             <Input type="number" {...field} className="max-w-[120px] bg-transparent border-0 text-right" />
+                           </FormControl>
+                           <FormMessage />
                         </FormItem>
                       )}
                     />
@@ -183,7 +182,7 @@ export function BuildForm({ buildData, category, children }: BuildFormProps) {
                </Card>
              ))}
            </div>
-        ) : (
+        ) : fieldInfo ? (
             <FormField
                 control={form.control}
                 name={fieldInfo.name as keyof BuildFormValues}
@@ -207,7 +206,7 @@ export function BuildForm({ buildData, category, children }: BuildFormProps) {
                     </FormItem>
                 )}
             />
-        )}
+        ) : null}
       </form>
     </Form>
   );
