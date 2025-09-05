@@ -88,7 +88,7 @@ export default function EditCategoryPage() {
         buildData={subClass}
         buildId={build.id} // buildId is now the className
         category={category as any}
-        className={decodedClassName}
+        className={build.class}
       >
         {(form, submitButton) => (
           <>

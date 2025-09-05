@@ -64,8 +64,8 @@ export async function createOrUpdateBuild(buildName: string, data: { class: stri
 }
 
 // Update a specific category within a subclass
-export async function updateBuild(className: string, subClassName: string, data: Partial<SubClass>) {
-    const buildDocRef = doc(db, 'builds', className);
+export async function updateBuild(buildId: string, subClassName: string, data: Partial<SubClass>) {
+    const buildDocRef = doc(db, 'builds', buildId);
     const docSnap = await getDoc(buildDocRef);
 
     if (!docSnap.exists()) {

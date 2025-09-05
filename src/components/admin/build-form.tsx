@@ -64,10 +64,10 @@ const allFields: { name: keyof Omit<BuildFormValues, 'class' | 'name' | 'buildNa
 ];
 
 interface BuildFormProps {
-    buildId?: string; // This will now be the className
+    buildId?: string; // This will now be the build name/ID
     buildData?: SubClass;
     category?: keyof Omit<BuildFormValues, 'class' | 'name' | 'buildName'>;
-    className?: string;
+    className?: string; // The character class name (e.g. 'Dark Wizard')
     children?: (form: React.ReactNode, submitButton: React.ReactNode) => React.ReactNode;
 }
 
@@ -89,7 +89,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
   const router = useRouter();
 
   const defaultValues: BuildFormValues = buildData ? {
-    buildName: className || '',
+    buildName: buildId || '',
     class: className || '',
     name: buildData.name,
     config: levelRanges.map(range => {
@@ -127,8 +127,8 @@ export function BuildForm({ buildId, buildData, category, className, children }:
 
   async function onSubmit(data: BuildFormValues) {
     try {
-        if (buildId && className) { // Editing existing build
-            await updateBuild(className, data.name, data);
+        if (buildId) { // Editing existing build
+            await updateBuild(buildId, data.name, data);
             toast({
                 title: `Build Atualizada!`,
                 description: `A build para ${data.class} - ${data.name} foi salva com sucesso.`,
@@ -169,7 +169,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                     <FormItem>
                     <FormLabel>Nome da Build</FormLabel>
                     <FormControl>
-                        <Input placeholder="Ex: Dark Wizard de Energia" {...field} />
+                        <Input placeholder="Ex: DW Ene para Farm" {...field} />
                     </FormControl>
                     <FormDescription>
                         Este nome será o identificador único da sua build.

@@ -73,10 +73,10 @@ export default function AdminPage() {
                 <CardHeader className="items-center">
                   <CardTitle className="flex items-center gap-2">
                     {Icon && <Icon className="h-6 w-6" />}
-                    {build.class}
+                    {build.id}
                   </CardTitle>
                   <CardDescription>
-                    Selecione uma subclasse para editar.
+                    {build.class} - Selecione uma subclasse para editar.
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="flex flex-col flex-grow items-center">
@@ -90,7 +90,7 @@ export default function AdminPage() {
                       >
                         <Link
                           href={`/admin/${encodeURIComponent(
-                            build.class
+                            build.id
                           )}/${encodeURIComponent(subClass.name)}/edit`}
                         >
                           {subClass.name}
