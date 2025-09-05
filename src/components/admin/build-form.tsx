@@ -464,7 +464,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                     </FormDescription>
                     {loadingSkills ? (
                         <div className="grid grid-cols-4 gap-1">
-                            {Array.from({ length: 8 }).map((_, i) => (
+                            {Array.from({ length: 24 }).map((_, i) => (
                                 <div key={i} className="flex flex-col items-center">
                                     <Skeleton className="h-20 w-20 rounded-md" />
                                     <Skeleton className="h-4 w-16" />
