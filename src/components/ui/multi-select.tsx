@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { X } from "lucide-react";
+import Image from "next/image";
 
 import { Badge } from "@/components/ui/badge";
 import {
@@ -13,11 +14,24 @@ import {
 import { Command as CommandPrimitive } from "cmdk";
 import { cn } from "@/lib/utils";
 
+// Helper function to generate the image path for a skill
+function getSkillImagePath(skillName: string, className?: string) {
+    if (!className) return "/placeholder.png"; // Fallback image
+    const formattedClassName = className.toLowerCase().replace(/\s+/g, '-');
+    const formattedSkillName = skillName.toLowerCase().replace(/\s+/g, '-');
+    // Handle potential typo in folder name
+    const finalClassName = formattedClassName === 'dark-knight' ? 'dark-kinight' : formattedClassName;
+    return `/${finalClassName}/skill/imagens/${formattedSkillName}.png`;
+}
+
+
 interface MultiSelectProps {
   selected: string[];
   onChange: React.Dispatch<React.SetStateAction<string[]>>;
   placeholder?: string;
   className?: string;
+  itemType?: 'skill' | 'text';
+  classNameProp?: string;
 }
 
 export function MultiSelect({
@@ -25,6 +39,8 @@ export function MultiSelect({
   onChange,
   placeholder = "Select options",
   className,
+  itemType = 'text',
+  classNameProp,
 }: MultiSelectProps) {
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [open, setOpen] = React.useState(false);
@@ -75,7 +91,20 @@ export function MultiSelect({
         <div className="flex flex-wrap gap-1">
           {selected.map((option) => {
             return (
-              <Badge key={option} variant="secondary">
+              <Badge key={option} variant="secondary" className="flex items-center gap-2">
+                {itemType === 'skill' && (
+                    <Image
+                        src={getSkillImagePath(option, classNameProp)}
+                        alt={option}
+                        width={20}
+                        height={20}
+                        className="rounded-sm"
+                        onError={(e) => {
+                            // Hide image on error
+                            e.currentTarget.style.display = 'none';
+                        }}
+                    />
+                )}
                 {option}
                 <button
                   className="ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
@@ -112,7 +141,6 @@ export function MultiSelect({
           />
         </div>
       </div>
-      {/* This part is intentionally left empty as we are allowing free-form input */}
       <div className="relative mt-2">
         {open &&
         inputValue.length > 0 &&
@@ -126,8 +154,20 @@ export function MultiSelect({
                     e.stopPropagation();
                   }}
                   onSelect={() => handleSelect(inputValue.trim())}
-                  className={"cursor-pointer"}
+                  className={"cursor-pointer flex items-center gap-2"}
                 >
+                    {itemType === 'skill' && (
+                         <Image
+                            src={getSkillImagePath(inputValue.trim(), classNameProp)}
+                            alt={inputValue.trim()}
+                            width={20}
+                            height={20}
+                            className="rounded-sm"
+                            onError={(e) => {
+                               e.currentTarget.style.display = 'none';
+                            }}
+                        />
+                    )}
                   Adicionar "{inputValue}"
                 </CommandItem>
               </CommandGroup>

@@ -10,7 +10,6 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
 } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
@@ -51,6 +50,7 @@ const allFields: { name: keyof BuildFormValues; label: string; description: stri
 interface BuildFormProps {
     buildData?: SubClass;
     category?: keyof Omit<BuildFormValues, 'class' | 'name'>;
+    className?: string;
     children?: (form: React.ReactNode, submitButton: React.ReactNode) => React.ReactNode;
 }
 
@@ -67,7 +67,7 @@ const getLevelRangeLabel = (levelRange: string) => {
     return `Lvl ${start} ao ${end}`;
 }
 
-export function BuildForm({ buildData, category, children }: BuildFormProps) {
+export function BuildForm({ buildData, category, className, children }: BuildFormProps) {
   const { toast } = useToast();
   const router = useRouter();
 
@@ -130,9 +130,8 @@ export function BuildForm({ buildData, category, children }: BuildFormProps) {
                                     <FormItem className="flex items-center justify-between">
                                         <FormLabel>FOR</FormLabel>
                                         <FormControl>
-                                            <Input type="number" {...field} className="w-24 bg-transparent border-0 text-right" />
+                                            <Input type="number" {...field} className="bg-transparent border-0 text-right" />
                                         </FormControl>
-                                        <FormMessage />
                                     </FormItem>
                                 )}
                             />
@@ -143,9 +142,8 @@ export function BuildForm({ buildData, category, children }: BuildFormProps) {
                                     <FormItem className="flex items-center justify-between">
                                         <FormLabel>AGI</FormLabel>
                                         <FormControl>
-                                            <Input type="number" {...field} className="w-24 bg-transparent border-0 text-right" />
+                                            <Input type="number" {...field} className="bg-transparent border-0 text-right" />
                                         </FormControl>
-                                        <FormMessage />
                                     </FormItem>
                                 )}
                             />
@@ -156,9 +154,8 @@ export function BuildForm({ buildData, category, children }: BuildFormProps) {
                                     <FormItem className="flex items-center justify-between">
                                         <FormLabel>VIT</FormLabel>
                                         <FormControl>
-                                            <Input type="number" {...field} className="w-24 bg-transparent border-0 text-right" />
+                                            <Input type="number" {...field} className="bg-transparent border-0 text-right" />
                                         </FormControl>
-                                        <FormMessage />
                                     </FormItem>
                                 )}
                             />
@@ -169,9 +166,8 @@ export function BuildForm({ buildData, category, children }: BuildFormProps) {
                                     <FormItem className="flex items-center justify-between">
                                         <FormLabel>ENE</FormLabel>
                                         <FormControl>
-                                            <Input type="number" {...field} className="w-24 bg-transparent border-0 text-right" />
+                                            <Input type="number" {...field} className="bg-transparent border-0 text-right" />
                                         </FormControl>
-                                        <FormMessage />
                                     </FormItem>
                                 )}
                             />
@@ -193,6 +189,8 @@ export function BuildForm({ buildData, category, children }: BuildFormProps) {
                                     onChange={field.onChange}
                                     placeholder={`Adicione ${fieldInfo.label.toLowerCase()}...`}
                                     className="min-h-48"
+                                    itemType={fieldInfo.name === 'skills' ? 'skill' : 'text'}
+                                    classNameProp={className}
                                 />
                             ) : null}
                         </FormControl>
@@ -208,5 +206,4 @@ export function BuildForm({ buildData, category, children }: BuildFormProps) {
     </Form>
   );
 
-  return <>{children ? children(formContent, submitButton) : formContent}</>;
 }

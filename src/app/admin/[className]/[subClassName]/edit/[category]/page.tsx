@@ -53,6 +53,7 @@ export default function EditCategoryPage() {
       <BuildForm
         buildData={subClass}
         category={category as any}
+        className={decodedClassName}
       >
         {(form, submitButton) => (
           <>
