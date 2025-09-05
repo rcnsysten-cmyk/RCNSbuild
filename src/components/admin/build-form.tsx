@@ -119,12 +119,14 @@ export function BuildForm({ buildData, category }: BuildFormProps) {
                       control={form.control}
                       name={`config.${index}.str`}
                       render={({ field }) => (
-                        <FormItem className="flex items-center justify-between">
-                          <FormLabel>FOR</FormLabel>
-                          <FormControl>
-                            <Input type="number" {...field} className="max-w-[120px]" />
-                          </FormControl>
-                          <FormMessage />
+                        <FormItem>
+                          <div className="flex items-center gap-4">
+                            <FormLabel className="w-8">FOR</FormLabel>
+                            <FormControl>
+                              <Input type="number" {...field} className="max-w-[120px]" />
+                            </FormControl>
+                          </div>
+                          <FormMessage className="ml-12" />
                         </FormItem>
                       )}
                     />
@@ -132,12 +134,14 @@ export function BuildForm({ buildData, category }: BuildFormProps) {
                       control={form.control}
                       name={`config.${index}.agi`}
                       render={({ field }) => (
-                        <FormItem className="flex items-center justify-between">
-                          <FormLabel>AGI</FormLabel>
-                          <FormControl>
-                            <Input type="number" {...field} className="max-w-[120px]" />
-                          </FormControl>
-                          <FormMessage />
+                        <FormItem>
+                           <div className="flex items-center gap-4">
+                            <FormLabel className="w-8">AGI</FormLabel>
+                            <FormControl>
+                              <Input type="number" {...field} className="max-w-[120px]" />
+                            </FormControl>
+                          </div>
+                          <FormMessage className="ml-12" />
                         </FormItem>
                       )}
                     />
@@ -145,12 +149,14 @@ export function BuildForm({ buildData, category }: BuildFormProps) {
                       control={form.control}
                       name={`config.${index}.vit`}
                       render={({ field }) => (
-                        <FormItem className="flex items-center justify-between">
-                          <FormLabel>VIT</FormLabel>
-                          <FormControl>
-                            <Input type="number" {...field} className="max-w-[120px]" />
-                          </FormControl>
-                          <FormMessage />
+                        <FormItem>
+                           <div className="flex items-center gap-4">
+                            <FormLabel className="w-8">VIT</FormLabel>
+                            <FormControl>
+                              <Input type="number" {...field} className="max-w-[120px]" />
+                            </FormControl>
+                          </div>
+                          <FormMessage className="ml-12" />
                         </FormItem>
                       )}
                     />
@@ -158,12 +164,14 @@ export function BuildForm({ buildData, category }: BuildFormProps) {
                       control={form.control}
                       name={`config.${index}.ene`}
                       render={({ field }) => (
-                        <FormItem className="flex items-center justify-between">
-                          <FormLabel>ENE</FormLabel>
-                          <FormControl>
-                            <Input type="number" {...field} className="max-w-[120px]" />
-                          </FormControl>
-                          <FormMessage />
+                        <FormItem>
+                          <div className="flex items-center gap-4">
+                            <FormLabel className="w-8">ENE</FormLabel>
+                            <FormControl>
+                              <Input type="number" {...field} className="max-w-[120px]" />
+                            </FormControl>
+                          </div>
+                          <FormMessage className="ml-12" />
                         </FormItem>
                       )}
                     />
