@@ -100,8 +100,8 @@ const getLevelRangeLabel = (levelRange: string) => {
 }
 
 const dwTestSkillOrder = [
-    "Meteorito", "Pilar De chamas", "Fogo Infernal", "Espirito Maligno", 
-    "Impulso De mana", "Lampejo Aquatic", "Veneno Mortal", "Barreira Da alma"
+    "Meteorito", "Pilar de chamas", "Fogo infernal", "Espirito maligno", 
+    "Impulso de mana", "Lampejo aquatico", "Veneno mortal", "Barreira da alma"
 ];
 
 
@@ -171,7 +171,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
         try {
             const response = await fetch('/api/skills');
             if (!response.ok) throw new Error('Failed to fetch skills');
-            let allSkills: AvailableSkill[] = await response.json();
+            const allSkills: AvailableSkill[] = await response.json();
             
             let classSkills = allSkills.filter(
                 skill => skill.className.toLowerCase() === className.toLowerCase()
@@ -188,14 +188,16 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                 }
               
                 // Filter to only include the test skills
-                classSkills = classSkills.filter(skill => dwTestSkillOrder.includes(skill.name));
+                const testSkills = classSkills.filter(skill => dwTestSkillOrder.includes(skill.name));
 
                 // Sort according to the test order
-                classSkills.sort((a, b) => {
+                testSkills.sort((a, b) => {
                     const indexA = dwTestSkillOrder.indexOf(a.name);
                     const indexB = dwTestSkillOrder.indexOf(b.name);
                     return indexA - indexB;
                 });
+                
+                classSkills = testSkills;
             }
 
             setAvailableSkills(classSkills);
@@ -481,8 +483,8 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                                     control={form.control}
                                     name={`skills.${index}.points`}
                                     render={({ field }) => (
-                                        <FormItem className="flex flex-col items-center justify-start gap-2 p-2 border border-muted/50 rounded-md bg-muted/20">
-                                            <div className="w-20 h-20 rounded-md overflow-hidden relative border border-muted">
+                                        <FormItem className="flex flex-col items-center justify-start gap-2 p-2 border border-input rounded-md bg-card">
+                                            <div className="w-20 h-20 rounded-md overflow-hidden relative border border-input">
                                                 <Image
                                                     src={skillInfo.imagePath}
                                                     alt={item.name}
