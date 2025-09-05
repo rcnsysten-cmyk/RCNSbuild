@@ -52,7 +52,7 @@ const allFields: { name: keyof BuildFormValues; label: string; description: stri
 interface BuildFormProps {
     buildData?: SubClass;
     category?: keyof Omit<BuildFormValues, 'class' | 'name'>;
-    children: (form: React.ReactNode, submitButton: React.ReactNode) => React.ReactNode;
+    children?: (form: React.ReactNode, submitButton: React.ReactNode) => React.ReactNode;
 }
 
 const levelRanges = [
@@ -133,7 +133,7 @@ export function BuildForm({ buildData, category, children }: BuildFormProps) {
                         <FormItem className="flex items-center justify-between">
                           <FormLabel>FOR</FormLabel>
                           <FormControl>
-                            <Input type="number" {...field} className="max-w-[120px] bg-transparent border-0 text-right" />
+                            <Input type="number" {...field} className="max-w-[120px]" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -146,7 +146,7 @@ export function BuildForm({ buildData, category, children }: BuildFormProps) {
                         <FormItem className="flex items-center justify-between">
                            <FormLabel>AGI</FormLabel>
                            <FormControl>
-                             <Input type="number" {...field} className="max-w-[120px] bg-transparent border-0 text-right" />
+                             <Input type="number" {...field} className="max-w-[120px]" />
                            </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -159,7 +159,7 @@ export function BuildForm({ buildData, category, children }: BuildFormProps) {
                         <FormItem className="flex items-center justify-between">
                            <FormLabel>VIT</FormLabel>
                            <FormControl>
-                             <Input type="number" {...field} className="max-w-[120px] bg-transparent border-0 text-right" />
+                             <Input type="number" {...field} className="max-w-[120px]" />
                            </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -172,7 +172,7 @@ export function BuildForm({ buildData, category, children }: BuildFormProps) {
                         <FormItem className="flex items-center justify-between">
                            <FormLabel>ENE</FormLabel>
                            <FormControl>
-                             <Input type="number" {...field} className="max-w-[120px] bg-transparent border-0 text-right" />
+                             <Input type="number" {...field} className="max-w-[120px]" />
                            </FormControl>
                            <FormMessage />
                         </FormItem>
@@ -211,5 +211,5 @@ export function BuildForm({ buildData, category, children }: BuildFormProps) {
     </Form>
   );
 
-  return <>{children(formContent, submitButton)}</>;
+  return <>{children ? children(formContent, submitButton) : formContent}</>;
 }
