@@ -75,9 +75,7 @@ export function BuildForm({ buildData }: BuildFormProps) {
     router.push('/admin');
   }
 
-  const fields: { name: keyof BuildFormValues; label: string; description: string, disabled?: boolean, isMultiSelect?: boolean }[] = [
-    { name: 'class', label: 'Classe', description: 'Ex: DW, DK, Elfa, DL', disabled: true },
-    { name: 'name', label: 'Nome da Sub-classe', description: 'Ex: ENE, AGI, STR', disabled: true },
+  const fields: { name: keyof BuildFormValues; label: string; description: string, isMultiSelect?: boolean }[] = [
     { name: 'config', label: 'Atributos', description: 'Adicione os pontos de atributos. Ex: Força: 1000', isMultiSelect: true },
     { name: 'skills', label: 'Habilidades', description: 'Adicione as habilidades. Ex: Evil Spirit', isMultiSelect: true },
     { name: 'constellation', label: 'Constelação', description: 'Adicione os pontos da constelação.', isMultiSelect: true },
@@ -107,7 +105,7 @@ export function BuildForm({ buildData }: BuildFormProps) {
                                         className="min-h-24"
                                     />
                                 ) : (
-                                    <Input placeholder={`Digite as ${fieldInfo.label.toLowerCase()}...`} {...field as any} disabled={fieldInfo.disabled} />
+                                    <Input placeholder={`Digite as ${fieldInfo.label.toLowerCase()}...`} {...field as any} />
                                 )}
                             </FormControl>
                             <FormDescription>
