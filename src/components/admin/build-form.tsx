@@ -17,7 +17,7 @@ import { useRouter } from 'next/navigation';
 import { MultiSelect } from '@/components/ui/multi-select';
 import { SubClass } from '@/lib/types';
 import { Input } from '../ui/input';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button } from '../ui/button';
 import { createOrUpdateBuild, updateBuild } from '@/lib/firestore';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
@@ -53,6 +53,12 @@ const allFields: { name: keyof Omit<BuildFormValues, 'class' | 'name'>; label: s
 ];
 
 const availableClasses = ['Dark Wizard', 'Dark Knight', 'Elfa', 'Dark Lord'];
+const availableSubclasses: Record<string, string[]> = {
+    'Dark Wizard': ['ENE', 'AGI'],
+    'Dark Knight': ['STR', 'AGI', 'VIT'],
+    'Elfa': ['AGI', 'ENE'],
+    'Dark Lord': ['STR', 'ENE'],
+  };
 
 interface BuildFormProps {
     buildId?: string;
@@ -111,6 +117,17 @@ export function BuildForm({ buildId, buildData, category, className, children }:
     control: form.control,
     name: "config",
   });
+
+  const watchedClass = form.watch('class');
+  const subclassesForSelectedClass = availableSubclasses[watchedClass] || [];
+
+  useEffect(() => {
+    // Reset subclass name if the main class changes and the selected subclass is no longer valid
+    if (!subclassesForSelectedClass.includes(form.getValues('name'))) {
+        form.setValue('name', '');
+    }
+  }, [watchedClass, subclassesForSelectedClass, form]);
+
 
   async function onSubmit(data: BuildFormValues) {
     try {
@@ -179,9 +196,22 @@ export function BuildForm({ buildId, buildData, category, className, children }:
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Nome da Subclasse (Ex: ENE, AGI, STR)</FormLabel>
-                  <FormControl>
-                    <Input placeholder="ENE" {...field} />
-                  </FormControl>
+                  <Select 
+                    onValueChange={field.onChange} 
+                    value={field.value}
+                    disabled={!watchedClass}
+                    >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder={watchedClass ? "Selecione uma subclasse" : "Primeiro escolha uma classe"} />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {subclassesForSelectedClass.map((sc) => (
+                        <SelectItem key={sc} value={sc}>{sc}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormDescription>
                     Dê um nome para a subclasse desta build.
                   </FormDescription>
@@ -292,3 +322,5 @@ export function BuildForm({ buildId, buildData, category, className, children }:
 
   return formContent;
 }
+
+    
