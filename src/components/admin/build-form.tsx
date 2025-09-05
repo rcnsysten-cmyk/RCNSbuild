@@ -17,10 +17,11 @@ import { useRouter } from 'next/navigation';
 import { MultiSelect } from '@/components/ui/multi-select';
 import { SubClass } from '@/lib/types';
 import { Input } from '../ui/input';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '../ui/button';
 import { createOrUpdateBuild, updateBuild } from '@/lib/firestore';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../ui/alert-dialog';
 
 const attributeConfigSchema = z.object({
   levelRange: z.string(),
@@ -68,7 +69,7 @@ interface BuildFormProps {
     buildData?: SubClass;
     category?: keyof Omit<BuildFormValues, 'class' | 'name' | 'buildName'>;
     className?: string; // The character class name (e.g. 'Dark Wizard')
-    children?: (form: React.ReactNode, submitButton: React.ReactNode) => React.ReactNode;
+    children?: (form: React.ReactNode, submitButton: React.ReactNode, handleBack: () => void) => React.ReactNode;
 }
 
 const levelRanges = [
@@ -87,6 +88,7 @@ const getLevelRangeLabel = (levelRange: string) => {
 export function BuildForm({ buildId, buildData, category, className, children }: BuildFormProps) {
   const { toast } = useToast();
   const router = useRouter();
+  const [isExitConfirmOpen, setIsExitConfirmOpen] = useState(false);
 
   const defaultValues: BuildFormValues = buildData ? {
     buildName: buildId || '',
@@ -123,7 +125,40 @@ export function BuildForm({ buildId, buildData, category, className, children }:
     name: "config",
   });
   
+  const { formState: { isDirty } } = form;
   const selectedClass = form.watch('class');
+
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (isDirty) {
+        e.preventDefault();
+        e.returnValue = ''; // Required for Chrome
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [isDirty]);
+
+
+  const handleBack = () => {
+    if (isDirty) {
+      setIsExitConfirmOpen(true);
+    } else {
+      router.back();
+    }
+  };
+
+  const handleConfirmExit = (save: boolean) => {
+    if (save) {
+        form.handleSubmit(onSubmit)();
+    } else {
+        router.back();
+    }
+    setIsExitConfirmOpen(false);
+  }
 
   async function onSubmit(data: BuildFormValues) {
     try {
@@ -157,6 +192,21 @@ export function BuildForm({ buildId, buildData, category, className, children }:
   const submitButton = <Button type="submit" form="build-form">Salvar Alterações</Button>;
 
   const formContent = (
+    <>
+    <AlertDialog open={isExitConfirmOpen} onOpenChange={setIsExitConfirmOpen}>
+        <AlertDialogContent>
+            <AlertDialogHeader>
+            <AlertDialogTitle>Você tem alterações não salvas!</AlertDialogTitle>
+            <AlertDialogDescription>
+                Você gostaria de salvar suas alterações antes de sair?
+            </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => handleConfirmExit(false)}>Descartar</AlertDialogCancel>
+            <AlertDialogAction onClick={() => handleConfirmExit(true)}>Salvar e Sair</AlertDialogAction>
+            </AlertDialogFooter>
+        </AlertDialogContent>
+    </AlertDialog>
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} id="build-form" className="space-y-8">
       {!buildData ? (
@@ -325,10 +375,11 @@ export function BuildForm({ buildId, buildData, category, className, children }:
 
       </form>
     </Form>
+    </>
   );
 
   if (children) {
-    return children(formContent, submitButton);
+    return children(formContent, submitButton, handleBack);
   }
 
   return formContent;

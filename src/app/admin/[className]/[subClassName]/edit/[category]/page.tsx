@@ -3,7 +3,7 @@
 import { BuildForm } from '@/components/admin/build-form';
 import { getBuildByClassName } from '@/lib/firestore';
 import { Build, SubClass } from '@/lib/types';
-import { notFound, useParams, useRouter } from 'next/navigation';
+import { notFound, useParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
@@ -22,7 +22,6 @@ const categoryNames: { [key: string]: string } = {
 
 export default function EditCategoryPage() {
   const params = useParams();
-  const router = useRouter();
   const { className, subClassName, category } = params;
 
   const [build, setBuild] = useState<Build | null>(null);
@@ -61,7 +60,7 @@ export default function EditCategoryPage() {
         setLoading(false);
     };
     fetchBuild();
-  }, [decodedClassName, decodedSubClassName, router]);
+  }, [decodedClassName, decodedSubClassName]);
 
   if (loading) {
     return (
@@ -88,15 +87,15 @@ export default function EditCategoryPage() {
     <div className="container mx-auto px-4 py-8">
       <BuildForm
         buildData={subClass}
-        buildId={build.id} // buildId is now the className
+        buildId={build.id}
         category={category as any}
         className={build.class}
       >
-        {(form, submitButton) => (
+        {(form, submitButton, handleBack) => (
           <>
             <div className="flex justify-between items-center mb-6">
                 <div>
-                    <Button variant="ghost" onClick={() => router.back()} className="mb-4">
+                    <Button variant="ghost" onClick={handleBack} className="mb-4">
                         <ArrowLeft className="mr-2 h-4 w-4" />
                         Voltar
                     </Button>
