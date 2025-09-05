@@ -101,7 +101,7 @@ const getLevelRangeLabel = (levelRange: string) => {
 
 const dwEneSkillOrder = ["Meteorito", "Pilar De Chamas", "Fogo Infernal", "Espirito Maligno", "Impulso De Mana", "Lampejo Aquatico", "Veneno Mortal", "Barreira De Mana"];
 const dwAgiSkillOrder = ["Lanca Venenosa", "Sensacao De Veneno", "Maldicao", "Enxame De Veneno"];
-const elfaSkillOrder = ["Lanca Venenosa", "Sensacao De Veneno", "Maldicao", "Enxame De Veneno"];
+const elfaSkillOrder: string[] = []; // Empty for now
 
 export function BuildForm({ buildId, buildData, category, className, children }: BuildFormProps) {
   const { toast } = useToast();
