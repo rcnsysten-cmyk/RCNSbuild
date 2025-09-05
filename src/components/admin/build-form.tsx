@@ -476,7 +476,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                     <ScrollArea className="h-[950px] pr-4">
                        <div className="flex flex-col">
                             {/* Bloco 1 */}
-                            <div className="flex items-center gap-4 mb-8">
+                            <div className="flex items-center justify-end mb-8">
                                 <div className="w-20 flex-shrink-0" />
                                 <div className="border border-input rounded-md p-4 w-[420px] h-[300px]">
                                     <div className="grid grid-cols-4 gap-y-1">
@@ -521,7 +521,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                             </div>
 
                             {/* Bloco 2 com Skill Exclusiva 1 */}
-                            <div className="flex items-center gap-4 mb-8">
+                            <div className="flex items-center justify-end mb-8">
                                 <div className="w-20 flex flex-col items-center justify-center flex-shrink-0">
                                 {skillFields.map((item, index) => {
                                     const skillInfo = exclusiveSkills.find(s => s.name === item.name);
@@ -587,7 +587,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                             </div>
     
                             {/* Bloco 3 com Skill Exclusiva 2 */}
-                             <div className="flex items-center gap-4">
+                             <div className="flex items-center justify-end">
                                 <div className="w-20 flex flex-col items-center justify-center flex-shrink-0">
                                 {skillFields.map((item, index) => {
                                     const skillInfo = exclusiveSkills.find(s => s.name === item.name);
@@ -696,3 +696,5 @@ export function BuildForm({ buildId, buildData, category, className, children }:
 
   return formContent;
 }
+
+    
