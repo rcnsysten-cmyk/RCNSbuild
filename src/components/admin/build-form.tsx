@@ -100,13 +100,16 @@ const getLevelRangeLabel = (levelRange: string) => {
 }
 
 const dwSkillOrder = [
-    "Meteorito", "Pilar De Chamas", "Fogo Infernal", "Espirito Maligno",
-    "Impulso De Mana", "Lampejo Aquatico", "Veneno Mortal", "Barreira Da Alma",
-    "Lanca Venenosa", "Sensacao De Veneno", "Maldicao", "Enxame De Veneno",
-    "Veterania Em Veneno", "Selo De Gelo", "Teletransporte", "Nevasca",
-    "Explosao", "Ilusao", "Meteoro Venenoso", "Alternancia",
-    "Veterania Do Escudo De Veneno", "Olho Do Ceifador", "Bolha", "Labareda", "Explosao Infernal"
-];  
+    "Meteorito", "Maldicao", "Teletransporte", "Nevasca", "Explosao", "Ilusao", "Alternancia",
+    "Bolha", "Labareda", "Barreira da alma", "Enxame de veneno", "Espirito maligno", "Explosao infernal", "Fogo infernal",
+    "Olho do Ceifador", "Lanca Venenosa", "Meteoro Venenoso", "Selo de Gelo", "Pilar De Chamas",
+    // ENE Skills
+    "Conhecimento Espaco Temporal", "Controle Espaco Temporal",
+    // AGI Skills
+    "Veterania Em Veneno", "Veterania Do Escudo De Veneno",
+    // Other skills that might not be in the image but are in the system
+    "Impulso De Mana", "Lampejo Aquatico", "Veneno Mortal", "Sensacao De Veneno"
+];
 
 export function BuildForm({ buildId, buildData, category, className, children }: BuildFormProps) {
   const { toast } = useToast();
@@ -181,7 +184,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                 skill => skill.className.toLowerCase() === className.toLowerCase()
             );
 
-            // Specific filtering for Dark Wizard subclasses
+            // Specific filtering and sorting for Dark Wizard subclasses
             if (className.toLowerCase() === 'dark wizard') {
               const eneSkills = ['Conhecimento Espaco Temporal', 'Controle Espaco Temporal'];
               const agiSkills = ['Veterania Em Veneno', 'Veterania Do Escudo De Veneno'];
@@ -196,7 +199,8 @@ export function BuildForm({ buildId, buildData, category, className, children }:
               classSkills.sort((a, b) => {
                   const indexA = dwSkillOrder.indexOf(a.name);
                   const indexB = dwSkillOrder.indexOf(b.name);
-                  if (indexA === -1) return 1; // Put skills not in the list at the end
+                  // If a skill is not in the order list, push it to the end.
+                  if (indexA === -1) return 1;
                   if (indexB === -1) return -1;
                   return indexA - indexB;
               });
@@ -488,7 +492,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                                     name={`skills.${index}.points`}
                                     render={({ field }) => (
                                         <FormItem className="flex flex-col items-center justify-start gap-2 p-2 border border-muted/50 rounded-md">
-                                            <div className="w-20 h-20 rounded-md overflow-hidden relative">
+                                            <div className="w-20 h-20 rounded-md overflow-hidden relative border border-muted">
                                                 <Image
                                                     src={skillInfo.imagePath}
                                                     alt={item.name}
