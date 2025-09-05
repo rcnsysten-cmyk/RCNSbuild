@@ -501,7 +501,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                                             )}
                                         </div>
 
-                                        <div className="flex flex-col border border-muted/50 p-4 rounded-lg w-[420px] h-[300px]">
+                                        <div className="flex flex-col border border-muted/50 p-4 rounded-lg">
                                             <div className="grid grid-cols-4 gap-x-2 gap-y-6">
                                                 {blockBaseSkills.map((skillInfo) => (
                                                     <div key={skillInfo.name} className="flex flex-col items-center justify-start p-1 gap-1">
@@ -512,7 +512,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                                                     </div>
                                                 ))}
                                             </div>
-                                            <div className="grid grid-cols-4 gap-x-2 gap-y-2 mt-2">
+                                            <div className="grid grid-cols-4 gap-x-2 gap-y-2 mt-4">
                                                 {blockBaseSkills.map((skillInfo) => (
                                                      <FormField
                                                         key={skillInfo.name}
@@ -575,3 +575,5 @@ export function BuildForm({ buildId, buildData, category, className, children }:
 
   return formContent;
 }
+
+    
