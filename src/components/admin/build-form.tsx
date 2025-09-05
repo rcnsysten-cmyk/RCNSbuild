@@ -105,6 +105,14 @@ export function BuildForm({ buildId, buildData, category, className, children }:
   const [availableSkills, setAvailableSkills] = useState<AvailableSkill[]>([]);
   const [loadingSkills, setLoadingSkills] = useState(false);
 
+  const form = useForm<BuildFormValues>({
+    resolver: zodResolver(formSchema),
+    // This is important to re-initialize the form when defaultValues change
+    enableReinitialize: true,
+  });
+  
+  const selectedSubClass = form.watch('name');
+
   // Fetch available skills for the class when category is 'skills'
   useEffect(() => {
     async function fetchSkills() {
@@ -114,10 +122,23 @@ export function BuildForm({ buildId, buildData, category, className, children }:
         try {
             const response = await fetch('/api/skills');
             if (!response.ok) throw new Error('Failed to fetch skills');
-            const allSkills: AvailableSkill[] = await response.json();
-            const classSkills = allSkills.filter(
+            let allSkills: AvailableSkill[] = await response.json();
+            let classSkills = allSkills.filter(
                 skill => skill.className.toLowerCase() === className.toLowerCase()
             );
+
+            // Specific filtering for Dark Wizard subclasses
+            if (className.toLowerCase() === 'dark wizard') {
+              const eneSkills = ['Conhecimento Espaco Temporal', 'Controle Espaco Temporal'];
+              const agiSkills = ['Veterania Em Veneno', 'Veterania Do Escudo De Veneno'];
+
+              if (selectedSubClass === 'ENE') {
+                classSkills = classSkills.filter(skill => !agiSkills.includes(skill.name));
+              } else if (selectedSubClass === 'AGI') {
+                classSkills = classSkills.filter(skill => !eneSkills.includes(skill.name));
+              }
+            }
+
             setAvailableSkills(classSkills);
         } catch (error) {
             console.error("Failed to fetch skills:", error);
@@ -131,7 +152,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
         }
     }
     fetchSkills();
-  }, [category, className, toast]);
+  }, [category, className, selectedSubClass, toast]);
 
 
   const defaultValues: BuildFormValues = React.useMemo(() => {
@@ -172,13 +193,9 @@ export function BuildForm({ buildId, buildData, category, className, children }:
     return baseValues;
   }, [buildData, buildId, className, category, availableSkills]);
 
+  // We are re-assigning the form const here, but it's okay because we are just re-initializing it.
+  form.reset(defaultValues);
 
-  const form = useForm<BuildFormValues>({
-    resolver: zodResolver(formSchema),
-    defaultValues,
-    // This is important to re-initialize the form when defaultValues change
-    enableReinitialize: true,
-  });
 
   const { fields: configFields } = useFieldArray({
     control: form.control,
