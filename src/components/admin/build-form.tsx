@@ -471,16 +471,13 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                         </div>
                     ) : (
                     <ScrollArea className="h-[950px] pr-4">
-                       <div className="flex flex-col items-start gap-y-8">
+                       <div className="flex flex-col items-start">
                             {Array.from({ length: 3 }).map((_, blockIndex) => {
                                 const exclusiveSkillInfo = exclusiveSkills[blockIndex];
                                 const blockBaseSkills = baseSkills.slice(blockIndex * 8, (blockIndex + 1) * 8);
 
-                                const topRowSkills = blockBaseSkills.slice(0, 4);
-                                const bottomRowSkills = blockBaseSkills.slice(4, 8);
-
                                 return (
-                                    <div key={`block-${blockIndex}`} className="flex items-start justify-start gap-4">
+                                    <div key={`block-${blockIndex}`} className="flex items-start justify-start mb-8">
                                         <div className="w-24 flex-shrink-0 mt-8">
                                             {exclusiveSkillInfo ? (
                                                  <div className="flex flex-col items-center justify-start p-1 gap-1">
@@ -504,17 +501,9 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                                             )}
                                         </div>
 
-                                        <div className="flex flex-col border border-muted/50 p-4 rounded-lg">
+                                        <div className="flex flex-col border border-muted/50 p-4 rounded-lg w-[420px] h-[300px]">
                                             <div className="grid grid-cols-4 gap-x-2 gap-y-6">
-                                                {topRowSkills.map((skillInfo) => (
-                                                    <div key={skillInfo.name} className="flex flex-col items-center justify-start p-1 gap-1">
-                                                        <div className="w-20 h-20 rounded-md overflow-hidden relative border border-input">
-                                                            <Image src={skillInfo.imagePath} alt={skillInfo.name} layout="fill" className="object-cover" unoptimized />
-                                                        </div>
-                                                        <span className="text-center text-xs h-8 leading-tight flex items-center">{skillInfo.name}</span>
-                                                    </div>
-                                                ))}
-                                                {bottomRowSkills.map((skillInfo) => (
+                                                {blockBaseSkills.map((skillInfo) => (
                                                     <div key={skillInfo.name} className="flex flex-col items-center justify-start p-1 gap-1">
                                                         <div className="w-20 h-20 rounded-md overflow-hidden relative border border-input">
                                                             <Image src={skillInfo.imagePath} alt={skillInfo.name} layout="fill" className="object-cover" unoptimized />
@@ -523,7 +512,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                                                     </div>
                                                 ))}
                                             </div>
-                                            <div className="grid grid-cols-4 gap-x-2 gap-y-2 mt-4">
+                                            <div className="grid grid-cols-4 gap-x-2 gap-y-2 mt-2">
                                                 {blockBaseSkills.map((skillInfo) => (
                                                      <FormField
                                                         key={skillInfo.name}
