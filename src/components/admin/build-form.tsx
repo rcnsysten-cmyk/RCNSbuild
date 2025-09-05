@@ -457,7 +457,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                         </div>
                     ) : (
                     <ScrollArea className="h-[550px] pr-4">
-                        <div className="grid grid-cols-4 gap-6">
+                      <div className="grid grid-cols-4 gap-3 p-4 border border-input rounded-md">
                             {skillFields.map((item, index) => {
                                 const skillInfo = availableSkills.find(s => s.name === item.name);
                                 if (!skillInfo) return null;
@@ -467,7 +467,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                                     control={form.control}
                                     name={`skills.${index}.points`}
                                     render={({ field }) => (
-                                        <FormItem className="flex flex-col items-center justify-start gap-2 p-2 border border-input rounded-md bg-card">
+                                        <FormItem className="flex flex-col items-center justify-start gap-2 p-2 rounded-md bg-card">
                                             <div className="w-20 h-20 rounded-md overflow-hidden relative border border-input">
                                                 <Image
                                                     src={skillInfo.imagePath}
