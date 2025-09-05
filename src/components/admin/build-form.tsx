@@ -467,7 +467,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                                     control={form.control}
                                     name={`skills.${index}.points`}
                                     render={({ field }) => (
-                                        <FormItem className="flex flex-col items-center justify-start gap-2 p-2 rounded-md bg-card">
+                                        <FormItem className="flex flex-col items-center justify-start p-2 rounded-md bg-card">
                                             <div className="w-20 h-20 rounded-md overflow-hidden relative">
                                                 <Image
                                                     src={skillInfo.imagePath}
