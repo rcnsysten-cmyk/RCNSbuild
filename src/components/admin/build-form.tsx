@@ -99,7 +99,7 @@ const getLevelRangeLabel = (levelRange: string) => {
     return `Lvl ${start} ao ${end}`;
 }
 
-const dwTestSkillOrder = ["Meteorito", "Pilar De Chamas"];
+const dwTestSkillOrder = ["Meteorito", "Pilar De Chamas", "Fogo Infernal"];
 
 export function BuildForm({ buildId, buildData, category, className, children }: BuildFormProps) {
   const { toast } = useToast();
@@ -174,11 +174,9 @@ export function BuildForm({ buildId, buildData, category, className, children }:
             );
 
             if (className.toLowerCase() === 'dark wizard') {
-                 // Filter to include only the test skills for now
                  const testSkillSet = new Set(dwTestSkillOrder);
                  classSkills = classSkills.filter(skill => testSkillSet.has(skill.name));
 
-                 // Sort the filtered skills according to the specified test order
                  classSkills.sort((a, b) => {
                      const indexA = dwTestSkillOrder.indexOf(a.name);
                      const indexB = dwTestSkillOrder.indexOf(b.name);
