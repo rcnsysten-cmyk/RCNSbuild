@@ -115,58 +115,58 @@ export function BuildForm({ buildData, category }: BuildFormProps) {
                    <CardTitle>{getLevelRangeLabel(item.levelRange)}</CardTitle>
                  </CardHeader>
                  <CardContent className="space-y-4">
-                   <FormField
-                     control={form.control}
-                     name={`config.${index}.str`}
-                     render={({ field }) => (
-                       <FormItem>
-                         <FormLabel>FOR</FormLabel>
-                         <FormControl>
-                           <Input type="number" {...field} />
-                         </FormControl>
-                         <FormMessage />
-                       </FormItem>
-                     )}
-                   />
-                   <FormField
-                     control={form.control}
-                     name={`config.${index}.agi`}
-                     render={({ field }) => (
-                       <FormItem>
-                         <FormLabel>AGI</FormLabel>
-                         <FormControl>
-                           <Input type="number" {...field} />
-                         </FormControl>
-                         <FormMessage />
-                       </FormItem>
-                     )}
-                   />
-                   <FormField
-                     control={form.control}
-                     name={`config.${index}.vit`}
-                     render={({ field }) => (
-                       <FormItem>
-                         <FormLabel>VIT</FormLabel>
-                         <FormControl>
-                           <Input type="number" {...field} />
-                         </FormControl>
-                         <FormMessage />
-                       </FormItem>
-                     )}
-                   />
-                   <FormField
-                     control={form.control}
-                     name={`config.${index}.ene`}
-                     render={({ field }) => (
-                       <FormItem>
-                         <FormLabel>ENE</FormLabel>
-                         <FormControl>
-                           <Input type="number" {...field} />
-                         </FormControl>
-                         <FormMessage />
-                       </FormItem>
-                     )}
-                   />
+                    <FormField
+                      control={form.control}
+                      name={`config.${index}.str`}
+                      render={({ field }) => (
+                        <FormItem className="flex items-center justify-between">
+                          <FormLabel>FOR</FormLabel>
+                          <FormControl>
+                            <Input type="number" {...field} className="max-w-[120px]" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name={`config.${index}.agi`}
+                      render={({ field }) => (
+                        <FormItem className="flex items-center justify-between">
+                          <FormLabel>AGI</FormLabel>
+                          <FormControl>
+                            <Input type="number" {...field} className="max-w-[120px]" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name={`config.${index}.vit`}
+                      render={({ field }) => (
+                        <FormItem className="flex items-center justify-between">
+                          <FormLabel>VIT</FormLabel>
+                          <FormControl>
+                            <Input type="number" {...field} className="max-w-[120px]" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name={`config.${index}.ene`}
+                      render={({ field }) => (
+                        <FormItem className="flex items-center justify-between">
+                          <FormLabel>ENE</FormLabel>
+                          <FormControl>
+                            <Input type="number" {...field} className="max-w-[120px]" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                  </CardContent>
                </Card>
              ))}
