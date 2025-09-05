@@ -1,8 +1,23 @@
-import { AdminBuildsTable } from '@/components/admin/admin-builds-table';
-import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { builds } from '@/lib/data';
-import { PlusCircle } from 'lucide-react';
 import Link from 'next/link';
+import { DkIcon, DlIcon, DwIcon, ElfaIcon } from '@/components/icons';
+import React from 'react';
+import { Button } from '@/components/ui/button';
+import { PlusCircle } from 'lucide-react';
+
+const iconMap: { [key: string]: React.ElementType } = {
+  DW: DwIcon,
+  DK: DkIcon,
+  Elfa: ElfaIcon,
+  DL: DlIcon,
+};
 
 export default function AdminPage() {
   return (
@@ -16,7 +31,45 @@ export default function AdminPage() {
           </Link>
         </Button>
       </div>
-      <AdminBuildsTable builds={builds} />
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {builds.map((build) => {
+          const Icon = iconMap[build.class];
+          return (
+            <Card key={build.class} className="flex flex-col">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  {Icon && <Icon className="h-6 w-6" />}
+                  {build.class}
+                </CardTitle>
+                <CardDescription>
+                  Selecione uma subclasse para editar.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="flex flex-col flex-grow">
+                <div className="space-y-2">
+                  {build.subclasses.map((subClass) => (
+                    <Button
+                      key={subClass.name}
+                      variant="outline"
+                      className="w-full justify-start"
+                      asChild
+                    >
+                      <Link
+                        href={`/admin/${encodeURIComponent(
+                          build.class
+                        )}/${encodeURIComponent(subClass.name)}/edit`}
+                      >
+                        {subClass.name}
+                      </Link>
+                    </Button>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
     </div>
   );
 }
