@@ -100,11 +100,11 @@ const getLevelRangeLabel = (levelRange: string) => {
 }
 
 // Skill Lists
-const dwBaseSkillOrder = ["Meteorito", "Pilar De Chamas", "Fogo Infernal", "Espirito Maligno", "Impulso De Mana", "Lampejo Aquatico", "Veneno Mortal", "Barreira De Mana", "Lanca Venenosa", "Sensacao De Veneno", "Maldicao", "Enxame De Veneno"];
+const dwBaseSkillOrder = ["Meteorito", "Pilar De Chamas", "Fogo Infernal", "Espirito Maligno", "Impulso De Mana", "Lampejo Aquatico", "Veneno Mortal", "Barreira Da Alma"];
 const dwEneExclusiveSkills = ["Conhecimento Espaco Temporal", "Controle Espaco Temporal"];
 const dwAgiExclusiveSkills = ["Veterania Do Escudo De Veneno", "Veterania Em Veneno"];
 
-const elfaSkillOrder: string[] = []; // Empty for now
+const elfaSkillOrder = ["Lanca Venenosa", "Sensacao De Veneno", "Maldicao", "Enxame De Veneno"];
 
 export function BuildForm({ buildId, buildData, category, className, children }: BuildFormProps) {
   const { toast } = useToast();
@@ -186,7 +186,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                  }
             } else if (className.toLowerCase() === 'elfa') {
                 finalSkillOrder = elfaSkillOrder;
-           }
+            }
 
             if (finalSkillOrder.length > 0) {
                 const skillSet = new Set(finalSkillOrder);
