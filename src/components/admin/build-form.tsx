@@ -25,6 +25,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Skeleton } from '../ui/skeleton';
 import { ScrollArea } from '../ui/scroll-area';
 import Image from 'next/image';
+import { Separator } from '../ui/separator';
 
 const attributeConfigSchema = z.object({
   levelRange: z.string(),
@@ -110,8 +111,11 @@ export function BuildForm({ buildId, buildData, category, className, children }:
   const { toast } = useToast();
   const router = useRouter();
   const [isExitConfirmOpen, setIsExitConfirmOpen] = useState(false);
-  const [availableSkills, setAvailableSkills] = useState<AvailableSkill[]>([]);
+  const [baseSkills, setBaseSkills] = useState<AvailableSkill[]>([]);
+  const [exclusiveSkills, setExclusiveSkills] = useState<AvailableSkill[]>([]);
   const [loadingSkills, setLoadingSkills] = useState(false);
+  
+  const allAvailableSkills = React.useMemo(() => [...baseSkills, ...exclusiveSkills], [baseSkills, exclusiveSkills]);
 
   const defaultValues = React.useMemo(() => {
     const baseValues = buildData ? {
@@ -139,16 +143,16 @@ export function BuildForm({ buildId, buildData, category, className, children }:
         sets: [],
       };
       
-    if (category === 'skills' && availableSkills.length > 0) {
+    if (category === 'skills' && allAvailableSkills.length > 0) {
         const skillMap = new Map(baseValues.skills.map(s => [s.name, s.points]));
-        baseValues.skills = availableSkills.map(skill => ({
+        baseValues.skills = allAvailableSkills.map(skill => ({
             name: skill.name,
             points: skillMap.get(skill.name) || 0
         }));
     }
 
     return baseValues;
-  }, [buildData, buildId, className, availableSkills, category]);
+  }, [buildData, buildId, className, allAvailableSkills, category]);
 
   const form = useForm<BuildFormValues>({
     resolver: zodResolver(formSchema),
@@ -172,30 +176,32 @@ export function BuildForm({ buildId, buildData, category, className, children }:
             if (!response.ok) throw new Error('Failed to fetch skills');
             const allSkills: AvailableSkill[] = await response.json();
             
-            let classSkills = allSkills.filter(
+            const classSkills = allSkills.filter(
                 skill => skill.className.toLowerCase() === className.toLowerCase()
             );
 
-            let finalSkillOrder: string[] = [];
-
+            let baseSkillOrder: string[] = [];
+            let exclusiveSkillOrder: string[] = [];
+            
             if (className.toLowerCase() === 'dark wizard') {
+                 baseSkillOrder = dwBaseSkillOrder;
                  if (buildData.name.toLowerCase() === 'ene') {
-                    finalSkillOrder = [...dwBaseSkillOrder, ...dwEneExclusiveSkills];
+                    exclusiveSkillOrder = dwEneExclusiveSkills;
                  } else if (buildData.name.toLowerCase() === 'agi') {
-                    finalSkillOrder = [...dwBaseSkillOrder, ...dwAgiExclusiveSkills];
+                    exclusiveSkillOrder = dwAgiExclusiveSkills;
                  }
             } else if (className.toLowerCase() === 'elfa') {
-                finalSkillOrder = elfaSkillOrder;
+                baseSkillOrder = elfaSkillOrder;
             }
 
-            if (finalSkillOrder.length > 0) {
-                const skillSet = new Set(finalSkillOrder);
-                classSkills = classSkills.filter(skill => skillSet.has(skill.name));
-                classSkills.sort((a, b) => finalSkillOrder.indexOf(a.name) - finalSkillOrder.indexOf(b.name));
-            }
+            const base = classSkills.filter(s => baseSkillOrder.includes(s.name));
+            base.sort((a,b) => baseSkillOrder.indexOf(a.name) - baseSkillOrder.indexOf(b.name));
+            setBaseSkills(base);
 
+            const exclusive = classSkills.filter(s => exclusiveSkillOrder.includes(s.name));
+            exclusive.sort((a,b) => exclusiveSkillOrder.indexOf(a.name) - exclusiveSkillOrder.indexOf(b.name));
+            setExclusiveSkills(exclusive);
 
-            setAvailableSkills(classSkills);
         } catch (error) {
             console.error("Failed to fetch skills:", error);
             toast({
@@ -468,43 +474,89 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                         </div>
                     ) : (
                     <ScrollArea className="h-[550px] pr-4">
-                      <div className="grid grid-cols-4 p-4 border border-input rounded-md gap-1">
-                            {skillFields.map((item, index) => {
-                                const skillInfo = availableSkills.find(s => s.name === item.name);
-                                if (!skillInfo) return null;
-                                return (
-                                <FormField
-                                    key={item.id}
-                                    control={form.control}
-                                    name={`skills.${index}.points`}
-                                    render={({ field }) => (
-                                        <FormItem className="flex flex-col items-center justify-start p-2 rounded-md bg-card">
-                                            <div className="w-20 h-20 rounded-md overflow-hidden relative">
-                                                <Image
-                                                    src={skillInfo.imagePath}
-                                                    alt={item.name}
-                                                    width={80}
-                                                    height={80}
-                                                    className="object-cover"
-                                                    unoptimized
-                                                />
-                                            </div>
-                                            <FormLabel className="text-center text-xs h-8 leading-tight">
-                                                {item.name}
-                                            </FormLabel>
-                                            <FormControl>
-                                                <Input 
-                                                    type="number" 
-                                                    placeholder="0" 
-                                                    {...field} 
-                                                    className="w-20 h-8 text-center px-1"
-                                                />
-                                            </FormControl>
-                                        </FormItem>
-                                    )}
-                                />
-                                );
-                            })}
+                      <div className="border border-input rounded-md p-4 space-y-4">
+                            <div className="grid grid-cols-4 gap-1">
+                                {skillFields.map((item, index) => {
+                                    const skillInfo = baseSkills.find(s => s.name === item.name);
+                                    if (!skillInfo) return null;
+                                    return (
+                                        <FormField
+                                            key={item.id}
+                                            control={form.control}
+                                            name={`skills.${index}.points`}
+                                            render={({ field }) => (
+                                                <FormItem className="flex flex-col items-center justify-start p-2 rounded-md bg-card">
+                                                    <div className="w-20 h-20 rounded-md overflow-hidden relative">
+                                                        <Image
+                                                            src={skillInfo.imagePath}
+                                                            alt={item.name}
+                                                            width={80}
+                                                            height={80}
+                                                            className="object-cover"
+                                                            unoptimized
+                                                        />
+                                                    </div>
+                                                    <FormLabel className="text-center text-xs h-8 leading-tight">
+                                                        {item.name}
+                                                    </FormLabel>
+                                                    <FormControl>
+                                                        <Input 
+                                                            type="number" 
+                                                            placeholder="0" 
+                                                            {...field} 
+                                                            className="w-20 h-8 text-center px-1"
+                                                        />
+                                                    </FormControl>
+                                                </FormItem>
+                                            )}
+                                        />
+                                    );
+                                })}
+                            </div>
+
+                            {exclusiveSkills.length > 0 && (
+                                <>
+                                <Separator />
+                                <div className="grid grid-cols-4 gap-1 justify-center">
+                                    {skillFields.map((item, index) => {
+                                        const skillInfo = exclusiveSkills.find(s => s.name === item.name);
+                                        if (!skillInfo) return null;
+                                        return (
+                                            <FormField
+                                                key={item.id}
+                                                control={form.control}
+                                                name={`skills.${index}.points`}
+                                                render={({ field }) => (
+                                                    <FormItem className="flex flex-col items-center justify-start p-2 rounded-md bg-card">
+                                                        <div className="w-20 h-20 rounded-md overflow-hidden relative">
+                                                            <Image
+                                                                src={skillInfo.imagePath}
+                                                                alt={item.name}
+                                                                width={80}
+                                                                height={80}
+                                                                className="object-cover"
+                                                                unoptimized
+                                                            />
+                                                        </div>
+                                                        <FormLabel className="text-center text-xs h-8 leading-tight">
+                                                            {item.name}
+                                                        </FormLabel>
+                                                        <FormControl>
+                                                            <Input 
+                                                                type="number" 
+                                                                placeholder="0" 
+                                                                {...field} 
+                                                                className="w-20 h-8 text-center px-1"
+                                                            />
+                                                        </FormControl>
+                                                    </FormItem>
+                                                )}
+                                            />
+                                        );
+                                    })}
+                                </div>
+                                </>
+                            )}
                         </div>
                     </ScrollArea>
                     )}
