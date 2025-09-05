@@ -15,7 +15,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { MultiSelect } from '@/components/ui/multi-select';
-import { SubClass } from '@/lib/types';
+import { SubClass, SkillConfig } from '@/lib/types';
 import { Input } from '../ui/input';
 import React, { useEffect, useState } from 'react';
 import { Button } from '../ui/button';
@@ -147,7 +147,6 @@ export function BuildForm({ buildId, buildData, category, className, children }:
   const form = useForm<BuildFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues,
-    // This is important to re-initialize the form when defaultValues change
     resetOptions: {
         keepDirtyValues: true,
     }
@@ -248,13 +247,22 @@ export function BuildForm({ buildId, buildData, category, className, children }:
   async function onSubmit(data: BuildFormValues) {
     try {
         // Filter out skills with 0 points before saving
-        const dataToSave = {
+        const dataToSave: Omit<BuildFormValues, 'skills'> & { skills: SkillConfig[] } = {
             ...data,
             skills: data.skills.filter(skill => skill.points > 0),
         };
 
         if (buildId) { // Editing existing build
-            await updateBuild(buildId, data.name, dataToSave);
+            // When editing, we only want to update the current category
+            const updateData: Partial<SubClass> = {};
+            if (category) {
+              if (category === 'skills') {
+                updateData.skills = dataToSave.skills;
+              } else {
+                (updateData as any)[category] = (dataToSave as any)[category];
+              }
+            }
+            await updateBuild(buildId, data.name, updateData);
             toast({
                 title: `Build Atualizada!`,
                 description: `A build para ${data.class} - ${data.name} foi salva com sucesso.`,
@@ -461,16 +469,19 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                                     control={form.control}
                                     name={`skills.${index}.points`}
                                     render={({ field }) => (
-                                        <FormItem className="flex flex-col items-center gap-2">
-                                            <Image
-                                                src={skillInfo.imagePath}
-                                                alt={item.name}
-                                                width={80}
-                                                height={80}
-                                                className="rounded-md border-2 border-muted"
-                                                unoptimized
-                                            />
-                                            <FormLabel className="text-center text-xs h-8">
+                                        <FormItem className="flex flex-col items-center justify-start gap-2 p-2 rounded-md hover:bg-muted/50 transition-colors">
+                                            <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-muted flex items-center justify-center">
+                                                <Image
+                                                    src={skillInfo.imagePath}
+                                                    alt={item.name}
+                                                    width={80} // Width of the original image square
+                                                    height={80} // Height of the original image square
+                                                    className="object-cover object-left" // This will focus on the left part of the image
+                                                    style={{ transform: 'scale(2.5)' }} // Zoom in to make the icon bigger
+                                                    unoptimized
+                                                />
+                                            </div>
+                                            <FormLabel className="text-center text-xs h-8 leading-tight">
                                                 {item.name}
                                             </FormLabel>
                                             <FormControl>
