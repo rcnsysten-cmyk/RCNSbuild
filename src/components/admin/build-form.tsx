@@ -100,10 +100,9 @@ const getLevelRangeLabel = (levelRange: string) => {
 }
 
 const dwTestSkillOrder = [
-    "Meteorito", "Pilar de chamas", "Fogo infernal", "Espirito maligno", 
-    "Impulso de mana", "Lampejo aquatico", "Veneno mortal", "Barreira da alma"
+    "Meteorito", "Pilar De chamas", "Fogo Infernal", "Espirito Maligno", 
+    "Impulso de mana", "Lampejo Aquatic", "Veneno Mortal", "Barreira da alma"
 ];
-
 
 export function BuildForm({ buildId, buildData, category, className, children }: BuildFormProps) {
   const { toast } = useToast();
@@ -178,26 +177,15 @@ export function BuildForm({ buildId, buildData, category, className, children }:
             );
 
             if (className.toLowerCase() === 'dark wizard') {
-                const eneSkills = ['Conhecimento Espaco Temporal', 'Controle Espaco Temporal'];
-                const agiSkills = ['Veterania Em Veneno', 'Veterania Do Escudo De Veneno'];
+                 // Filter to include only the 8 test skills for now
+                 classSkills = classSkills.filter(skill => dwTestSkillOrder.includes(skill.name));
 
-                if (selectedSubClass === 'ENE') {
-                    classSkills = classSkills.filter(skill => !agiSkills.includes(skill.name));
-                } else if (selectedSubClass === 'AGI') {
-                    classSkills = classSkills.filter(skill => !eneSkills.includes(skill.name));
-                }
-              
-                // Filter to only include the test skills
-                const testSkills = classSkills.filter(skill => dwTestSkillOrder.includes(skill.name));
-
-                // Sort according to the test order
-                testSkills.sort((a, b) => {
-                    const indexA = dwTestSkillOrder.indexOf(a.name);
-                    const indexB = dwTestSkillOrder.indexOf(b.name);
-                    return indexA - indexB;
-                });
-                
-                classSkills = testSkills;
+                 // Sort the filtered skills according to the specified test order
+                 classSkills.sort((a, b) => {
+                     const indexA = dwTestSkillOrder.indexOf(a.name);
+                     const indexB = dwTestSkillOrder.indexOf(b.name);
+                     return indexA - indexB;
+                 });
             }
 
             setAvailableSkills(classSkills);
@@ -462,8 +450,8 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                         {fieldInfo?.description}
                     </FormDescription>
                     {loadingSkills ? (
-                        <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
-                            {Array.from({ length: 16 }).map((_, i) => (
+                        <div className="grid grid-cols-4 gap-6">
+                            {Array.from({ length: 8 }).map((_, i) => (
                                 <div key={i} className="flex flex-col items-center gap-2">
                                     <Skeleton className="h-20 w-20 rounded-md" />
                                     <Skeleton className="h-4 w-16" />
@@ -473,7 +461,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                         </div>
                     ) : (
                     <ScrollArea className="h-[550px] pr-4">
-                        <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 xl:grid-cols-8 gap-6">
+                        <div className="grid grid-cols-4 gap-6">
                             {skillFields.map((item, index) => {
                                 const skillInfo = availableSkills.find(s => s.name === item.name);
                                 if (!skillInfo) return null;
