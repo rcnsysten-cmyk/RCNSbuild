@@ -123,17 +123,17 @@ export function BuildForm({ buildData, category, children }: BuildFormProps) {
              {fields.map((item, index) => (
                <Card key={item.id} className="bg-muted/30 border-muted/50">
                  <CardHeader>
-                   <CardTitle>{getLevelRangeLabel(item.levelRange)}</CardTitle>
+                   <CardTitle className="text-center">{getLevelRangeLabel(item.levelRange)}</CardTitle>
                  </CardHeader>
                  <CardContent className="space-y-4">
                     <FormField
                       control={form.control}
                       name={`config.${index}.str`}
                       render={({ field }) => (
-                        <FormItem className="flex items-center justify-between">
+                        <FormItem className="flex items-center gap-4">
                           <FormLabel>FOR</FormLabel>
                           <FormControl>
-                            <Input type="number" {...field} className="max-w-[120px]" />
+                            <Input type="number" {...field} className="flex-1 bg-transparent border-0 text-right" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -143,10 +143,10 @@ export function BuildForm({ buildData, category, children }: BuildFormProps) {
                       control={form.control}
                       name={`config.${index}.agi`}
                       render={({ field }) => (
-                        <FormItem className="flex items-center justify-between">
+                        <FormItem className="flex items-center gap-4">
                            <FormLabel>AGI</FormLabel>
                            <FormControl>
-                             <Input type="number" {...field} className="max-w-[120px]" />
+                             <Input type="number" {...field} className="flex-1 bg-transparent border-0 text-right" />
                            </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -156,10 +156,10 @@ export function BuildForm({ buildData, category, children }: BuildFormProps) {
                       control={form.control}
                       name={`config.${index}.vit`}
                       render={({ field }) => (
-                        <FormItem className="flex items-center justify-between">
+                        <FormItem className="flex items-center gap-4">
                            <FormLabel>VIT</FormLabel>
                            <FormControl>
-                             <Input type="number" {...field} className="max-w-[120px]" />
+                             <Input type="number" {...field} className="flex-1 bg-transparent border-0 text-right" />
                            </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -169,10 +169,10 @@ export function BuildForm({ buildData, category, children }: BuildFormProps) {
                       control={form.control}
                       name={`config.${index}.ene`}
                       render={({ field }) => (
-                        <FormItem className="flex items-center justify-between">
+                        <FormItem className="flex items-center gap-4">
                            <FormLabel>ENE</FormLabel>
                            <FormControl>
-                             <Input type="number" {...field} className="max-w-[120px]" />
+                             <Input type="number" {...field} className="flex-1 bg-transparent border-0 text-right" />
                            </FormControl>
                            <FormMessage />
                         </FormItem>
