@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { builds } from '@/lib/data';
-import { ChevronRight, Dna, Gem, ShieldCheck, Swords, Star, Wand } from 'lucide-react';
+import { ChevronRight, Dna, Gem, ListTree, ShieldCheck, Swords, Star } from 'lucide-react';
 import Link from 'next/link';
 import { notFound, useParams } from 'next/navigation';
 
@@ -11,7 +11,7 @@ const categoryMap = [
     { id: 'config', name: 'Atributos', icon: Dna },
     { id: 'skills', name: 'Habilidades', icon: Swords },
     { id: 'constellation', name: 'Constelação', icon: Star },
-    { id: 'properties', name: 'Propriedades', icon: Wand },
+    { id: 'properties', name: 'Propriedade', icon: ListTree },
     { id: 'sets', name: 'Conjuntos', icon: ShieldCheck },
     { id: 'runes', name: 'Runas', icon: Gem },
 ];

@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import {
@@ -16,57 +16,66 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { MultiSelect } from '@/components/ui/multi-select';
+import { AttributeConfig, SubClass } from '@/lib/data';
+import { Input } from '../ui/input';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+
+const attributeConfigSchema = z.object({
+  levelRange: z.string(),
+  str: z.coerce.number().min(0, "Deve ser um número positivo."),
+  agi: z.coerce.number().min(0, "Deve ser um número positivo."),
+  vit: z.coerce.number().min(0, "Deve ser um número positivo."),
+  ene: z.coerce.number().min(0, "Deve ser um número positivo."),
+});
 
 const formSchema = z.object({
-  class: z.string().min(1, 'A classe é obrigatória.'),
-  name: z.string().min(1, 'O nome da sub-classe é obrigatório.'),
-  runes: z.array(z.string()).min(1, 'As runas são obrigatórias.'),
-  skills: z.array(z.string()).min(1, 'As habilidades são obrigatórias.'),
-  properties: z.array(z.string()).min(1, 'As propriedades são obrigatórias.'),
-  config: z.array(z.string()).min(1, 'Os atributos são obrigatórios.'),
-  constellation: z.array(z.string()).min(1, 'A constelação é obrigatória.'),
-  sets: z.array(z.string()).min(1, 'Os conjuntos são obrigatórios.'),
+  config: z.array(attributeConfigSchema),
+  runes: z.array(z.string()),
+  skills: z.array(z.string()),
+  properties: z.array(z.string()),
+  constellation: z.array(z.string()),
+  sets: z.array(z.string()),
 });
 
 type BuildFormValues = z.infer<typeof formSchema>;
 
 const allFields: { name: keyof BuildFormValues; label: string; description: string, isMultiSelect?: boolean }[] = [
-    { name: 'config', label: 'Atributos', description: 'Adicione os pontos de atributos. Ex: Força: 1000', isMultiSelect: true },
+    { name: 'config', label: 'Atributos', description: 'Defina os pontos de atributos para cada faixa de nível.' },
     { name: 'skills', label: 'Habilidades', description: 'Adicione as habilidades. Ex: Evil Spirit', isMultiSelect: true },
     { name: 'constellation', label: 'Constelação', description: 'Adicione os pontos da constelação.', isMultiSelect: true },
-    { name: 'properties', label: 'Propriedades', description: 'Adicione as propriedades. Ex: Aumento de Dano Mágico: 20%', isMultiSelect: true },
+    { name: 'properties', label: 'Propriedade', description: 'Adicione as propriedades. Ex: Aumento de Dano Mágico: 20%', isMultiSelect: true },
     { name: 'sets', label: 'Conjuntos', description: 'Adicione os conjuntos (sets). Ex: Grand Soul', isMultiSelect: true },
     { name: 'runes', label: 'Runas', description: 'Adicione as runas. Ex: Runa de Energia Mística', isMultiSelect: true },
 ];
 
 interface BuildFormProps {
-    buildData?: {
-        class: string;
-        name: string;
-        runes: string[];
-        skills: string[];
-        properties: string[];
-        config: string[];
-        constellation: string[];
-        sets: string[];
-    };
+    buildData: SubClass;
     category: keyof Omit<BuildFormValues, 'class' | 'name'>;
+}
+
+const levelRanges = [
+    "1-200",
+    "201-300",
+    "301-400",
+    "401+",
+];
+
+const getLevelRangeLabel = (levelRange: string) => {
+    if (levelRange === '401+') return 'Lvl 401 em diante';
+    const [start, end] = levelRange.split('-');
+    return `Lvl ${start} ao ${end}`;
 }
 
 export function BuildForm({ buildData, category }: BuildFormProps) {
   const { toast } = useToast();
   const router = useRouter();
-  const isEditing = !!buildData;
 
-  const defaultValues = buildData ? buildData : {
-    class: '',
-    name: '',
-    runes: [],
-    skills: [],
-    properties: [],
-    config: [],
-    constellation: [],
-    sets: [],
+  const defaultValues = {
+    ...buildData,
+    config: levelRanges.map(range => {
+        const existingConfig = buildData.config.find(c => c.levelRange === range);
+        return existingConfig || { levelRange: range, str: 0, agi: 0, vit: 0, ene: 0 };
+    })
   };
 
   const form = useForm<BuildFormValues>({
@@ -74,12 +83,17 @@ export function BuildForm({ buildData, category }: BuildFormProps) {
     defaultValues,
   });
 
+  const { fields } = useFieldArray({
+    control: form.control,
+    name: "config",
+  });
+
   function onSubmit(data: BuildFormValues) {
     console.log('Dados do formulário:', data);
 
     toast({
-      title: `Build ${isEditing ? 'Atualizada' : 'Criada'} (Simulação)`,
-      description: `A build para ${data.class} - ${data.name} foi salva com sucesso.`,
+      title: `Build Atualizada (Simulação)`,
+      description: `A build para ${buildData.name} foi salva com sucesso.`,
     });
     router.back();
   }
@@ -93,30 +107,96 @@ export function BuildForm({ buildData, category }: BuildFormProps) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <FormField
-            control={form.control}
-            name={fieldInfo.name as keyof BuildFormValues}
-            render={({ field }) => (
-                <FormItem>
-                    <FormLabel>{fieldInfo.label}</FormLabel>
-                    <FormControl>
-                        {fieldInfo.isMultiSelect ? (
-                            <MultiSelect
-                                selected={field.value as string[]}
-                                onChange={field.onChange}
-                                placeholder={`Adicione ${fieldInfo.label.toLowerCase()}...`}
-                                className="min-h-48"
-                            />
-                        ) : null}
-                    </FormControl>
-                    <FormDescription>
-                        {fieldInfo.description}
-                    </FormDescription>
-                    <FormMessage />
-                </FormItem>
-            )}
-        />
-        <Button type="submit">{isEditing ? 'Salvar Alterações' : 'Criar Build'}</Button>
+        {category === 'config' ? (
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+             {fields.map((item, index) => (
+               <Card key={item.id}>
+                 <CardHeader>
+                   <CardTitle>{getLevelRangeLabel(item.levelRange)}</CardTitle>
+                 </CardHeader>
+                 <CardContent className="space-y-4">
+                   <FormField
+                     control={form.control}
+                     name={`config.${index}.str`}
+                     render={({ field }) => (
+                       <FormItem>
+                         <FormLabel>FOR</FormLabel>
+                         <FormControl>
+                           <Input type="number" {...field} />
+                         </FormControl>
+                         <FormMessage />
+                       </FormItem>
+                     )}
+                   />
+                   <FormField
+                     control={form.control}
+                     name={`config.${index}.agi`}
+                     render={({ field }) => (
+                       <FormItem>
+                         <FormLabel>AGI</FormLabel>
+                         <FormControl>
+                           <Input type="number" {...field} />
+                         </FormControl>
+                         <FormMessage />
+                       </FormItem>
+                     )}
+                   />
+                   <FormField
+                     control={form.control}
+                     name={`config.${index}.vit`}
+                     render={({ field }) => (
+                       <FormItem>
+                         <FormLabel>VIT</FormLabel>
+                         <FormControl>
+                           <Input type="number" {...field} />
+                         </FormControl>
+                         <FormMessage />
+                       </FormItem>
+                     )}
+                   />
+                   <FormField
+                     control={form.control}
+                     name={`config.${index}.ene`}
+                     render={({ field }) => (
+                       <FormItem>
+                         <FormLabel>ENE</FormLabel>
+                         <FormControl>
+                           <Input type="number" {...field} />
+                         </FormControl>
+                         <FormMessage />
+                       </FormItem>
+                     )}
+                   />
+                 </CardContent>
+               </Card>
+             ))}
+           </div>
+        ) : (
+            <FormField
+                control={form.control}
+                name={fieldInfo.name as keyof BuildFormValues}
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>{fieldInfo.label}</FormLabel>
+                        <FormControl>
+                            {fieldInfo.isMultiSelect ? (
+                                <MultiSelect
+                                    selected={field.value as string[]}
+                                    onChange={field.onChange}
+                                    placeholder={`Adicione ${fieldInfo.label.toLowerCase()}...`}
+                                    className="min-h-48"
+                                />
+                            ) : null}
+                        </FormControl>
+                        <FormDescription>
+                            {fieldInfo.description}
+                        </FormDescription>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+        )}
+        <Button type="submit">Salvar Alterações</Button>
       </form>
     </Form>
   );

@@ -11,7 +11,7 @@ const categoryNames: { [key: string]: string } = {
     config: 'Atributos',
     skills: 'Habilidades',
     constellation: 'Constelação',
-    properties: 'Propriedades',
+    properties: 'Propriedade',
     sets: 'Conjuntos',
     runes: 'Runas',
 };
@@ -55,10 +55,7 @@ export default function EditCategoryPage() {
       </h1>
       <p className="text-muted-foreground mb-6">Adicione ou remova os itens abaixo.</p>
       <BuildForm
-        buildData={{
-          class: buildClass.class,
-          ...subClass,
-        }}
+        buildData={subClass}
         category={category as any}
       />
     </div>
