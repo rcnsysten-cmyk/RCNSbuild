@@ -178,7 +178,8 @@ export function BuildForm({ buildId, buildData, category, className, children }:
 
             if (className.toLowerCase() === 'dark wizard') {
                  // Filter to include only the 8 test skills for now
-                 classSkills = classSkills.filter(skill => dwTestSkillOrder.includes(skill.name));
+                 const testSkillSet = new Set(dwTestSkillOrder);
+                 classSkills = classSkills.filter(skill => testSkillSet.has(skill.name));
 
                  // Sort the filtered skills according to the specified test order
                  classSkills.sort((a, b) => {
@@ -450,7 +451,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                         {fieldInfo?.description}
                     </FormDescription>
                     {loadingSkills ? (
-                        <div className="grid grid-cols-4 gap-6">
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
                             {Array.from({ length: 8 }).map((_, i) => (
                                 <div key={i} className="flex flex-col items-center gap-2">
                                     <Skeleton className="h-20 w-20 rounded-md" />
@@ -461,7 +462,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                         </div>
                     ) : (
                     <ScrollArea className="h-[550px] pr-4">
-                        <div className="grid grid-cols-4 gap-6">
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 gap-6">
                             {skillFields.map((item, index) => {
                                 const skillInfo = availableSkills.find(s => s.name === item.name);
                                 if (!skillInfo) return null;
