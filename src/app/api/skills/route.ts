@@ -21,7 +21,7 @@ const formatSkillName = (fileName: string): string => {
     const nameWithoutExt = path.parse(fileName).name;
     // Specific override for a known problematic name
     if (nameWithoutExt === 'lampejo-aquatico') {
-        return 'Lampejo Aquatic';
+        return 'Lampejo Aquatico';
     }
     return nameWithoutExt
       .split('-')
