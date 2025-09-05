@@ -473,9 +473,9 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                         </div>
                     ) : (
                     <ScrollArea className="h-[950px] pr-4">
-                        <div className="flex flex-col gap-y-4">
+                        <div className="flex flex-col">
                             {/* Bloco 1 */}
-                            <div className="flex gap-4 items-center">
+                            <div className="flex gap-4 items-center mb-4">
                                 <div className="w-20 flex-shrink-0" />
                                 <div className="border border-input rounded-md p-4 w-[420px] h-[300px]">
                                 <div className="grid grid-cols-4 gap-1">
@@ -504,8 +504,8 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                             </div>
     
                             {/* Bloco 2 com Skill Exclusiva 1 */}
-                            <div className="flex gap-4 items-center">
-                                <div className="w-20 flex flex-col items-center justify-center gap-y-4">
+                            <div className="flex gap-4 items-center mb-4">
+                                <div className="w-20 flex flex-col items-center justify-center">
                                 {skillFields.map((item, index) => {
                                     const skillInfo = exclusiveSkills.find(s => s.name === item.name);
                                     if (!skillInfo || skillInfo.name !== 'Veterania Em Veneno') return null;
@@ -556,7 +556,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
     
                             {/* Bloco 3 com Skill Exclusiva 2 */}
                             <div className="flex gap-4 items-center">
-                                <div className="w-20 flex flex-col items-center justify-center gap-y-4">
+                                <div className="w-20 flex flex-col items-center justify-center">
                                 {skillFields.map((item, index) => {
                                     const skillInfo = exclusiveSkills.find(s => s.name === item.name);
                                     if (!skillInfo || skillInfo.name !== 'Veterania Do Escudo De Veneno') return null;
