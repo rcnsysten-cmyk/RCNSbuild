@@ -17,7 +17,7 @@ import { useRouter } from 'next/navigation';
 import { MultiSelect } from '@/components/ui/multi-select';
 import { SubClass } from '@/lib/types';
 import { Input } from '../ui/input';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Button } from '../ui/button';
 import { createOrUpdateBuild, updateBuild } from '@/lib/firestore';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
@@ -31,8 +31,9 @@ const attributeConfigSchema = z.object({
 });
 
 const formSchema = z.object({
-  class: z.string().min(1, "O nome da classe é obrigatório."),
-  name: z.string().min(1, "O nome da subclasse é obrigatório."),
+  buildName: z.string().min(1, "O nome da build é obrigatório."),
+  class: z.string().min(1, "Selecione uma classe."),
+  name: z.string().min(1, "Selecione uma subclasse."),
   config: z.array(attributeConfigSchema),
   runes: z.array(z.string()),
   skills: z.array(z.string()),
@@ -41,9 +42,19 @@ const formSchema = z.object({
   sets: z.array(z.string()),
 });
 
+
 type BuildFormValues = z.infer<typeof formSchema>;
 
-const allFields: { name: keyof Omit<BuildFormValues, 'class' | 'name'>; label: string; description: string, isMultiSelect?: boolean }[] = [
+const classSubclassMap: { [key: string]: string[] } = {
+    'Dark Wizard': ['ENE', 'AGI'],
+    'Dark Knight': ['STR', 'AGI'],
+    'Elfa': ['ENE', 'AGI'],
+    'Dark Lord': ['CMD', 'STR'],
+};
+const classNames = Object.keys(classSubclassMap);
+
+
+const allFields: { name: keyof Omit<BuildFormValues, 'class' | 'name' | 'buildName'>; label: string; description: string, isMultiSelect?: boolean }[] = [
     { name: 'config', label: 'Atributos', description: 'Defina os pontos de atributos para cada faixa de nível.' },
     { name: 'skills', label: 'Habilidades', description: 'Adicione as habilidades. Ex: Evil Spirit', isMultiSelect: true },
     { name: 'constellation', label: 'Constelação', description: 'Adicione os pontos da constelação.', isMultiSelect: true },
@@ -55,7 +66,7 @@ const allFields: { name: keyof Omit<BuildFormValues, 'class' | 'name'>; label: s
 interface BuildFormProps {
     buildId?: string; // This will now be the className
     buildData?: SubClass;
-    category?: keyof Omit<BuildFormValues, 'class' | 'name'>;
+    category?: keyof Omit<BuildFormValues, 'class' | 'name' | 'buildName'>;
     className?: string;
     children?: (form: React.ReactNode, submitButton: React.ReactNode) => React.ReactNode;
 }
@@ -78,6 +89,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
   const router = useRouter();
 
   const defaultValues: BuildFormValues = buildData ? {
+    buildName: className || '',
     class: className || '',
     name: buildData.name,
     config: levelRanges.map(range => {
@@ -90,6 +102,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
     constellation: buildData.constellation || [],
     sets: buildData.sets || [],
   } : {
+    buildName: '',
     class: '',
     name: '',
     config: levelRanges.map(range => ({ levelRange: range, str: 0, agi: 0, vit: 0, ene: 0 })),
@@ -109,6 +122,8 @@ export function BuildForm({ buildId, buildData, category, className, children }:
     control: form.control,
     name: "config",
   });
+  
+  const selectedClass = form.watch('class');
 
   async function onSubmit(data: BuildFormValues) {
     try {
@@ -119,10 +134,10 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                 description: `A build para ${data.class} - ${data.name} foi salva com sucesso.`,
               });
         } else { // Creating new build
-            await createOrUpdateBuild(data.class, data);
+            await createOrUpdateBuild(data.buildName, { class: data.class, ...data });
             toast({
                 title: `Build Criada!`,
-                description: `A build para ${data.class} - ${data.name} foi criada com sucesso.`,
+                description: `A build ${data.buildName} foi criada com sucesso.`,
               });
         }
       router.push('/admin');
@@ -149,13 +164,38 @@ export function BuildForm({ buildId, buildData, category, className, children }:
           <div className="space-y-6">
              <FormField
                 control={form.control}
+                name="buildName"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Nome da Build</FormLabel>
+                    <FormControl>
+                        <Input placeholder="Ex: Dark Wizard de Energia" {...field} />
+                    </FormControl>
+                    <FormDescription>
+                        Este nome será o identificador único da sua build.
+                    </FormDescription>
+                    <FormMessage />
+                    </FormItem>
+                )}
+                />
+            <FormField
+                control={form.control}
                 name="class"
                 render={({ field }) => (
                     <FormItem>
                     <FormLabel>Classe</FormLabel>
-                    <FormControl>
-                        <Input placeholder="Ex: Dark Wizard" {...field} />
-                    </FormControl>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Selecione a classe" />
+                            </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                            {classNames.map(name => (
+                                <SelectItem key={name} value={name}>{name}</SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
                     <FormDescription>
                         Escolha a classe para a qual esta build se aplica.
                     </FormDescription>
@@ -168,12 +208,23 @@ export function BuildForm({ buildId, buildData, category, className, children }:
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nome da Subclasse (Ex: ENE, AGI, STR)</FormLabel>
-                   <FormControl>
-                        <Input placeholder="Ex: ENE" {...field} />
-                    </FormControl>
+                  <FormLabel>Subclasse</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value} disabled={!selectedClass}>
+                        <FormControl>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Selecione a subclasse" />
+                            </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                            {selectedClass && classSubclassMap[selectedClass] ? (
+                                classSubclassMap[selectedClass].map(name => (
+                                    <SelectItem key={name} value={name}>{name}</SelectItem>
+                                ))
+                            ) : null}
+                        </SelectContent>
+                    </Select>
                   <FormDescription>
-                    Dê um nome para a subclasse desta build.
+                    Escolha a especialização da build.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>

@@ -24,7 +24,7 @@ export function getBuilds(callback: (builds: Build[]) => void) {
   });
 }
 
-// Get a single build by class name (not real-time, as it's for single page loads)
+// Get a single build by its ID (which is the custom build name)
 export async function getBuildByClassName(className: string): Promise<Build | null> {
     const docRef = doc(db, 'builds', className);
     const docSnap = await getDoc(docRef);
@@ -35,9 +35,19 @@ export async function getBuildByClassName(className: string): Promise<Build | nu
 }
 
 // Create a new build or add a new subclass to an existing build
-export async function createOrUpdateBuild(className: string, subClassData: Omit<SubClass, 'id'>) {
-    const buildDocRef = doc(db, 'builds', className);
+export async function createOrUpdateBuild(buildName: string, data: { class: string; name: string }) {
+    const buildDocRef = doc(db, 'builds', buildName);
     const docSnap = await getDoc(buildDocRef);
+
+    const subClassData: SubClass = {
+        name: data.name,
+        runes: [],
+        skills: [],
+        properties: [],
+        config: [],
+        constellation: [],
+        sets: [],
+    };
 
     if (docSnap.exists()) {
         // Build for this class exists, add new subclass
@@ -45,9 +55,9 @@ export async function createOrUpdateBuild(className: string, subClassData: Omit<
             subclasses: arrayUnion(subClassData)
         });
     } else {
-        // No build for this class, create a new one with the className as ID
+        // No build for this class, create a new one with the buildName as ID
         await setDoc(buildDocRef, {
-            class: className,
+            class: data.class,
             subclasses: [subClassData]
         });
     }
