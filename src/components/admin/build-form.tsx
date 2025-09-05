@@ -459,24 +459,25 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                         {fieldInfo?.description}
                     </FormDescription>
                     {loadingSkills ? (
-                        <div className="grid grid-cols-4 gap-1">
-                            {Array.from({ length: 24 }).map((_, i) => (
-                                <div key={i} className="flex flex-col items-center">
-                                    <Skeleton className="h-20 w-20 rounded-md" />
-                                    <Skeleton className="h-4 w-16" />
-                                    <Skeleton className="h-8 w-20" />
-                                </div>
-                             ))}
+                        <div className="flex space-x-8">
+                          {Array.from({ length: 3 }).map((_, i) => (
+                             <div key={i} className="flex flex-col items-center">
+                               <Skeleton className="h-24 w-24 mb-4" />
+                               <div className="space-y-4">
+                                  <Skeleton className="h-[280px] w-[420px]" />
+                               </div>
+                             </div>
+                           ))}
                         </div>
                     ) : (
                     <ScrollArea className="h-[950px] pr-4">
-                        <div className="flex flex-col items-start">
+                        <div className="flex items-start">
                             {Array.from({ length: 3 }).map((_, blockIndex) => {
                                 const exclusiveSkillInfo = exclusiveSkills[blockIndex];
                                 const blockBaseSkills = baseSkills.slice(blockIndex * 8, (blockIndex + 1) * 8);
 
                                 return (
-                                    <div key={`block-${blockIndex}`} className="flex items-start mb-8">
+                                    <div key={`block-${blockIndex}`} className="flex items-start mb-8 mr-8">
                                         {/* Exclusive Skill */}
                                         <div className="w-24 flex-shrink-0 mt-8">
                                             {exclusiveSkillInfo ? (
@@ -503,7 +504,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
 
                                         {/* Base Skills Block */}
                                         <div className="border border-muted/50 p-4 rounded-lg">
-                                            <div className="grid grid-cols-4 gap-x-2 gap-y-10">
+                                            <div className="grid grid-cols-4 gap-x-2 gap-y-[46px]">
                                                 {blockBaseSkills.map((skillInfo) => (
                                                     <div key={skillInfo.name} className="flex flex-col items-center justify-start p-1 gap-1">
                                                         <div className="w-20 h-20 rounded-md overflow-hidden relative border border-input">
@@ -513,7 +514,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                                                     </div>
                                                 ))}
                                             </div>
-                                            <div className="grid grid-cols-4 gap-x-2 gap-y-2 mt-3">
+                                            <div className="grid grid-cols-4 gap-x-2 mt-3">
                                                 {blockBaseSkills.map((skillInfo) => (
                                                         <FormField
                                                         key={`${skillInfo.name}-input`}
