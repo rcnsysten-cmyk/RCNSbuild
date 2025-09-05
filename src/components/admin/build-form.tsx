@@ -99,17 +99,11 @@ const getLevelRangeLabel = (levelRange: string) => {
     return `Lvl ${start} ao ${end}`;
 }
 
-const dwSkillOrder = [
-    "Meteorito", "Maldicao", "Teletransporte", "Nevasca", "Explosao", "Ilusao", "Alternancia",
-    "Bolha", "Labareda", "Barreira da alma", "Enxame de veneno", "Espirito maligno", "Explosao infernal", "Fogo infernal",
-    "Olho do Ceifador", "Lanca Venenosa", "Meteoro Venenoso", "Selo de Gelo", "Pilar De Chamas",
-    // ENE Skills
-    "Conhecimento Espaco Temporal", "Controle Espaco Temporal",
-    // AGI Skills
-    "Veterania Em Veneno", "Veterania Do Escudo De Veneno",
-    // Other skills that might not be in the image but are in the system
-    "Impulso De Mana", "Lampejo Aquatico", "Veneno Mortal", "Sensacao De Veneno"
+const dwTestSkillOrder = [
+    "Meteorito", "Pilar De Chamas", "Fogo Infernal", "Espirito Maligno", 
+    "Impulso De Mana", "Lampejo Aquatic", "Veneno Mortal", "Barreira da alma"
 ];
+
 
 export function BuildForm({ buildId, buildData, category, className, children }: BuildFormProps) {
   const { toast } = useToast();
@@ -118,7 +112,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
   const [availableSkills, setAvailableSkills] = useState<AvailableSkill[]>([]);
   const [loadingSkills, setLoadingSkills] = useState(false);
 
-  const defaultValues: BuildFormValues = React.useMemo(() => {
+  const defaultValues = React.useMemo(() => {
     const baseValues = buildData ? {
         buildName: buildId || '',
         class: className || '',
@@ -144,7 +138,6 @@ export function BuildForm({ buildId, buildData, category, className, children }:
         sets: [],
       };
       
-    // Populate skills with all available skills for the class if editing skills
     if (category === 'skills' && availableSkills.length > 0) {
         const skillMap = new Map(baseValues.skills.map(s => [s.name, s.points]));
         baseValues.skills = availableSkills.map(skill => ({
@@ -170,7 +163,6 @@ export function BuildForm({ buildId, buildData, category, className, children }:
   
   const selectedSubClass = form.watch('name');
 
-  // Fetch available skills for the class when category is 'skills'
   useEffect(() => {
     async function fetchSkills() {
         if (category !== 'skills' || !className) return;
@@ -180,30 +172,30 @@ export function BuildForm({ buildId, buildData, category, className, children }:
             const response = await fetch('/api/skills');
             if (!response.ok) throw new Error('Failed to fetch skills');
             let allSkills: AvailableSkill[] = await response.json();
+            
             let classSkills = allSkills.filter(
                 skill => skill.className.toLowerCase() === className.toLowerCase()
             );
 
-            // Specific filtering and sorting for Dark Wizard subclasses
             if (className.toLowerCase() === 'dark wizard') {
-              const eneSkills = ['Conhecimento Espaco Temporal', 'Controle Espaco Temporal'];
-              const agiSkills = ['Veterania Em Veneno', 'Veterania Do Escudo De Veneno'];
+                const eneSkills = ['Conhecimento Espaco Temporal', 'Controle Espaco Temporal'];
+                const agiSkills = ['Veterania Em Veneno', 'Veterania Do Escudo De Veneno'];
 
-              if (selectedSubClass === 'ENE') {
-                classSkills = classSkills.filter(skill => !agiSkills.includes(skill.name));
-              } else if (selectedSubClass === 'AGI') {
-                classSkills = classSkills.filter(skill => !eneSkills.includes(skill.name));
-              }
+                if (selectedSubClass === 'ENE') {
+                    classSkills = classSkills.filter(skill => !agiSkills.includes(skill.name));
+                } else if (selectedSubClass === 'AGI') {
+                    classSkills = classSkills.filter(skill => !eneSkills.includes(skill.name));
+                }
               
-              // Sort according to the predefined order
-              classSkills.sort((a, b) => {
-                  const indexA = dwSkillOrder.indexOf(a.name);
-                  const indexB = dwSkillOrder.indexOf(b.name);
-                  // If a skill is not in the order list, push it to the end.
-                  if (indexA === -1) return 1;
-                  if (indexB === -1) return -1;
-                  return indexA - indexB;
-              });
+                // Filter to only include the test skills
+                classSkills = classSkills.filter(skill => dwTestSkillOrder.includes(skill.name));
+
+                // Sort according to the test order
+                classSkills.sort((a, b) => {
+                    const indexA = dwTestSkillOrder.indexOf(a.name);
+                    const indexB = dwTestSkillOrder.indexOf(b.name);
+                    return indexA - indexB;
+                });
             }
 
             setAvailableSkills(classSkills);
@@ -268,14 +260,12 @@ export function BuildForm({ buildId, buildData, category, className, children }:
 
   async function onSubmit(data: BuildFormValues) {
     try {
-        // Filter out skills with 0 points before saving
         const dataToSave: Omit<BuildFormValues, 'skills'> & { skills: SkillConfig[] } = {
             ...data,
             skills: data.skills.filter(skill => skill.points > 0),
         };
 
         if (buildId) { // Editing existing build
-            // When editing, we only want to update the current category
             const updateData: Partial<SubClass> = {};
             if (category) {
               if (category === 'skills') {
@@ -498,7 +488,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                                                     alt={item.name}
                                                     width={80}
                                                     height={80}
-                                                    className="object-cover w-full h-full"
+                                                    className="object-cover"
                                                     unoptimized
                                                 />
                                             </div>
