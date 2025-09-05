@@ -10,6 +10,7 @@ import {
   query,
   where,
   onSnapshot,
+  getDoc,
 } from 'firebase/firestore';
 import { Build, SubClass } from './types';
 
@@ -25,29 +26,27 @@ export function getBuilds(callback: (builds: Build[]) => void) {
 
 // Get a single build by class name (not real-time, as it's for single page loads)
 export async function getBuildByClassName(className: string): Promise<Build | null> {
-    const q = query(buildsCollection, where("class", "==", className));
-    const querySnapshot = await getDocs(q);
-    if (querySnapshot.empty) {
+    const docRef = doc(db, 'builds', className);
+    const docSnap = await getDoc(docRef);
+    if (!docSnap.exists()) {
       return null;
     }
-    const doc = querySnapshot.docs[0];
-    return { id: doc.id, ...doc.data() } as Build;
+    return { id: docSnap.id, ...docSnap.data() } as Build;
 }
 
 // Create a new build or add a new subclass to an existing build
 export async function createOrUpdateBuild(className: string, subClassData: Omit<SubClass, 'id'>) {
-    const existingBuild = await getBuildByClassName(className);
+    const buildDocRef = doc(db, 'builds', className);
+    const docSnap = await getDoc(buildDocRef);
 
-    if (existingBuild) {
+    if (docSnap.exists()) {
         // Build for this class exists, add new subclass
-        const buildDoc = doc(db, 'builds', existingBuild.id);
-        await updateDoc(buildDoc, {
+        await updateDoc(buildDocRef, {
             subclasses: arrayUnion(subClassData)
         });
     } else {
-        // No build for this class, create a new one
-        const newBuildDoc = doc(buildsCollection);
-        await setDoc(newBuildDoc, {
+        // No build for this class, create a new one with the className as ID
+        await setDoc(buildDocRef, {
             class: className,
             subclasses: [subClassData]
         });
@@ -55,13 +54,15 @@ export async function createOrUpdateBuild(className: string, subClassData: Omit<
 }
 
 // Update a specific category within a subclass
-export async function updateBuild(buildId: string, subClassName: string, data: Partial<SubClass>) {
-    const buildDocRef = doc(db, 'builds', buildId);
-    const existingBuild = (await getDocs(query(buildsCollection, where('__name__', '==', buildId)))).docs[0].data() as Omit<Build, 'id'>;
+export async function updateBuild(className: string, subClassName: string, data: Partial<SubClass>) {
+    const buildDocRef = doc(db, 'builds', className);
+    const docSnap = await getDoc(buildDocRef);
 
-    if (!existingBuild) {
+    if (!docSnap.exists()) {
         throw new Error("Build não encontrada!");
     }
+
+    const existingBuild = docSnap.data() as Omit<Build, 'id'>;
 
     const newSubclasses = existingBuild.subclasses.map(sc => {
         if (sc.name === subClassName) {

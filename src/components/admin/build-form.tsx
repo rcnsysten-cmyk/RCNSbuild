@@ -61,7 +61,7 @@ const availableSubclasses: Record<string, string[]> = {
   };
 
 interface BuildFormProps {
-    buildId?: string;
+    buildId?: string; // This will now be the className
     buildData?: SubClass;
     category?: keyof Omit<BuildFormValues, 'class' | 'name'>;
     className?: string;
@@ -131,8 +131,8 @@ export function BuildForm({ buildId, buildData, category, className, children }:
 
   async function onSubmit(data: BuildFormValues) {
     try {
-        if (buildId) { // Editing existing build
-            await updateBuild(buildId, data.name, data);
+        if (buildId && className) { // Editing existing build
+            await updateBuild(className, data.name, data);
             toast({
                 title: `Build Atualizada!`,
                 description: `A build para ${data.class} - ${data.name} foi salva com sucesso.`,
@@ -145,6 +145,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
               });
         }
       router.push('/admin');
+      router.refresh();
     } catch (error) {
       console.error("Erro ao salvar a build:", error);
       toast({
@@ -322,5 +323,3 @@ export function BuildForm({ buildId, buildData, category, className, children }:
 
   return formContent;
 }
-
-    
