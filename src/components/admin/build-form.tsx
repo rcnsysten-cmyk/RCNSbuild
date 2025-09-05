@@ -99,6 +99,16 @@ const getLevelRangeLabel = (levelRange: string) => {
     return `Lvl ${start} ao ${end}`;
 }
 
+const dwSkillOrder = [
+    'Explosao', 'Labareda', 'Impulso De Mana', 'Teletransporte', 'Maldicao', 'Fogo Infernal', 
+    'Pilar De Chamas', 'Alternancia', 'Meteoro', 'Meteoro Venenoso', 'Espírito Maligno', 
+    'Nevasca', 'Olho Do Ceifador', 'Selo De Gelo', 'Ilusao', 'Barreira Da Alma', 'Lampejo Aquatico', 
+    'Bolha', 'Conhecimento Espaco Temporal', 'Controle Espaco Temporal',
+    'Lanca Venenosa', 'Enxame De Veneno', 'Veneno Mortal', 'Sensacao De Veneno', 'Meteoro Venenoso',
+    'Veterania Em Veneno', 'Veterania Do Escudo De Veneno'
+];
+  
+
 export function BuildForm({ buildId, buildData, category, className, children }: BuildFormProps) {
   const { toast } = useToast();
   const router = useRouter();
@@ -142,7 +152,8 @@ export function BuildForm({ buildId, buildData, category, className, children }:
     }
 
     return baseValues;
-  }, [buildData, buildId, className, category, availableSkills]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [buildData, buildId, className, availableSkills]);
 
   const form = useForm<BuildFormValues>({
     resolver: zodResolver(formSchema),
@@ -182,6 +193,15 @@ export function BuildForm({ buildId, buildData, category, className, children }:
               } else if (selectedSubClass === 'AGI') {
                 classSkills = classSkills.filter(skill => !eneSkills.includes(skill.name));
               }
+              
+              // Sort according to the predefined order
+              classSkills.sort((a, b) => {
+                  const indexA = dwSkillOrder.indexOf(a.name);
+                  const indexB = dwSkillOrder.indexOf(b.name);
+                  if (indexA === -1) return 1; // Put skills not in the list at the end
+                  if (indexB === -1) return -1;
+                  return indexA - indexB;
+              });
             }
 
             setAvailableSkills(classSkills);
@@ -449,7 +469,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                     </FormDescription>
                     {loadingSkills ? (
                         <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
-                            {Array.from({ length: 12 }).map((_, i) => (
+                            {Array.from({ length: 16 }).map((_, i) => (
                                 <div key={i} className="flex flex-col items-center gap-2">
                                     <Skeleton className="h-20 w-20 rounded-md" />
                                     <Skeleton className="h-4 w-16" />
@@ -459,7 +479,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                         </div>
                     ) : (
                     <ScrollArea className="h-[550px] pr-4">
-                        <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 xl:grid-cols-8 gap-4">
+                        <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 xl:grid-cols-8 gap-6">
                             {skillFields.map((item, index) => {
                                 const skillInfo = availableSkills.find(s => s.name === item.name);
                                 if (!skillInfo) return null;
@@ -475,7 +495,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                                                 alt={item.name}
                                                 width={64}
                                                 height={64}
-                                                className="rounded-md border-2 border-muted/50 w-16 h-16 object-cover"
+                                                className="rounded-md border-2 border-muted/50 w-20 h-20 object-cover"
                                                 unoptimized
                                             />
                                             <FormLabel className="text-center text-xs h-8 leading-tight">
@@ -486,7 +506,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                                                     type="number" 
                                                     placeholder="0" 
                                                     {...field} 
-                                                    className="w-16 h-8 text-center px-1"
+                                                    className="w-20 h-8 text-center px-1"
                                                 />
                                             </FormControl>
                                         </FormItem>

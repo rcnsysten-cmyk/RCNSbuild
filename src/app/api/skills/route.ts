@@ -36,7 +36,26 @@ export async function GET() {
       .map(dirent => dirent.name);
 
     for (const classFolder of classFolders) {
-      const skillsDir = path.join(publicDir, classFolder, 'skill', 'imagens');
+      const logoDir = path.join(publicDir, classFolder, 'skill', 'logo');
+      const regularDir = path.join(publicDir, classFolder, 'skill', 'imagens');
+      let skillsDir = '';
+      let imageSubPath = '';
+
+      try {
+        await fs.access(logoDir);
+        skillsDir = logoDir;
+        imageSubPath = `/${classFolder}/skill/logo`;
+      } catch (error) {
+        try {
+          await fs.access(regularDir);
+          skillsDir = regularDir;
+          imageSubPath = `/${classFolder}/skill/imagens`;
+        } catch (e) {
+          // If neither directory exists, skip this class folder.
+          continue;
+        }
+      }
+
       try {
         const skillFiles = await fs.readdir(skillsDir);
         const className = formatClassName(classFolder);
@@ -46,14 +65,12 @@ export async function GET() {
             const skillName = formatSkillName(file);
             skills.push({
               name: skillName,
-              imagePath: `/${classFolder}/skill/imagens/${file}`,
+              imagePath: `${imageSubPath}/${file}`,
               className: className,
             });
           }
         }
       } catch (error) {
-        // If a class folder doesn't have the skill/imagens structure, skip it.
-        // This is normal and expected.
         if (error instanceof Error && 'code' in error && error.code !== 'ENOENT') {
             console.warn(`Could not read skills for ${classFolder}:`, error);
         }
