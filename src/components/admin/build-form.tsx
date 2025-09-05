@@ -16,15 +16,17 @@ import {
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
-import { builds } from '@/lib/data';
+import { MultiSelect } from '@/components/ui/multi-select';
 
 const formSchema = z.object({
   class: z.string().min(1, 'A classe é obrigatória.'),
   name: z.string().min(1, 'O nome da sub-classe é obrigatório.'),
-  runes: z.string().min(1, 'As runas são obrigatórias.'),
-  skills: z.string().min(1, 'As habilidades são obrigatórias.'),
-  properties: z.string().min(1, 'As propriedades são obrigatórias.'),
-  config: z.string().min(1, 'A configuração é obrigatória.'),
+  runes: z.array(z.string()).min(1, 'As runas são obrigatórias.'),
+  skills: z.array(z.string()).min(1, 'As habilidades são obrigatórias.'),
+  properties: z.array(z.string()).min(1, 'As propriedades são obrigatórias.'),
+  config: z.array(z.string()).min(1, 'Os atributos são obrigatórios.'),
+  constellation: z.array(z.string()).min(1, 'A constelação é obrigatória.'),
+  sets: z.array(z.string()).min(1, 'Os conjuntos são obrigatórios.'),
 });
 
 type BuildFormValues = z.infer<typeof formSchema>;
@@ -33,10 +35,12 @@ interface BuildFormProps {
     buildData?: {
         class: string;
         name: string;
-        runes: string;
-        skills: string;
-        properties: string;
-        config: string;
+        runes: string[];
+        skills: string[];
+        properties: string[];
+        config: string[];
+        constellation: string[];
+        sets: string[];
     }
 }
 
@@ -48,10 +52,12 @@ export function BuildForm({ buildData }: BuildFormProps) {
   const defaultValues = buildData ? buildData : {
     class: '',
     name: '',
-    runes: '',
-    skills: '',
-    properties: '',
-    config: '',
+    runes: [],
+    skills: [],
+    properties: [],
+    config: [],
+    constellation: [],
+    sets: [],
   };
 
   const form = useForm<BuildFormValues>({
@@ -60,8 +66,6 @@ export function BuildForm({ buildData }: BuildFormProps) {
   });
 
   function onSubmit(data: BuildFormValues) {
-    // Aqui viria a lógica para salvar os dados no banco de dados.
-    // Como ainda não temos um, vamos apenas simular.
     console.log('Dados do formulário:', data);
 
     toast({
@@ -71,13 +75,15 @@ export function BuildForm({ buildData }: BuildFormProps) {
     router.push('/admin');
   }
 
-  const fields: { name: keyof BuildFormValues; label: string; description: string, disabled?: boolean }[] = [
-    { name: 'class', label: 'Classe', description: 'Ex: DW, DK, Elfa, DL', disabled: isEditing },
-    { name: 'name', label: 'Nome da Sub-classe', description: 'Ex: ENE, AGI, STR', disabled: isEditing },
-    { name: 'runes', label: 'Runas', description: 'Separe os itens por vírgula. Ex: Runa 1, Runa 2' },
-    { name: 'skills', label: 'Habilidades', description: 'Separe os itens por vírgula. Ex: Skill 1, Skill 2' },
-    { name: 'properties', label: 'Propriedades', description: 'Separe os itens por vírgula. Ex: Propriedade 1, Propriedade 2' },
-    { name: 'config', label: 'Configuração', description: 'Separe os itens por vírgula. Ex: Pontos em Energia: 2000, Pontos em Agilidade: 400' },
+  const fields: { name: keyof BuildFormValues; label: string; description: string, disabled?: boolean, isMultiSelect?: boolean }[] = [
+    { name: 'class', label: 'Classe', description: 'Ex: DW, DK, Elfa, DL', disabled: true },
+    { name: 'name', label: 'Nome da Sub-classe', description: 'Ex: ENE, AGI, STR', disabled: true },
+    { name: 'config', label: 'Atributos', description: 'Adicione os pontos de atributos. Ex: Força: 1000', isMultiSelect: true },
+    { name: 'skills', label: 'Habilidades', description: 'Adicione as habilidades. Ex: Evil Spirit', isMultiSelect: true },
+    { name: 'constellation', label: 'Constelação', description: 'Adicione os pontos da constelação.', isMultiSelect: true },
+    { name: 'properties', label: 'Propriedades', description: 'Adicione as propriedades. Ex: Aumento de Dano Mágico: 20%', isMultiSelect: true },
+    { name: 'sets', label: 'Conjuntos', description: 'Adicione os conjuntos (sets). Ex: Grand Soul', isMultiSelect: true },
+    { name: 'runes', label: 'Runas', description: 'Adicione as runas. Ex: Runa de Energia Mística', isMultiSelect: true },
   ];
 
   return (
@@ -88,12 +94,21 @@ export function BuildForm({ buildData }: BuildFormProps) {
                 <FormField
                     key={fieldInfo.name}
                     control={form.control}
-                    name={fieldInfo.name}
+                    name={fieldInfo.name as keyof BuildFormValues}
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>{fieldInfo.label}</FormLabel>
                             <FormControl>
-                                <Input placeholder={`Digite as ${fieldInfo.label.toLowerCase()}...`} {...field} disabled={fieldInfo.disabled} />
+                                {fieldInfo.isMultiSelect ? (
+                                    <MultiSelect
+                                        selected={field.value as string[]}
+                                        onChange={field.onChange}
+                                        placeholder={`Adicione ${fieldInfo.label.toLowerCase()}...`}
+                                        className="min-h-24"
+                                    />
+                                ) : (
+                                    <Input placeholder={`Digite as ${fieldInfo.label.toLowerCase()}...`} {...field as any} disabled={fieldInfo.disabled} />
+                                )}
                             </FormControl>
                             <FormDescription>
                                 {fieldInfo.description}

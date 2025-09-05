@@ -29,10 +29,6 @@ export default function EditBuildPage({
         buildData={{
           class: buildClass.class,
           ...subClass,
-          runes: subClass.runes.join(', '),
-          skills: subClass.skills.join(', '),
-          properties: subClass.properties.join(', '),
-          config: subClass.config.join(', '),
         }}
       />
     </div>

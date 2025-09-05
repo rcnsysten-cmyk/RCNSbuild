@@ -4,6 +4,8 @@ export interface SubClass {
   skills: string[];
   properties: string[];
   config: string[];
+  constellation: string[];
+  sets: string[];
 }
 
 export interface Build {
@@ -21,6 +23,8 @@ export const builds: Build[] = [
         skills: ['Evil Spirit', 'Meteor', 'Ice Storm'],
         properties: ['Aumento de Dano Mágico: 20%', 'Redução de Custo de Mana: 15%', 'Velocidade de Conjuração: 10%'],
         config: ['Pontos em Energia: 2000', 'Pontos em Agilidade: 400', 'Pontos em Vitalidade: 600', 'Pontos em Força: Base'],
+        constellation: [],
+        sets: [],
       },
       {
         name: 'AGI',
@@ -28,6 +32,8 @@ export const builds: Build[] = [
         skills: ['Aqua Beam', 'Teleport', 'Soul Barrier'],
         properties: ['Taxa de Defesa: +500', 'Velocidade de Ataque: +20', 'Evasão: 15%'],
         config: ['Pontos em Agilidade: 1800', 'Pontos em Energia: 800', 'Pontos em Vitalidade: 400', 'Pontos em Força: Base'],
+        constellation: [],
+        sets: [],
       },
     ],
   },
@@ -40,6 +46,8 @@ export const builds: Build[] = [
         skills: ['Death Stab', 'Twisting Slash', 'Rageful Blow'],
         properties: ['Dano de Ataque: +30%', 'Chance de Crítico: +10%', 'Aumento de HP: +1000'],
         config: ['Pontos em Força: 2200', 'Pontos em Agilidade: 300', 'Pontos em Vitalidade: 500', 'Pontos em Energia: Base'],
+        constellation: [],
+        sets: [],
       },
       {
         name: 'ENE',
@@ -47,6 +55,8 @@ export const builds: Build[] = [
         skills: ['Swell Life', 'Great Fortitude', 'Defensive Aura'],
         properties: ['HP Máximo: +25%', 'Defesa: +15%', 'Redução de Dano: 10%'],
         config: ['Pontos em Energia: 1000', 'Pontos em Força: 1000', 'Pontos em Vitalidade: 1000', 'Pontos em Agilidade: Base'],
+        constellation: [],
+        sets: [],
       },
     ],
   },
@@ -59,6 +69,8 @@ export const builds: Build[] = [
         skills: ['Greater Heal', 'Greater Defense', 'Greater Damage'],
         properties: ['Poder de Cura: +40%', 'Poder de Buff: +20%', 'Duração de Buff: +30s'],
         config: ['Pontos em Energia: 2500', 'Pontos em Agilidade: 300', 'Pontos em Vitalidade: 200', 'Pontos em Força: Base'],
+        constellation: [],
+        sets: [],
       },
       {
         name: 'AGI',
@@ -66,6 +78,8 @@ export const builds: Build[] = [
         skills: ['Ice Arrow', 'Penetration', 'Multi-Shot'],
         properties: ['Velocidade de Ataque: +50', 'Dano a Distância: +25%', 'Chance de Congelar: 5%'],
         config: ['Pontos em Agilidade: 2400', 'Pontos em Força: 400', 'Pontos em Vitalidade: 200', 'Pontos em Energia: Base'],
+        constellation: [],
+        sets: [],
       },
     ],
   },
@@ -78,6 +92,8 @@ export const builds: Build[] = [
         skills: ['Fire Burst', 'Chaotic Diseier', 'Earthshake'],
         properties: ['Dano em Área: +20%', 'Dano Crítico: +50%', 'Dano do Pet: +15%'],
         config: ['Pontos em Força: 2000', 'Pontos em Agilidade: 500', 'Pontos em Comando: 300', 'Pontos em Vitalidade: 200'],
+        constellation: [],
+        sets: [],
       },
       {
         name: 'ENE',
@@ -85,6 +101,8 @@ export const builds: Build[] = [
         skills: ['Increase Critical Damage', 'Summon', 'Fire Scream'],
         properties: ['HP do Pet: +50%', 'Defesa do Pet: +30%', 'Dano recebido transferido para o Pet: 10%'],
         config: ['Pontos em Energia: 1500', 'Pontos em Comando: 1000', 'Pontos em Força: 300', 'Pontos em Vitalidade: 200'],
+        constellation: [],
+        sets: [],
       },
     ],
   },
