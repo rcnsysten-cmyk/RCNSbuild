@@ -55,11 +55,8 @@ export default function AdminPage() {
                   <Skeleton className="h-8 w-32 mb-2" />
                   <Skeleton className="h-4 w-48" />
                </CardHeader>
-               <CardContent className="flex flex-col flex-grow items-center">
-                  <div className="space-y-2 w-full max-w-xs">
-                    <Skeleton className="h-10 w-full" />
-                    <Skeleton className="h-10 w-full" />
-                  </div>
+               <CardContent className="flex flex-col flex-grow items-center justify-center pt-6">
+                  <Skeleton className="h-10 w-3/4" />
                </CardContent>
              </Card>
           ))}
@@ -68,6 +65,11 @@ export default function AdminPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {builds.map((build) => {
             const Icon = iconMap[build.class];
+            const firstSubClass = build.subclasses[0];
+            if (!firstSubClass) return null; // Don't render card if no subclasses
+
+            const subClassNames = build.subclasses.map(sc => sc.name).join(', ');
+
             return (
               <Card key={build.id} className="flex flex-col text-center">
                 <CardHeader className="items-center">
@@ -76,28 +78,22 @@ export default function AdminPage() {
                     {build.id}
                   </CardTitle>
                   <CardDescription>
-                    {build.class} - Selecione uma subclasse para editar.
+                    {build.class} - {subClassNames}
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="flex flex-col flex-grow items-center">
-                  <div className="space-y-2 w-full max-w-xs">
-                    {build.subclasses.map((subClass) => (
-                      <Button
-                        key={subClass.name}
-                        variant="outline"
-                        className="w-full justify-center"
+                <CardContent className="flex flex-col flex-grow items-center justify-center pt-6">
+                    <Button
+                        className="w-full max-w-xs"
                         asChild
-                      >
+                    >
                         <Link
-                          href={`/admin/${encodeURIComponent(
+                        href={`/admin/${encodeURIComponent(
                             build.id
-                          )}/${encodeURIComponent(subClass.name)}/edit`}
+                        )}/${encodeURIComponent(firstSubClass.name)}/edit`}
                         >
-                          {subClass.name}
+                        Editar
                         </Link>
-                      </Button>
-                    ))}
-                  </div>
+                    </Button>
                 </CardContent>
               </Card>
             );
