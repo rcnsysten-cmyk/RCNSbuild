@@ -1,6 +1,7 @@
 'use client';
 
 import { BuildForm } from '@/components/admin/build-form';
+import { Button } from '@/components/ui/button';
 import { builds } from '@/lib/data';
 import { notFound, useParams } from 'next/navigation';
 import React from 'react';
@@ -50,14 +51,25 @@ export default function EditCategoryPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-2">
-        Editando {categoryName}: {decodedClassName} - {decodedSubClassName}
-      </h1>
-      <p className="text-muted-foreground mb-6">Adicione ou remova os itens abaixo.</p>
       <BuildForm
         buildData={subClass}
         category={category as any}
-      />
+      >
+        {(form) => (
+          <>
+            <div className="flex justify-between items-center mb-6">
+                <div>
+                    <h1 className="text-3xl font-bold">
+                        Editando {categoryName}: {decodedClassName} - {decodedSubClassName}
+                    </h1>
+                    <p className="text-muted-foreground mt-2">Adicione ou remova os itens abaixo.</p>
+                </div>
+                <Button type="submit" form="build-form">Salvar Alterações</Button>
+            </div>
+            {form}
+          </>
+        )}
+      </BuildForm>
     </div>
   );
 }

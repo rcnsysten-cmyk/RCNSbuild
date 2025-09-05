@@ -3,7 +3,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
@@ -16,9 +15,10 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { MultiSelect } from '@/components/ui/multi-select';
-import { AttributeConfig, SubClass } from '@/lib/data';
+import { SubClass } from '@/lib/data';
 import { Input } from '../ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import React from 'react';
 
 const attributeConfigSchema = z.object({
   levelRange: z.string(),
@@ -51,6 +51,7 @@ const allFields: { name: keyof BuildFormValues; label: string; description: stri
 interface BuildFormProps {
     buildData: SubClass;
     category: keyof Omit<BuildFormValues, 'class' | 'name'>;
+    children: (form: React.ReactNode) => React.ReactNode;
 }
 
 const levelRanges = [
@@ -66,7 +67,7 @@ const getLevelRangeLabel = (levelRange: string) => {
     return `Lvl ${start} ao ${end}`;
 }
 
-export function BuildForm({ buildData, category }: BuildFormProps) {
+export function BuildForm({ buildData, category, children }: BuildFormProps) {
   const { toast } = useToast();
   const router = useRouter();
 
@@ -104,13 +105,13 @@ export function BuildForm({ buildData, category }: BuildFormProps) {
     return <div>Categoria de formulário inválida.</div>
   }
 
-  return (
+  const formContent = (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form onSubmit={form.handleSubmit(onSubmit)} id="build-form" className="space-y-8">
         {category === 'config' ? (
              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
              {fields.map((item, index) => (
-               <Card key={item.id}>
+               <Card key={item.id} className="bg-transparent border-muted">
                  <CardHeader>
                    <CardTitle>{getLevelRangeLabel(item.levelRange)}</CardTitle>
                  </CardHeader>
@@ -123,7 +124,7 @@ export function BuildForm({ buildData, category }: BuildFormProps) {
                           <div className="flex items-center gap-4">
                             <FormLabel className="w-8">FOR</FormLabel>
                             <FormControl>
-                              <Input type="number" {...field} className="max-w-[120px]" />
+                              <Input type="number" {...field} className="max-w-[120px] bg-transparent border-0" />
                             </FormControl>
                           </div>
                           <FormMessage className="ml-12" />
@@ -138,7 +139,7 @@ export function BuildForm({ buildData, category }: BuildFormProps) {
                            <div className="flex items-center gap-4">
                             <FormLabel className="w-8">AGI</FormLabel>
                             <FormControl>
-                              <Input type="number" {...field} className="max-w-[120px]" />
+                              <Input type="number" {...field} className="max-w-[120px] bg-transparent border-0" />
                             </FormControl>
                           </div>
                           <FormMessage className="ml-12" />
@@ -153,7 +154,7 @@ export function BuildForm({ buildData, category }: BuildFormProps) {
                            <div className="flex items-center gap-4">
                             <FormLabel className="w-8">VIT</FormLabel>
                             <FormControl>
-                              <Input type="number" {...field} className="max-w-[120px]" />
+                              <Input type="number" {...field} className="max-w-[120px] bg-transparent border-0" />
                             </FormControl>
                           </div>
                           <FormMessage className="ml-12" />
@@ -168,7 +169,7 @@ export function BuildForm({ buildData, category }: BuildFormProps) {
                           <div className="flex items-center gap-4">
                             <FormLabel className="w-8">ENE</FormLabel>
                             <FormControl>
-                              <Input type="number" {...field} className="max-w-[120px]" />
+                              <Input type="number" {...field} className="max-w-[120px] bg-transparent border-0" />
                             </FormControl>
                           </div>
                           <FormMessage className="ml-12" />
@@ -204,8 +205,9 @@ export function BuildForm({ buildData, category }: BuildFormProps) {
                 )}
             />
         )}
-        <Button type="submit">Salvar Alterações</Button>
       </form>
     </Form>
   );
+
+  return <>{children(formContent)}</>;
 }
