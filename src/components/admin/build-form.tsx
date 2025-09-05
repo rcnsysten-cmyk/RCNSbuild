@@ -105,11 +105,56 @@ export function BuildForm({ buildId, buildData, category, className, children }:
   const [availableSkills, setAvailableSkills] = useState<AvailableSkill[]>([]);
   const [loadingSkills, setLoadingSkills] = useState(false);
 
+  const defaultValues: BuildFormValues = React.useMemo(() => {
+    const baseValues = buildData ? {
+        buildName: buildId || '',
+        class: className || '',
+        name: buildData.name,
+        config: levelRanges.map(range => {
+            const existingConfig = buildData.config?.find(c => c.levelRange === range);
+            return existingConfig || { levelRange: range, str: 0, agi: 0, vit: 0, ene: 0 };
+        }),
+        runes: buildData.runes || [],
+        skills: buildData.skills || [],
+        properties: buildData.properties || [],
+        constellation: buildData.constellation || [],
+        sets: buildData.sets || [],
+      } : {
+        buildName: '',
+        class: '',
+        name: '',
+        config: levelRanges.map(range => ({ levelRange: range, str: 0, agi: 0, vit: 0, ene: 0 })),
+        runes: [],
+        skills: [],
+        properties: [],
+        constellation: [],
+        sets: [],
+      };
+      
+    // Populate skills with all available skills for the class if editing skills
+    if (category === 'skills' && availableSkills.length > 0) {
+        const skillMap = new Map(baseValues.skills.map(s => [s.name, s.points]));
+        baseValues.skills = availableSkills.map(skill => ({
+            name: skill.name,
+            points: skillMap.get(skill.name) || 0
+        }));
+    }
+
+    return baseValues;
+  }, [buildData, buildId, className, category, availableSkills]);
+
   const form = useForm<BuildFormValues>({
     resolver: zodResolver(formSchema),
+    defaultValues,
     // This is important to re-initialize the form when defaultValues change
-    enableReinitialize: true,
+    resetOptions: {
+        keepDirtyValues: true,
+    }
   });
+
+  React.useEffect(() => {
+    form.reset(defaultValues);
+  }, [defaultValues, form]);
   
   const selectedSubClass = form.watch('name');
 
@@ -153,49 +198,6 @@ export function BuildForm({ buildId, buildData, category, className, children }:
     }
     fetchSkills();
   }, [category, className, selectedSubClass, toast]);
-
-
-  const defaultValues: BuildFormValues = React.useMemo(() => {
-    const baseValues = buildData ? {
-        buildName: buildId || '',
-        class: className || '',
-        name: buildData.name,
-        config: levelRanges.map(range => {
-            const existingConfig = buildData.config?.find(c => c.levelRange === range);
-            return existingConfig || { levelRange: range, str: 0, agi: 0, vit: 0, ene: 0 };
-        }),
-        runes: buildData.runes || [],
-        skills: buildData.skills || [],
-        properties: buildData.properties || [],
-        constellation: buildData.constellation || [],
-        sets: buildData.sets || [],
-      } : {
-        buildName: '',
-        class: '',
-        name: '',
-        config: levelRanges.map(range => ({ levelRange: range, str: 0, agi: 0, vit: 0, ene: 0 })),
-        runes: [],
-        skills: [],
-        properties: [],
-        constellation: [],
-        sets: [],
-      };
-      
-    // Populate skills with all available skills for the class if editing skills
-    if (category === 'skills' && availableSkills.length > 0) {
-        const skillMap = new Map(baseValues.skills.map(s => [s.name, s.points]));
-        baseValues.skills = availableSkills.map(skill => ({
-            name: skill.name,
-            points: skillMap.get(skill.name) || 0
-        }));
-    }
-
-    return baseValues;
-  }, [buildData, buildId, className, category, availableSkills]);
-
-  // We are re-assigning the form const here, but it's okay because we are just re-initializing it.
-  form.reset(defaultValues);
-
 
   const { fields: configFields } = useFieldArray({
     control: form.control,
@@ -513,3 +515,5 @@ export function BuildForm({ buildId, buildData, category, className, children }:
 
   return formContent;
 }
+
+    
