@@ -123,7 +123,7 @@ export function BuildForm({ buildData, category }: BuildFormProps) {
                           <div className="flex items-center gap-4">
                             <FormLabel className="w-8">FOR</FormLabel>
                             <FormControl>
-                              <Input type="number" {...field} className="max-w-[120px] border-border" />
+                              <Input type="number" {...field} className="max-w-[120px]" />
                             </FormControl>
                           </div>
                           <FormMessage className="ml-12" />
@@ -138,7 +138,7 @@ export function BuildForm({ buildData, category }: BuildFormProps) {
                            <div className="flex items-center gap-4">
                             <FormLabel className="w-8">AGI</FormLabel>
                             <FormControl>
-                              <Input type="number" {...field} className="max-w-[120px] border-border" />
+                              <Input type="number" {...field} className="max-w-[120px]" />
                             </FormControl>
                           </div>
                           <FormMessage className="ml-12" />
@@ -153,7 +153,7 @@ export function BuildForm({ buildData, category }: BuildFormProps) {
                            <div className="flex items-center gap-4">
                             <FormLabel className="w-8">VIT</FormLabel>
                             <FormControl>
-                              <Input type="number" {...field} className="max-w-[120px] border-border" />
+                              <Input type="number" {...field} className="max-w-[120px]" />
                             </FormControl>
                           </div>
                           <FormMessage className="ml-12" />
@@ -168,7 +168,7 @@ export function BuildForm({ buildData, category }: BuildFormProps) {
                           <div className="flex items-center gap-4">
                             <FormLabel className="w-8">ENE</FormLabel>
                             <FormControl>
-                              <Input type="number" {...field} className="max-w-[120px] border-border" />
+                              <Input type="number" {...field} className="max-w-[120px]" />
                             </FormControl>
                           </div>
                           <FormMessage className="ml-12" />
