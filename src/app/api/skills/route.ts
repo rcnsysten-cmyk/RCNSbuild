@@ -19,6 +19,10 @@ const formatClassName = (folderName: string): string => {
 // Helper to format skill name from file name (e.g., 'evil-spirit.png' -> 'Evil Spirit')
 const formatSkillName = (fileName: string): string => {
     const nameWithoutExt = path.parse(fileName).name;
+    // Specific override for a known problematic name
+    if (nameWithoutExt === 'lampejo-aquatico') {
+        return 'Lampejo Aquatic';
+    }
     return nameWithoutExt
       .split('-')
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
