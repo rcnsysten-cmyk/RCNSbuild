@@ -13,7 +13,7 @@ export interface Build {
 
 export const builds: Build[] = [
   {
-    class: 'DW',
+    class: 'Dark Wizard',
     subclasses: [
       {
         name: 'ENE',
@@ -32,7 +32,7 @@ export const builds: Build[] = [
     ],
   },
   {
-    class: 'DK',
+    class: 'Dark Knight',
     subclasses: [
       {
         name: 'STR',
@@ -70,7 +70,7 @@ export const builds: Build[] = [
     ],
   },
   {
-    class: 'DL',
+    class: 'Dark Lord',
     subclasses: [
       {
         name: 'STR',

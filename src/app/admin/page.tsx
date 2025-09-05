@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Card,
   CardContent,
@@ -13,10 +15,10 @@ import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-react';
 
 const iconMap: { [key: string]: React.ElementType } = {
-  DW: DwIcon,
-  DK: DkIcon,
+  'Dark Wizard': DwIcon,
+  'Dark Knight': DkIcon,
   Elfa: ElfaIcon,
-  DL: DlIcon,
+  'Dark Lord': DlIcon,
 };
 
 export default function AdminPage() {
