@@ -73,7 +73,7 @@ export function BuildForm({ buildData }: BuildFormProps) {
 
   const fields: { name: keyof BuildFormValues; label: string; description: string, disabled?: boolean }[] = [
     { name: 'class', label: 'Classe', description: 'Ex: DW, DK, Elfa, DL', disabled: isEditing },
-    { name: 'name', label: 'Nome da Sub-classe', description: 'Ex: Ene, Agi, Str', disabled: isEditing },
+    { name: 'name', label: 'Nome da Sub-classe', description: 'Ex: ENE, AGI, STR', disabled: isEditing },
     { name: 'runes', label: 'Runas', description: 'Separe os itens por vírgula. Ex: Runa 1, Runa 2' },
     { name: 'skills', label: 'Habilidades', description: 'Separe os itens por vírgula. Ex: Skill 1, Skill 2' },
     { name: 'properties', label: 'Propriedades', description: 'Separe os itens por vírgula. Ex: Propriedade 1, Propriedade 2' },
