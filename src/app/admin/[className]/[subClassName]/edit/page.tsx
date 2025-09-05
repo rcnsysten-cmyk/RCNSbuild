@@ -2,10 +2,13 @@
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { builds } from '@/lib/data';
+import { getBuildByClassName } from '@/lib/firestore';
+import { Build } from '@/lib/types';
 import { ChevronRight, Dna, Gem, ListTree, ShieldCheck, Swords, Star } from 'lucide-react';
 import Link from 'next/link';
 import { notFound, useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const categoryMap = [
     { id: 'config', name: 'Atributos', icon: Dna },
@@ -20,6 +23,9 @@ export default function EditBuildCategorySelectionPage() {
     const params = useParams();
     const { className, subClassName } = params;
 
+    const [build, setBuild] = useState<Build | null>(null);
+    const [loading, setLoading] = useState(true);
+
     if (!className || !subClassName) {
         return notFound();
     }
@@ -27,10 +33,41 @@ export default function EditBuildCategorySelectionPage() {
     const decodedClassName = decodeURIComponent(className as string);
     const decodedSubClassName = decodeURIComponent(subClassName as string);
 
-    const buildClass = builds.find(
-        (b) => b.class.toLowerCase() === decodedClassName.toLowerCase()
-    );
-    const subClass = buildClass?.subclasses.find(
+    useEffect(() => {
+        const fetchBuild = async () => {
+            const buildData = await getBuildByClassName(decodedClassName);
+            if (buildData) {
+                setBuild(buildData);
+            } else {
+                notFound();
+            }
+            setLoading(false);
+        };
+        fetchBuild();
+    }, [decodedClassName]);
+    
+    if (loading) {
+        return (
+            <div className="container mx-auto px-4 py-8">
+                <Skeleton className="h-10 w-1/2 mb-2" />
+                <Skeleton className="h-6 w-1/3 mb-6" />
+                <Card>
+                    <CardHeader>
+                        <Skeleton className="h-8 w-1/4" />
+                    </CardHeader>
+                    <CardContent>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {Array.from({ length: 6 }).map((_, i) => (
+                                <Skeleton key={i} className="h-16 w-full" />
+                            ))}
+                        </div>
+                    </CardContent>
+                </Card>
+            </div>
+        )
+    }
+
+    const subClass = build?.subclasses.find(
         (sc) => sc.name.toLowerCase() === decodedSubClassName.toLowerCase()
     );
 

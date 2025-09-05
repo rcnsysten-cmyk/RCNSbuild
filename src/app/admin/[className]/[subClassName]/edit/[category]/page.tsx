@@ -1,9 +1,11 @@
 'use client';
 
 import { BuildForm } from '@/components/admin/build-form';
-import { builds } from '@/lib/data';
+import { getBuildByClassName } from '@/lib/firestore';
+import { Build, SubClass } from '@/lib/types';
 import { notFound, useParams } from 'next/navigation';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const validCategories = ['config', 'skills', 'constellation', 'properties', 'sets', 'runes'];
 
@@ -16,10 +18,13 @@ const categoryNames: { [key: string]: string } = {
     runes: 'Runas',
 };
 
-
 export default function EditCategoryPage() {
   const params = useParams();
   const { className, subClassName, category } = params;
+
+  const [build, setBuild] = useState<Build | null>(null);
+  const [subClass, setSubClass] = useState<SubClass | null>(null);
+  const [loading, setLoading] = useState(true);
 
   if (
     !className || 
@@ -34,24 +39,53 @@ export default function EditCategoryPage() {
   const decodedClassName = decodeURIComponent(className as string);
   const decodedSubClassName = decodeURIComponent(subClassName as string);
 
-  const buildClass = builds.find(
-    (b) => b.class.toLowerCase() === decodedClassName.toLowerCase()
-  );
-  const subClass = buildClass?.subclasses.find(
-    (sc) => sc.name.toLowerCase() === decodedSubClassName.toLowerCase()
-  );
+  useEffect(() => {
+    const fetchBuild = async () => {
+        const buildData = await getBuildByClassName(decodedClassName);
+        if (buildData) {
+            setBuild(buildData);
+            const foundSubClass = buildData.subclasses.find(
+              (sc) => sc.name.toLowerCase() === decodedSubClassName.toLowerCase()
+            );
+            if (foundSubClass) {
+              setSubClass(foundSubClass);
+            } else {
+              notFound();
+            }
+        } else {
+            notFound();
+        }
+        setLoading(false);
+    };
+    fetchBuild();
+  }, [decodedClassName, decodedSubClassName]);
 
-  if (!subClass) {
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <Skeleton className="h-10 w-96 mb-2" />
+            <Skeleton className="h-6 w-64" />
+          </div>
+          <Skeleton className="h-10 w-32" />
+        </div>
+        <Skeleton className="h-[400px] w-full" />
+      </div>
+    );
+  }
+
+  if (!subClass || !build) {
     return notFound();
   }
   
   const categoryName = categoryNames[category] || 'Categoria';
 
-
   return (
     <div className="container mx-auto px-4 py-8">
       <BuildForm
         buildData={subClass}
+        buildId={build.id}
         category={category as any}
         className={decodedClassName}
       >

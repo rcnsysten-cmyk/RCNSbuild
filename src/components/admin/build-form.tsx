@@ -10,14 +10,17 @@ import {
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { MultiSelect } from '@/components/ui/multi-select';
-import { SubClass } from '@/lib/data';
+import { SubClass } from '@/lib/types';
 import { Input } from '../ui/input';
 import React from 'react';
 import { Button } from '../ui/button';
+import { createOrUpdateBuild, updateBuild } from '@/lib/firestore';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 
 const attributeConfigSchema = z.object({
   levelRange: z.string(),
@@ -28,6 +31,8 @@ const attributeConfigSchema = z.object({
 });
 
 const formSchema = z.object({
+  class: z.string().min(1, "O nome da classe é obrigatório."),
+  name: z.string().min(1, "O nome da subclasse é obrigatório."),
   config: z.array(attributeConfigSchema),
   runes: z.array(z.string()),
   skills: z.array(z.string()),
@@ -38,7 +43,7 @@ const formSchema = z.object({
 
 type BuildFormValues = z.infer<typeof formSchema>;
 
-const allFields: { name: keyof BuildFormValues; label: string; description: string, isMultiSelect?: boolean }[] = [
+const allFields: { name: keyof Omit<BuildFormValues, 'class' | 'name'>; label: string; description: string, isMultiSelect?: boolean }[] = [
     { name: 'config', label: 'Atributos', description: 'Defina os pontos de atributos para cada faixa de nível.' },
     { name: 'skills', label: 'Habilidades', description: 'Adicione as habilidades. Ex: Evil Spirit', isMultiSelect: true },
     { name: 'constellation', label: 'Constelação', description: 'Adicione os pontos da constelação.', isMultiSelect: true },
@@ -47,7 +52,10 @@ const allFields: { name: keyof BuildFormValues; label: string; description: stri
     { name: 'runes', label: 'Runas', description: 'Adicione as runas. Ex: Runa de Energia Mística', isMultiSelect: true },
 ];
 
+const availableClasses = ['Dark Wizard', 'Dark Knight', 'Elfa', 'Dark Lord'];
+
 interface BuildFormProps {
+    buildId?: string;
     buildData?: SubClass;
     category?: keyof Omit<BuildFormValues, 'class' | 'name'>;
     className?: string;
@@ -67,17 +75,25 @@ const getLevelRangeLabel = (levelRange: string) => {
     return `Lvl ${start} ao ${end}`;
 }
 
-export function BuildForm({ buildData, category, className, children }: BuildFormProps) {
+export function BuildForm({ buildId, buildData, category, className, children }: BuildFormProps) {
   const { toast } = useToast();
   const router = useRouter();
 
-  const defaultValues = buildData ? {
-    ...buildData,
+  const defaultValues: BuildFormValues = buildData ? {
+    class: className || '',
+    name: buildData.name,
     config: levelRanges.map(range => {
-        const existingConfig = buildData.config.find(c => c.levelRange === range);
+        const existingConfig = buildData.config?.find(c => c.levelRange === range);
         return existingConfig || { levelRange: range, str: 0, agi: 0, vit: 0, ene: 0 };
-    })
+    }),
+    runes: buildData.runes || [],
+    skills: buildData.skills || [],
+    properties: buildData.properties || [],
+    constellation: buildData.constellation || [],
+    sets: buildData.sets || [],
   } : {
+    class: '',
+    name: '',
     config: levelRanges.map(range => ({ levelRange: range, str: 0, agi: 0, vit: 0, ene: 0 })),
     runes: [],
     skills: [],
@@ -96,114 +112,183 @@ export function BuildForm({ buildData, category, className, children }: BuildFor
     name: "config",
   });
 
-  function onSubmit(data: BuildFormValues) {
-    console.log('Dados do formulário:', data);
-
-    toast({
-      title: `Build Atualizada (Simulação)`,
-      description: `A build para ${buildData?.name} foi salva com sucesso.`,
-    });
-    router.back();
+  async function onSubmit(data: BuildFormValues) {
+    try {
+        if (buildId) { // Editing existing build
+            await updateBuild(buildId, data.name, data);
+            toast({
+                title: `Build Atualizada!`,
+                description: `A build para ${data.class} - ${data.name} foi salva com sucesso.`,
+              });
+        } else { // Creating new build
+            await createOrUpdateBuild(data.class, data);
+            toast({
+                title: `Build Criada!`,
+                description: `A build para ${data.class} - ${data.name} foi criada com sucesso.`,
+              });
+        }
+      router.push('/admin');
+    } catch (error) {
+      console.error("Erro ao salvar a build:", error);
+      toast({
+        title: "Erro ao Salvar",
+        description: "Ocorreu um erro ao salvar a build. Tente novamente.",
+        variant: "destructive",
+      });
+    }
   }
 
   const fieldInfo = allFields.find(f => f.name === category);
-
-  if (category && !fieldInfo) {
-    return <div>Categoria de formulário inválida.</div>
-  }
   
   const submitButton = <Button type="submit" form="build-form">Salvar Alterações</Button>;
 
   const formContent = (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} id="build-form" className="space-y-8">
-        {category === 'config' ? (
-             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {fields.map((item, index) => (
-                    <div key={item.id} className="flex flex-col gap-4 p-4 rounded-lg bg-muted/30 border border-muted/50">
-                        <h3 className="text-center font-bold">{getLevelRangeLabel(item.levelRange)}</h3>
-                        <div className="flex flex-col gap-2">
-                            <FormField
-                                control={form.control}
-                                name={`config.${index}.str`}
-                                render={({ field }) => (
-                                    <FormItem className="flex items-center justify-between">
-                                        <FormLabel>FOR</FormLabel>
-                                        <FormControl>
-                                            <Input type="number" {...field} className="bg-transparent border-0 text-right" />
-                                        </FormControl>
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name={`config.${index}.agi`}
-                                render={({ field }) => (
-                                    <FormItem className="flex items-center justify-between">
-                                        <FormLabel>AGI</FormLabel>
-                                        <FormControl>
-                                            <Input type="number" {...field} className="bg-transparent border-0 text-right" />
-                                        </FormControl>
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name={`config.${index}.vit`}
-                                render={({ field }) => (
-                                    <FormItem className="flex items-center justify-between">
-                                        <FormLabel>VIT</FormLabel>
-                                        <FormControl>
-                                            <Input type="number" {...field} className="bg-transparent border-0 text-right" />
-                                        </FormControl>
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name={`config.${index}.ene`}
-                                render={({ field }) => (
-                                    <FormItem className="flex items-center justify-between">
-                                        <FormLabel>ENE</FormLabel>
-                                        <FormControl>
-                                            <Input type="number" {...field} className="bg-transparent border-0 text-right" />
-                                        </FormControl>
-                                    </FormItem>
-                                )}
-                            />
-                        </div>
-                    </div>
-                ))}
-            </div>
-        ) : fieldInfo ? (
-            <FormField
+      {!buildData ? (
+          // Form for creating a new build
+          <div className="space-y-6">
+             <FormField
                 control={form.control}
-                name={fieldInfo.name as keyof BuildFormValues}
+                name="class"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>{fieldInfo.label}</FormLabel>
+                    <FormLabel>Classe</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
-                            {fieldInfo.isMultiSelect ? (
-                                <MultiSelect
-                                    selected={field.value as string[]}
-                                    onChange={field.onChange}
-                                    placeholder={`Adicione ${fieldInfo.label.toLowerCase()}...`}
-                                    className="min-h-48"
-                                    itemType={fieldInfo.name === 'skills' ? 'skill' : 'text'}
-                                    classNameProp={className}
-                                />
-                            ) : null}
+                        <SelectTrigger>
+                            <SelectValue placeholder="Selecione uma classe" />
+                        </SelectTrigger>
                         </FormControl>
-                        <FormDescription>
-                            {fieldInfo.description}
-                        </FormDescription>
-                        <FormMessage />
+                        <SelectContent>
+                        {availableClasses.map((c) => (
+                            <SelectItem key={c} value={c}>{c}</SelectItem>
+                        ))}
+                        </SelectContent>
+                    </Select>
+                    <FormDescription>
+                        Escolha a classe para a qual esta build se aplica.
+                    </FormDescription>
+                    <FormMessage />
                     </FormItem>
                 )}
+                />
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Nome da Subclasse (Ex: ENE, AGI, STR)</FormLabel>
+                  <FormControl>
+                    <Input placeholder="ENE" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    Dê um nome para a subclasse desta build.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-        ) : null}
+             <Button type="submit" form="build-form">Criar Build</Button>
+          </div>
+        ) : (
+            // Form for editing an existing build category
+            <>
+            {category === 'config' ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {fields.map((item, index) => (
+                        <div key={item.id} className="flex flex-col gap-4 p-4 rounded-lg bg-muted/30 border border-muted/50">
+                            <h3 className="text-center font-bold">{getLevelRangeLabel(item.levelRange)}</h3>
+                            <div className="flex flex-col gap-2">
+                                <FormField
+                                    control={form.control}
+                                    name={`config.${index}.str`}
+                                    render={({ field }) => (
+                                        <FormItem className="flex items-center justify-between">
+                                            <FormLabel>FOR</FormLabel>
+                                            <FormControl>
+                                                <Input type="number" {...field} className="bg-transparent border-0 text-right" />
+                                            </FormControl>
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name={`config.${index}.agi`}
+                                    render={({ field }) => (
+                                        <FormItem className="flex items-center justify-between">
+                                            <FormLabel>AGI</FormLabel>
+                                            <FormControl>
+                                                <Input type="number" {...field} className="bg-transparent border-0 text-right" />
+                                            </FormControl>
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name={`config.${index}.vit`}
+                                    render={({ field }) => (
+                                        <FormItem className="flex items-center justify-between">
+                                            <FormLabel>VIT</FormLabel>
+                                            <FormControl>
+                                                <Input type="number" {...field} className="bg-transparent border-0 text-right" />
+                                            </FormControl>
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name={`config.${index}.ene`}
+                                    render={({ field }) => (
+                                        <FormItem className="flex items-center justify-between">
+                                            <FormLabel>ENE</FormLabel>
+                                            <FormControl>
+                                                <Input type="number" {...field} className="bg-transparent border-0 text-right" />
+                                            </FormControl>
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            ) : fieldInfo ? (
+                <FormField
+                    control={form.control}
+                    name={fieldInfo.name as any}
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>{fieldInfo.label}</FormLabel>
+                            <FormControl>
+                                {fieldInfo.isMultiSelect ? (
+                                    <MultiSelect
+                                        selected={field.value as string[]}
+                                        onChange={field.onChange}
+                                        placeholder={`Adicione ${fieldInfo.label.toLowerCase()}...`}
+                                        className="min-h-48"
+                                        itemType={fieldInfo.name === 'skills' ? 'skill' : 'text'}
+                                        classNameProp={className}
+                                    />
+                                ) : null}
+                            </FormControl>
+                            <FormDescription>
+                                {fieldInfo.description}
+                            </FormDescription>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+            ) : null}
+            </>
+        )}
+
       </form>
     </Form>
   );
 
+  if (children) {
+    return children(formContent, submitButton);
+  }
+
+  return formContent;
 }
