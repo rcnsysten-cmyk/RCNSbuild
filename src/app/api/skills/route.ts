@@ -8,7 +8,7 @@ interface Skill {
   className: string;
 }
 
-// Helper to format class name from folder name (e.g., 'dark-wizard' -> 'Dark Wizard')
+// Helper function to format class name from folder name (e.g., 'dark-wizard' -> 'Dark Wizard')
 const formatClassName = (folderName: string): string => {
   return folderName
     .split('-')

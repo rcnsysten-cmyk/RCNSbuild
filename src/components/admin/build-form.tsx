@@ -100,6 +100,7 @@ const getLevelRangeLabel = (levelRange: string) => {
 }
 
 const dwTestSkillOrder = ["Meteorito", "Pilar De Chamas", "Fogo Infernal", "Espirito Maligno", "Impulso De Mana", "Lampejo Aquatico", "Veneno Mortal", "Barreira Da Alma"];
+const elfaTestSkillOrder = ["Lanca Venenosa", "Sensacao De Veneno", "Maldicao", "Enxame De Veneno"];
 
 export function BuildForm({ buildId, buildData, category, className, children }: BuildFormProps) {
   const { toast } = useToast();
@@ -182,7 +183,16 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                      const indexB = dwTestSkillOrder.indexOf(b.name);
                      return indexA - indexB;
                  });
-            }
+            } else if (className.toLowerCase() === 'elfa') {
+                const testSkillSet = new Set(elfaTestSkillOrder);
+                classSkills = classSkills.filter(skill => testSkillSet.has(skill.name));
+
+                classSkills.sort((a, b) => {
+                    const indexA = elfaTestSkillOrder.indexOf(a.name);
+                    const indexB = elfaTestSkillOrder.indexOf(b.name);
+                    return indexA - indexB;
+                });
+           }
 
             setAvailableSkills(classSkills);
         } catch (error) {
