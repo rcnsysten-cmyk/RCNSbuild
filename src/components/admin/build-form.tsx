@@ -100,11 +100,12 @@ const getLevelRangeLabel = (levelRange: string) => {
 }
 
 const dwSkillOrder = [
-    "Meteoro", "Pilar De Chamas", "Fogo Infernal", "Espirito Maligno", "Impulso De Mana",
-    "Lampejo Aquatico", "Veneno Mortal", "Barreira Da Alma", "Lanca Venenosa", "Sensacao De Veneno",
-    "Maldicao", "Enxame De Veneno", "Veterania Em Veneno", "Selo De Gelo", "Teletransporte", "Nevasca",
-    "Explosao", "Ilusao", "Meteoro Venenoso", "Alternancia", "Veterania Do Escudo De Veneno",
-    "Olho Do Ceifador", "Bolha", "Labareda", "Explosao Infernal"
+    "Meteoro", "Pilar De Chamas", "Fogo Infernal", "Espirito Maligno",
+    "Impulso De Mana", "Lampejo Aquatico", "Veneno Mortal", "Barreira Da Alma",
+    "Lanca Venenosa", "Sensacao De Veneno", "Maldicao", "Enxame De Veneno",
+    "Veterania Em Veneno", "Selo De Gelo", "Teletransporte", "Nevasca",
+    "Explosao", "Ilusao", "Meteoro Venenoso", "Alternancia",
+    "Veterania Do Escudo De Veneno", "Olho Do Ceifador", "Bolha", "Labareda", "Explosao Infernal"
 ];  
 
 export function BuildForm({ buildId, buildData, category, className, children }: BuildFormProps) {
@@ -487,14 +488,16 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                                     name={`skills.${index}.points`}
                                     render={({ field }) => (
                                         <FormItem className="flex flex-col items-center justify-start gap-2">
-                                            <Image
-                                                src={skillInfo.imagePath}
-                                                alt={item.name}
-                                                width={64}
-                                                height={64}
-                                                className="rounded-md border-2 border-muted/50 w-20 h-20 object-cover"
-                                                unoptimized
-                                            />
+                                            <div className="w-20 h-20 rounded-md border-2 border-muted/50 overflow-hidden">
+                                                <Image
+                                                    src={skillInfo.imagePath}
+                                                    alt={item.name}
+                                                    width={80}
+                                                    height={80}
+                                                    className="object-cover w-full h-full"
+                                                    unoptimized
+                                                />
+                                            </div>
                                             <FormLabel className="text-center text-xs h-8 leading-tight">
                                                 {item.name}
                                             </FormLabel>
