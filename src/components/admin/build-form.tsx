@@ -99,10 +99,7 @@ const getLevelRangeLabel = (levelRange: string) => {
     return `Lvl ${start} ao ${end}`;
 }
 
-const dwTestSkillOrder = [
-    "Meteorito", "Pilar De chamas", "Fogo Infernal", "Espirito Maligno", 
-    "Impulso de mana", "Lampejo Aquatic", "Veneno Mortal", "Barreira da alma"
-];
+const dwTestSkillOrder = ["Meteorito"];
 
 export function BuildForm({ buildId, buildData, category, className, children }: BuildFormProps) {
   const { toast } = useToast();
@@ -177,7 +174,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
             );
 
             if (className.toLowerCase() === 'dark wizard') {
-                 // Filter to include only the 8 test skills for now
+                 // Filter to include only the test skills for now
                  const testSkillSet = new Set(dwTestSkillOrder);
                  classSkills = classSkills.filter(skill => testSkillSet.has(skill.name));
 
@@ -462,7 +459,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                         </div>
                     ) : (
                     <ScrollArea className="h-[550px] pr-4">
-                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-3 gap-6">
                             {skillFields.map((item, index) => {
                                 const skillInfo = availableSkills.find(s => s.name === item.name);
                                 if (!skillInfo) return null;
