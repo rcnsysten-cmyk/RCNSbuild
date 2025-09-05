@@ -100,7 +100,7 @@ const getLevelRangeLabel = (levelRange: string) => {
 }
 
 const dwSkillOrder = [
-    "Meteoro", "Pilar De Chamas", "Fogo Infernal", "Espirito Maligno",
+    "Meteorito", "Pilar De Chamas", "Fogo Infernal", "Espirito Maligno",
     "Impulso De Mana", "Lampejo Aquatico", "Veneno Mortal", "Barreira Da Alma",
     "Lanca Venenosa", "Sensacao De Veneno", "Maldicao", "Enxame De Veneno",
     "Veterania Em Veneno", "Selo De Gelo", "Teletransporte", "Nevasca",
@@ -487,8 +487,8 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                                     control={form.control}
                                     name={`skills.${index}.points`}
                                     render={({ field }) => (
-                                        <FormItem className="flex flex-col items-center justify-start gap-2">
-                                            <div className="w-20 h-20 rounded-md border-2 border-muted/50 overflow-hidden">
+                                        <FormItem className="flex flex-col items-center justify-start gap-2 p-2 border border-muted/50 rounded-md">
+                                            <div className="w-20 h-20 rounded-md overflow-hidden relative">
                                                 <Image
                                                     src={skillInfo.imagePath}
                                                     alt={item.name}
@@ -559,5 +559,3 @@ export function BuildForm({ buildId, buildData, category, className, children }:
 
   return formContent;
 }
-
-    
