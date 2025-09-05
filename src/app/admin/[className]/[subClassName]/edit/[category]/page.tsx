@@ -85,31 +85,33 @@ export default function EditCategoryPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <BuildForm
-        buildData={subClass}
-        buildId={build.id}
-        category={category as any}
-        className={build.class}
-      >
-        {(form, submitButton, handleBack) => (
-          <>
-            <div className="flex justify-between items-center mb-6">
-                <div>
-                    <Button variant="ghost" onClick={handleBack} className="mb-4">
-                        <ArrowLeft className="mr-2 h-4 w-4" />
-                        Voltar
-                    </Button>
-                    <h1 className="text-3xl font-bold">
-                        Editando {categoryName}: {decodedClassName} - {decodedSubClassName}
-                    </h1>
-                    <p className="text-muted-foreground mt-2">Adicione ou remova os itens abaixo.</p>
-                </div>
-                {submitButton}
-            </div>
-            {form}
-          </>
-        )}
-      </BuildForm>
+      <div className="max-w-4xl mx-auto">
+        <BuildForm
+          buildData={subClass}
+          buildId={build.id}
+          category={category as any}
+          className={build.class}
+        >
+          {(form, submitButton, handleBack) => (
+            <>
+              <div className="flex justify-between items-center mb-6">
+                  <div>
+                      <Button variant="ghost" onClick={handleBack} className="mb-4">
+                          <ArrowLeft className="mr-2 h-4 w-4" />
+                          Voltar
+                      </Button>
+                      <h1 className="text-3xl font-bold">
+                          Editando {categoryName}: {decodedClassName} - {decodedSubClassName}
+                      </h1>
+                      <p className="text-muted-foreground mt-2">Adicione ou remova os itens abaixo.</p>
+                  </div>
+                  {submitButton}
+              </div>
+              {form}
+            </>
+          )}
+        </BuildForm>
+      </div>
     </div>
   );
 }
