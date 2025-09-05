@@ -99,7 +99,8 @@ const getLevelRangeLabel = (levelRange: string) => {
     return `Lvl ${start} ao ${end}`;
 }
 
-const dwTestSkillOrder = ["Meteorito", "Pilar De Chamas", "Fogo Infernal", "Espirito Maligno", "Impulso De Mana", "Lampejo Aquatico", "Veneno Mortal", "Barreira Da Alma"];
+const dwEneTestSkillOrder = ["Meteorito", "Pilar De Chamas", "Fogo Infernal", "Espirito Maligno", "Impulso De Mana", "Lampejo Aquatico", "Veneno Mortal", "Barreira Da Alma"];
+const dwAgiTestSkillOrder = ["Lanca Venenosa", "Sensacao De Veneno", "Maldicao", "Enxame De Veneno"];
 const elfaTestSkillOrder = ["Lanca Venenosa", "Sensacao De Veneno", "Maldicao", "Enxame De Veneno"];
 
 export function BuildForm({ buildId, buildData, category, className, children }: BuildFormProps) {
@@ -162,7 +163,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
 
   useEffect(() => {
     async function fetchSkills() {
-        if (category !== 'skills' || !className) return;
+        if (category !== 'skills' || !className || !buildData?.name) return;
 
         setLoadingSkills(true);
         try {
@@ -175,14 +176,15 @@ export function BuildForm({ buildId, buildData, category, className, children }:
             );
 
             if (className.toLowerCase() === 'dark wizard') {
-                 const testSkillSet = new Set(dwTestSkillOrder);
-                 classSkills = classSkills.filter(skill => testSkillSet.has(skill.name));
-
-                 classSkills.sort((a, b) => {
-                     const indexA = dwTestSkillOrder.indexOf(a.name);
-                     const indexB = dwTestSkillOrder.indexOf(b.name);
-                     return indexA - indexB;
-                 });
+                 if (buildData.name.toLowerCase() === 'ene') {
+                    const testSkillSet = new Set(dwEneTestSkillOrder);
+                    classSkills = classSkills.filter(skill => testSkillSet.has(skill.name));
+                    classSkills.sort((a, b) => dwEneTestSkillOrder.indexOf(a.name) - dwEneTestSkillOrder.indexOf(b.name));
+                 } else if (buildData.name.toLowerCase() === 'agi') {
+                    const testSkillSet = new Set(dwAgiTestSkillOrder);
+                    classSkills = classSkills.filter(skill => testSkillSet.has(skill.name));
+                    classSkills.sort((a, b) => dwAgiTestSkillOrder.indexOf(a.name) - dwAgiTestSkillOrder.indexOf(b.name));
+                 }
             } else if (className.toLowerCase() === 'elfa') {
                 const testSkillSet = new Set(elfaTestSkillOrder);
                 classSkills = classSkills.filter(skill => testSkillSet.has(skill.name));
@@ -207,7 +209,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
         }
     }
     fetchSkills();
-  }, [category, className, selectedSubClass, toast]);
+  }, [category, className, buildData?.name, toast]);
 
   const { fields: configFields } = useFieldArray({
     control: form.control,
