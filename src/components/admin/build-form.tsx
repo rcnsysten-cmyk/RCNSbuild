@@ -99,7 +99,7 @@ const getLevelRangeLabel = (levelRange: string) => {
     return `Lvl ${start} ao ${end}`;
 }
 
-const dwTestSkillOrder = ["Meteorito", "Pilar De chamas"];
+const dwTestSkillOrder = ["Meteorito", "Pilar De Chamas"];
 
 export function BuildForm({ buildId, buildData, category, className, children }: BuildFormProps) {
   const { toast } = useToast();
