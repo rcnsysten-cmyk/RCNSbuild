@@ -215,11 +215,6 @@ export function BuildForm({ buildId, buildData, category, className, children }:
     fetchSkills();
   }, [category, className, buildData?.name, toast]);
 
-  const { fields: configFields } = useFieldArray({
-    control: form.control,
-    name: "config",
-  });
-
   const { fields: skillFields } = useFieldArray({
     control: form.control,
     name: "skills",
@@ -473,28 +468,27 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                         </div>
                     ) : (
                     <ScrollArea className="h-[950px] pr-4">
-                       <div className="flex flex-col">
+                       <div className="flex flex-col items-start">
                             {Array.from({ length: 3 }).map((_, blockIndex) => {
-                                const exclusiveSkillName = blockIndex === 1 ? 'Veterania Em Veneno' : blockIndex === 2 ? 'Veterania Do Escudo De Veneno' : null;
-                                const exclusiveSkillField = exclusiveSkills.length > 0 && exclusiveSkillName ? skillFields.find(sf => sf.name === exclusiveSkillName) : null;
-                                const exclusiveSkillInfo = exclusiveSkills.find(es => es.name === exclusiveSkillName);
+                                const exclusiveSkillInfo = exclusiveSkills[blockIndex - 1];
+                                const exclusiveSkillField = exclusiveSkillInfo ? skillFields.find(sf => sf.name === exclusiveSkillInfo.name) : null;
                                 const exclusiveSkillFormIndex = exclusiveSkillField ? skillFields.indexOf(exclusiveSkillField) : -1;
                                 
                                 const blockBaseSkills = baseSkills.slice(blockIndex * 8, (blockIndex + 1) * 8);
 
                                 return (
-                                    <div key={`block-${blockIndex}`} className="flex items-center justify-end mb-8">
+                                    <div key={`block-${blockIndex}`} className="flex items-start justify-start mb-8 gap-4">
                                         {/* Exclusive Skill or Spacer */}
-                                        <div className="w-24 flex-shrink-0 mr-4">
+                                        <div className="w-24 flex-shrink-0 mt-8">
                                             {exclusiveSkillInfo && exclusiveSkillFormIndex !== -1 ? (
                                                  <FormField
                                                     key={exclusiveSkillField!.id}
                                                     control={form.control}
                                                     name={`skills.${exclusiveSkillFormIndex}.points`}
                                                     render={({ field }) => (
-                                                    <FormItem className="flex flex-col items-center justify-start p-1 rounded-md bg-card">
-                                                        <div className="w-20 h-20 rounded-md overflow-hidden relative">
-                                                            <Image src={exclusiveSkillInfo.imagePath} alt={exclusiveSkillInfo.name} width={80} height={80} className="object-cover" unoptimized />
+                                                    <FormItem className="flex flex-col items-center justify-start p-1 gap-2">
+                                                        <div className="w-20 h-20 rounded-md overflow-hidden relative border border-input">
+                                                            <Image src={exclusiveSkillInfo.imagePath} alt={exclusiveSkillInfo.name} layout="fill" className="object-cover" unoptimized />
                                                         </div>
                                                         <FormLabel className="text-center text-xs h-8 leading-tight flex items-center">{exclusiveSkillInfo.name}</FormLabel>
                                                         <FormControl><Input type="number" placeholder="0" {...field} className="w-20 h-8 text-center px-1" /></FormControl>
@@ -502,21 +496,21 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                                                     )}
                                                 />
                                             ) : (
-                                                <div className="w-24 h-24" /> // Spacer to maintain alignment
+                                                <div className="w-24" /> // Spacer
                                             )}
                                         </div>
 
                                         {/* Main Skill Block */}
-                                        <div className="border border-input rounded-md p-4 w-[420px] h-auto flex flex-col justify-between">
+                                        <div className="flex flex-col gap-2">
                                             {/* Skills (Images + Names) */}
-                                            <div className="grid grid-cols-4 gap-y-2 gap-x-1 mb-2">
+                                            <div className="grid grid-cols-4 gap-y-4 gap-x-2">
                                                 {blockBaseSkills.map((skillInfo) => {
                                                      const skillField = skillFields.find(sf => sf.name === skillInfo.name);
                                                      if (!skillField) return null;
                                                      return (
-                                                        <div key={skillField.id} className="flex flex-col items-center justify-start p-1 rounded-md bg-card">
-                                                            <div className="w-20 h-20 rounded-md overflow-hidden relative">
-                                                                <Image src={skillInfo.imagePath} alt={skillInfo.name} width={80} height={80} className="object-cover" unoptimized />
+                                                        <div key={skillField.id} className="flex flex-col items-center justify-start p-1 gap-1">
+                                                            <div className="w-20 h-20 rounded-md overflow-hidden relative border border-input">
+                                                                <Image src={skillInfo.imagePath} alt={skillInfo.name} layout="fill" className="object-cover" unoptimized />
                                                             </div>
                                                             <span className="text-center text-xs h-8 leading-tight flex items-center">{skillInfo.name}</span>
                                                         </div>
@@ -524,29 +518,13 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                                                 })}
                                             </div>
                                             {/* Inputs */}
-                                            <div className="grid grid-cols-4 gap-y-1 gap-x-1">
-                                            {blockBaseSkills.slice(0, 4).map((skillInfo) => {
+                                            <div className="grid grid-cols-4 gap-y-2 gap-x-2">
+                                            {blockBaseSkills.map((skillInfo) => {
                                                 const formIndex = skillFields.findIndex(sf => sf.name === skillInfo.name);
                                                 if (formIndex === -1) return null;
                                                 return(
                                                     <FormField
-                                                        key={`${skillFields[formIndex].id}-input-top`}
-                                                        control={form.control}
-                                                        name={`skills.${formIndex}.points`}
-                                                        render={({ field }) => (
-                                                            <FormItem className="flex flex-col items-center">
-                                                                <FormControl><Input type="number" placeholder="0" {...field} className="w-20 h-8 text-center px-1" /></FormControl>
-                                                            </FormItem>
-                                                        )}
-                                                    />
-                                                )
-                                            })}
-                                            {blockBaseSkills.slice(4, 8).map((skillInfo) => {
-                                                const formIndex = skillFields.findIndex(sf => sf.name === skillInfo.name);
-                                                if (formIndex === -1) return null;
-                                                return(
-                                                    <FormField
-                                                        key={`${skillFields[formIndex].id}-input-bottom`}
+                                                        key={`${skillFields[formIndex].id}-input`}
                                                         control={form.control}
                                                         name={`skills.${formIndex}.points`}
                                                         render={({ field }) => (
