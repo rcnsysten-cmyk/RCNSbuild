@@ -52,14 +52,6 @@ const allFields: { name: keyof Omit<BuildFormValues, 'class' | 'name'>; label: s
     { name: 'runes', label: 'Runas', description: 'Adicione as runas. Ex: Runa de Energia Mística', isMultiSelect: true },
 ];
 
-const availableClasses = ['Dark Wizard', 'Dark Knight', 'Elfa', 'Dark Lord'];
-const availableSubclasses: Record<string, string[]> = {
-    'Dark Wizard': ['ENE', 'AGI'],
-    'Dark Knight': ['STR', 'AGI', 'VIT'],
-    'Elfa': ['AGI', 'ENE'],
-    'Dark Lord': ['STR', 'ENE'],
-  };
-
 interface BuildFormProps {
     buildId?: string; // This will now be the className
     buildData?: SubClass;
@@ -118,17 +110,6 @@ export function BuildForm({ buildId, buildData, category, className, children }:
     name: "config",
   });
 
-  const watchedClass = form.watch('class');
-  const subclassesForSelectedClass = availableSubclasses[watchedClass] || [];
-
-  useEffect(() => {
-    // Reset subclass name if the main class changes and the selected subclass is no longer valid
-    if (!subclassesForSelectedClass.includes(form.getValues('name'))) {
-        form.setValue('name', '');
-    }
-  }, [watchedClass, subclassesForSelectedClass, form]);
-
-
   async function onSubmit(data: BuildFormValues) {
     try {
         if (buildId && className) { // Editing existing build
@@ -172,18 +153,9 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                 render={({ field }) => (
                     <FormItem>
                     <FormLabel>Classe</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                        <SelectTrigger>
-                            <SelectValue placeholder="Selecione uma classe" />
-                        </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                        {availableClasses.map((c) => (
-                            <SelectItem key={c} value={c}>{c}</SelectItem>
-                        ))}
-                        </SelectContent>
-                    </Select>
+                    <FormControl>
+                        <Input placeholder="Ex: Dark Wizard" {...field} />
+                    </FormControl>
                     <FormDescription>
                         Escolha a classe para a qual esta build se aplica.
                     </FormDescription>
@@ -197,22 +169,9 @@ export function BuildForm({ buildId, buildData, category, className, children }:
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Nome da Subclasse (Ex: ENE, AGI, STR)</FormLabel>
-                  <Select 
-                    onValueChange={field.onChange} 
-                    value={field.value}
-                    disabled={!watchedClass}
-                    >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder={watchedClass ? "Selecione uma subclasse" : "Primeiro escolha uma classe"} />
-                      </SelectTrigger>
+                   <FormControl>
+                        <Input placeholder="Ex: ENE" {...field} />
                     </FormControl>
-                    <SelectContent>
-                      {subclassesForSelectedClass.map((sc) => (
-                        <SelectItem key={sc} value={sc}>{sc}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
                   <FormDescription>
                     Dê um nome para a subclasse desta build.
                   </FormDescription>
