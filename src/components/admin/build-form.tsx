@@ -100,14 +100,12 @@ const getLevelRangeLabel = (levelRange: string) => {
 }
 
 const dwSkillOrder = [
-    'Explosao', 'Labareda', 'Impulso De Mana', 'Teletransporte', 'Maldicao', 'Fogo Infernal', 
-    'Pilar De Chamas', 'Alternancia', 'Meteoro', 'Meteoro Venenoso', 'Espírito Maligno', 
-    'Nevasca', 'Olho Do Ceifador', 'Selo De Gelo', 'Ilusao', 'Barreira Da Alma', 'Lampejo Aquatico', 
-    'Bolha', 'Conhecimento Espaco Temporal', 'Controle Espaco Temporal',
-    'Lanca Venenosa', 'Enxame De Veneno', 'Veneno Mortal', 'Sensacao De Veneno', 'Meteoro Venenoso',
-    'Veterania Em Veneno', 'Veterania Do Escudo De Veneno'
-];
-  
+    "Meteoro", "Pilar De Chamas", "Fogo Infernal", "Espirito Maligno", "Impulso De Mana",
+    "Lampejo Aquatico", "Veneno Mortal", "Barreira Da Alma", "Lanca Venenosa", "Sensacao De Veneno",
+    "Maldicao", "Enxame De Veneno", "Veterania Em Veneno", "Selo De Gelo", "Teletransporte", "Nevasca",
+    "Explosao", "Ilusao", "Meteoro Venenoso", "Alternancia", "Veterania Do Escudo De Veneno",
+    "Olho Do Ceifador", "Bolha", "Labareda", "Explosao Infernal"
+];  
 
 export function BuildForm({ buildId, buildData, category, className, children }: BuildFormProps) {
   const { toast } = useToast();
@@ -152,8 +150,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
     }
 
     return baseValues;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [buildData, buildId, className, availableSkills]);
+  }, [buildData, buildId, className, availableSkills, category]);
 
   const form = useForm<BuildFormValues>({
     resolver: zodResolver(formSchema),
@@ -559,3 +556,5 @@ export function BuildForm({ buildId, buildData, category, className, children }:
 
   return formContent;
 }
+
+    
