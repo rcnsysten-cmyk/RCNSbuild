@@ -479,6 +479,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                             <div className="flex items-center justify-end mb-8">
                                 <div className="w-20 flex-shrink-0" />
                                 <div className="border border-input rounded-md p-4 w-[420px] h-[300px]">
+                                    {/* Linha 1 de Skills */}
                                     <div className="grid grid-cols-4 gap-y-1">
                                     {skillFields.slice(0, 4).map((item, index) => {
                                         const skillInfo = baseSkills.find(s => s.name === item.name);
@@ -493,6 +494,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                                         );
                                     })}
                                     </div>
+                                    {/* Linha de Conectores */}
                                     <div className="grid grid-cols-4">
                                         {Array.from({ length: 4 }).map((_, i) => (
                                             <div key={`connector-1-${i}`} className="flex justify-center items-center h-6">
@@ -500,6 +502,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                                             </div>
                                         ))}
                                     </div>
+                                     {/* Linha 2 de Skills (Inputs) */}
                                      <div className="grid grid-cols-4 gap-y-1">
                                         {skillFields.slice(4, 8).map((item, index) => {
                                             const actualIndex = index + 4;
@@ -587,7 +590,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                             </div>
     
                             {/* Bloco 3 com Skill Exclusiva 2 */}
-                             <div className="flex items-center justify-end">
+                             <div className="flex items-center justify-end mb-8">
                                 <div className="w-20 flex flex-col items-center justify-center flex-shrink-0">
                                 {skillFields.map((item, index) => {
                                     const skillInfo = exclusiveSkills.find(s => s.name === item.name);
@@ -696,5 +699,3 @@ export function BuildForm({ buildId, buildData, category, className, children }:
 
   return formContent;
 }
-
-    
