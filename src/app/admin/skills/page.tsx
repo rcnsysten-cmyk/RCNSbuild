@@ -3,8 +3,9 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, List } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -51,16 +52,26 @@ export default function SkillsGalleryPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="flex items-center mb-2">
-        <Button variant="ghost" onClick={() => router.back()} className="mr-4">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Voltar
+      <div className="flex justify-between items-start">
+        <div>
+          <div className="flex items-center mb-2">
+            <Button variant="ghost" onClick={() => router.back()} className="mr-4">
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Voltar
+            </Button>
+            <h1 className="text-3xl font-bold">Galeria de Habilidades</h1>
+          </div>
+          <p className="text-muted-foreground mb-6 ml-16">
+            Busque e visualize as habilidades disponíveis.
+          </p>
+        </div>
+        <Button asChild variant="outline">
+          <Link href="/admin/all-skills-list">
+            <List className="mr-2 h-4 w-4" />
+            Ver Lista de Nomes
+          </Link>
         </Button>
-        <h1 className="text-3xl font-bold">Galeria de Habilidades</h1>
       </div>
-      <p className="text-muted-foreground mb-6 ml-16">
-        Busque e visualize as habilidades disponíveis.
-      </p>
       <div className="mb-6">
         <Input
           type="text"
