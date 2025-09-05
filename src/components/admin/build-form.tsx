@@ -25,6 +25,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Skeleton } from '../ui/skeleton';
 import { ScrollArea } from '../ui/scroll-area';
 import Image from 'next/image';
+import { ChevronDown } from 'lucide-react';
 
 const attributeConfigSchema = z.object({
   levelRange: z.string(),
@@ -482,20 +483,20 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                                         <div className="w-24 flex-shrink-0 mt-8">
                                             {exclusiveSkillInfo ? (
                                                 <div className="flex flex-col items-center justify-start p-1 gap-1">
-                                                <div className="w-20 h-20 rounded-md overflow-hidden relative border border-input">
-                                                    <Image src={exclusiveSkillInfo.imagePath} alt={exclusiveSkillInfo.name} layout="fill" className="object-cover" unoptimized />
-                                                </div>
-                                                <span className="text-center text-xs h-8 leading-tight flex items-center">{exclusiveSkillInfo.name}</span>
-                                                <FormField
-                                                    key={`exclusive-${exclusiveSkillInfo.name}`}
-                                                    control={form.control}
-                                                    name={`skills.${skillFields.findIndex(sf => sf.name === exclusiveSkillInfo.name)}.points`}
-                                                    render={({ field }) => (
-                                                        <FormItem>
-                                                            <FormControl><Input type="number" placeholder="0" {...field} className="w-20 h-8 text-center px-1" /></FormControl>
-                                                        </FormItem>
-                                                    )}
-                                                />
+                                                    <div className="w-20 h-20 rounded-md overflow-hidden relative border border-input">
+                                                        <Image src={exclusiveSkillInfo.imagePath} alt={exclusiveSkillInfo.name} layout="fill" className="object-cover" unoptimized />
+                                                    </div>
+                                                    <span className="text-center text-xs h-8 leading-tight flex items-center">{exclusiveSkillInfo.name}</span>
+                                                    <FormField
+                                                        key={`exclusive-${exclusiveSkillInfo.name}`}
+                                                        control={form.control}
+                                                        name={`skills.${skillFields.findIndex(sf => sf.name === exclusiveSkillInfo.name)}.points`}
+                                                        render={({ field }) => (
+                                                            <FormItem>
+                                                                <FormControl><Input type="number" placeholder="0" {...field} className="w-20 h-8 text-center px-1" /></FormControl>
+                                                            </FormItem>
+                                                        )}
+                                                    />
                                                 </div>
                                             ) : (
                                                 <div className="w-24" /> // Spacer
@@ -503,8 +504,8 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                                         </div>
 
                                         {/* Base Skills Block */}
-                                        <div className="border border-muted/50 p-4 rounded-lg">
-                                            <div className="grid grid-cols-4 gap-x-2 gap-y-[46px]">
+                                        <div className="border border-muted/50 p-4 rounded-lg w-[420px] h-[300px]">
+                                            <div className="grid grid-cols-4 gap-x-2 gap-y-10">
                                                 {blockBaseSkills.map((skillInfo) => (
                                                     <div key={skillInfo.name} className="flex flex-col items-center justify-start p-1 gap-1">
                                                         <div className="w-20 h-20 rounded-md overflow-hidden relative border border-input">
