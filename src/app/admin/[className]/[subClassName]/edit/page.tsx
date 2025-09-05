@@ -4,9 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { getBuildByClassName } from '@/lib/firestore';
 import { Build } from '@/lib/types';
-import { ChevronRight, Dna, Gem, ListTree, ShieldCheck, Swords, Star } from 'lucide-react';
+import { ChevronRight, Dna, Gem, ListTree, ShieldCheck, Swords, Star, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
-import { notFound, useParams } from 'next/navigation';
+import { notFound, useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -21,6 +21,7 @@ const categoryMap = [
 
 export default function EditBuildCategorySelectionPage() {
     const params = useParams();
+    const router = useRouter();
     const { className, subClassName } = params;
 
     const [build, setBuild] = useState<Build | null>(null);
@@ -77,6 +78,10 @@ export default function EditBuildCategorySelectionPage() {
 
     return (
         <div className="container mx-auto px-4 py-8">
+            <Button variant="ghost" onClick={() => router.back()} className="mb-4">
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Voltar
+            </Button>
             <h1 className="text-3xl font-bold mb-2">
                 Editar Build: {decodedClassName} - {decodedSubClassName}
             </h1>

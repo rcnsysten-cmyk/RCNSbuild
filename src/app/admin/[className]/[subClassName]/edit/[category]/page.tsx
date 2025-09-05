@@ -6,6 +6,8 @@ import { Build, SubClass } from '@/lib/types';
 import { notFound, useParams, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft } from 'lucide-react';
 
 const validCategories = ['config', 'skills', 'constellation', 'properties', 'sets', 'runes'];
 
@@ -94,6 +96,10 @@ export default function EditCategoryPage() {
           <>
             <div className="flex justify-between items-center mb-6">
                 <div>
+                    <Button variant="ghost" onClick={() => router.back()} className="mb-4">
+                        <ArrowLeft className="mr-2 h-4 w-4" />
+                        Voltar
+                    </Button>
                     <h1 className="text-3xl font-bold">
                         Editando {categoryName}: {decodedClassName} - {decodedSubClassName}
                     </h1>

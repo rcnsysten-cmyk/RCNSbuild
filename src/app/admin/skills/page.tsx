@@ -1,8 +1,11 @@
 'use client';
 
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { ArrowLeft } from 'lucide-react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -13,6 +16,7 @@ interface Skill {
 }
 
 export default function SkillsGalleryPage() {
+  const router = useRouter();
   const [skills, setSkills] = useState<Skill[]>([]);
   const [filteredSkills, setFilteredSkills] = useState<Skill[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -47,8 +51,14 @@ export default function SkillsGalleryPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-2">Galeria de Habilidades</h1>
-      <p className="text-muted-foreground mb-6">
+      <div className="flex items-center mb-2">
+        <Button variant="ghost" onClick={() => router.back()} className="mr-4">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Voltar
+        </Button>
+        <h1 className="text-3xl font-bold">Galeria de Habilidades</h1>
+      </div>
+      <p className="text-muted-foreground mb-6 ml-16">
         Busque e visualize as habilidades disponíveis.
       </p>
       <div className="mb-6">
