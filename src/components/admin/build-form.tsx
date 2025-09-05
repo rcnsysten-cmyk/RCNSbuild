@@ -17,7 +17,6 @@ import { useRouter } from 'next/navigation';
 import { MultiSelect } from '@/components/ui/multi-select';
 import { SubClass } from '@/lib/data';
 import { Input } from '../ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import React from 'react';
 import { Button } from '../ui/button';
 
@@ -120,68 +119,66 @@ export function BuildForm({ buildData, category, children }: BuildFormProps) {
       <form onSubmit={form.handleSubmit(onSubmit)} id="build-form" className="space-y-8">
         {category === 'config' ? (
              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-             {fields.map((item, index) => (
-               <Card key={item.id} className="bg-muted/30 border-muted/50">
-                 <CardHeader>
-                   <CardTitle className="text-center">{getLevelRangeLabel(item.levelRange)}</CardTitle>
-                 </CardHeader>
-                 <CardContent className="space-y-4">
-                    <FormField
-                      control={form.control}
-                      name={`config.${index}.str`}
-                      render={({ field }) => (
-                        <FormItem className="flex items-center justify-between">
-                          <FormLabel>FOR</FormLabel>
-                          <FormControl>
-                            <Input type="number" {...field} className="flex-1 bg-transparent border-0 text-right max-w-24" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name={`config.${index}.agi`}
-                      render={({ field }) => (
-                        <FormItem className="flex items-center justify-between">
-                           <FormLabel>AGI</FormLabel>
-                           <FormControl>
-                             <Input type="number" {...field} className="flex-1 bg-transparent border-0 text-right max-w-24" />
-                           </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name={`config.${index}.vit`}
-                      render={({ field }) => (
-                        <FormItem className="flex items-center justify-between">
-                           <FormLabel>VIT</FormLabel>
-                           <FormControl>
-                             <Input type="number" {...field} className="flex-1 bg-transparent border-0 text-right max-w-24" />
-                           </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name={`config.${index}.ene`}
-                      render={({ field }) => (
-                        <FormItem className="flex items-center justify-between">
-                           <FormLabel>ENE</FormLabel>
-                           <FormControl>
-                             <Input type="number" {...field} className="flex-1 bg-transparent border-0 text-right max-w-24" />
-                           </FormControl>
-                           <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                 </CardContent>
-               </Card>
-             ))}
-           </div>
+                {fields.map((item, index) => (
+                    <div key={item.id} className="flex flex-col gap-4 p-4 rounded-lg bg-muted/30 border border-muted/50">
+                        <h3 className="text-center font-bold">{getLevelRangeLabel(item.levelRange)}</h3>
+                        <div className="flex flex-col gap-2">
+                            <FormField
+                                control={form.control}
+                                name={`config.${index}.str`}
+                                render={({ field }) => (
+                                    <FormItem className="flex items-center justify-between">
+                                        <FormLabel>FOR</FormLabel>
+                                        <FormControl>
+                                            <Input type="number" {...field} className="w-24 bg-transparent border-0 text-right" />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name={`config.${index}.agi`}
+                                render={({ field }) => (
+                                    <FormItem className="flex items-center justify-between">
+                                        <FormLabel>AGI</FormLabel>
+                                        <FormControl>
+                                            <Input type="number" {...field} className="w-24 bg-transparent border-0 text-right" />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name={`config.${index}.vit`}
+                                render={({ field }) => (
+                                    <FormItem className="flex items-center justify-between">
+                                        <FormLabel>VIT</FormLabel>
+                                        <FormControl>
+                                            <Input type="number" {...field} className="w-24 bg-transparent border-0 text-right" />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name={`config.${index}.ene`}
+                                render={({ field }) => (
+                                    <FormItem className="flex items-center justify-between">
+                                        <FormLabel>ENE</FormLabel>
+                                        <FormControl>
+                                            <Input type="number" {...field} className="w-24 bg-transparent border-0 text-right" />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+                    </div>
+                ))}
+            </div>
         ) : fieldInfo ? (
             <FormField
                 control={form.control}
