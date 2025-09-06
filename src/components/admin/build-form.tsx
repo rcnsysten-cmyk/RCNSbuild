@@ -474,37 +474,67 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                         <div className="flex flex-col items-center gap-y-8">
                             {Array.from({ length: 3 }).map((_, blockIndex) => {
                                 const blockBaseSkills = baseSkills.slice(blockIndex * 8, (blockIndex + 1) * 8);
+                                const exclusiveSkill = exclusiveSkills[blockIndex];
 
                                 if (blockBaseSkills.length === 0) return null;
 
                                 return (
-                                    <div key={`block-${blockIndex}`} className="flex items-center justify-center">
-                                          <div className="grid grid-cols-4 gap-x-8 gap-y-20">
-                                            {blockBaseSkills.map((skillInfo) => {
-                                              const skillFieldIndex = skillFields.findIndex(sf => sf.name === skillInfo.name);
-                                              return (
-                                                <div key={skillInfo.name} className="flex flex-col items-center p-2 gap-2 border rounded-lg w-28">
-                                                  <div className="w-20 h-20 rounded-md overflow-hidden relative">
-                                                    <Image src={skillInfo.imagePath} alt={skillInfo.name} layout="fill" className="object-cover" unoptimized />
-                                                  </div>
-                                                  <span className="text-center text-xs h-8 leading-tight flex items-center justify-center">{skillInfo.name}</span>
-                                                  {skillFieldIndex !== -1 && (
-                                                    <FormField
-                                                      key={`${skillInfo.name}-input`}
-                                                      control={form.control}
-                                                      name={`skills.${skillFieldIndex}.points`}
-                                                      render={({ field }) => (
-                                                        <FormItem>
-                                                          <FormControl><Input type="number" placeholder="0" {...field} className="w-20 h-8 text-center px-1" /></FormControl>
-                                                        </FormItem>
-                                                      )}
-                                                    />
-                                                  )}
+                                    <React.Fragment key={`fragment-block-${blockIndex}`}>
+                                        <div className="flex items-center justify-center">
+                                            <div className="grid grid-cols-4 gap-x-8 gap-y-10">
+                                                {blockBaseSkills.map((skillInfo) => {
+                                                const skillFieldIndex = skillFields.findIndex(sf => sf.name === skillInfo.name);
+                                                return (
+                                                    <div key={skillInfo.name} className="flex flex-col items-center p-2 gap-2 border rounded-lg w-28">
+                                                    <div className="w-20 h-20 rounded-md overflow-hidden relative">
+                                                        <Image src={skillInfo.imagePath} alt={skillInfo.name} layout="fill" className="object-cover" unoptimized />
+                                                    </div>
+                                                    <span className="text-center text-xs h-8 leading-tight flex items-center justify-center">{skillInfo.name}</span>
+                                                    {skillFieldIndex !== -1 && (
+                                                        <FormField
+                                                        key={`${skillInfo.name}-input`}
+                                                        control={form.control}
+                                                        name={`skills.${skillFieldIndex}.points`}
+                                                        render={({ field }) => (
+                                                            <FormItem>
+                                                            <FormControl><Input type="number" placeholder="0" {...field} className="w-20 h-8 text-center px-1" /></FormControl>
+                                                            </FormItem>
+                                                        )}
+                                                        />
+                                                    )}
+                                                    </div>
+                                                );
+                                                })}
+                                            </div>
+                                        </div>
+
+                                        {exclusiveSkill && blockIndex < 2 && (
+                                            <div className="flex justify-center w-full">
+                                                <div key={exclusiveSkill.name} className="flex flex-col items-center p-2 gap-2 border rounded-lg w-28">
+                                                    <div className="w-20 h-20 rounded-md overflow-hidden relative">
+                                                        <Image src={exclusiveSkill.imagePath} alt={exclusiveSkill.name} layout="fill" className="object-cover" unoptimized />
+                                                    </div>
+                                                    <span className="text-center text-xs h-8 leading-tight flex items-center justify-center">{exclusiveSkill.name}</span>
+                                                    {(() => {
+                                                        const skillFieldIndex = skillFields.findIndex(sf => sf.name === exclusiveSkill.name);
+                                                        if (skillFieldIndex === -1) return null;
+                                                        return (
+                                                        <FormField
+                                                            key={`${exclusiveSkill.name}-input`}
+                                                            control={form.control}
+                                                            name={`skills.${skillFieldIndex}.points`}
+                                                            render={({ field }) => (
+                                                                <FormItem>
+                                                                    <FormControl><Input type="number" placeholder="0" {...field} className="w-20 h-8 text-center px-1" /></FormControl>
+                                                                </FormItem>
+                                                            )}
+                                                        />
+                                                        )
+                                                    })()}
                                                 </div>
-                                              );
-                                            })}
-                                          </div>
-                                    </div>
+                                            </div>
+                                        )}
+                                    </React.Fragment>
                                 )
                             })}
                         </div>
