@@ -472,15 +472,14 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                     ) : (
                     <ScrollArea className="h-[950px] pr-4">
                         <div className="flex flex-col items-center gap-y-8">
-                            {Array.from({ length: 1 }).map((_, blockIndex) => {
+                            {Array.from({ length: 2 }).map((_, blockIndex) => {
                                 const blockBaseSkills = baseSkills.slice(blockIndex * 8, (blockIndex + 1) * 8);
 
+                                if (blockBaseSkills.length === 0) return null;
+
                                 return (
-                                    <div key={`block-${blockIndex}`} className="flex items-start gap-x-8">
-                                        
-                                        {/* Base Skills Block */}
-                                        {blockBaseSkills.length > 0 && (
-                                          <div className="grid grid-cols-4 gap-x-8 gap-y-4">
+                                    <div key={`block-${blockIndex}`} className="flex items-center justify-center">
+                                          <div className="grid grid-cols-4 gap-x-8 gap-y-20">
                                             {blockBaseSkills.map((skillInfo) => {
                                               const skillFieldIndex = skillFields.findIndex(sf => sf.name === skillInfo.name);
                                               return (
@@ -505,7 +504,6 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                                               );
                                             })}
                                           </div>
-                                        )}
                                     </div>
                                 )
                             })}
