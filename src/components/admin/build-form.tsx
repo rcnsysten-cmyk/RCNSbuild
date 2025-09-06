@@ -472,7 +472,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                     ) : (
                     <ScrollArea className="h-[950px] pr-4">
                         <div className="flex flex-col items-center gap-y-8">
-                            {Array.from({ length: 2 }).map((_, blockIndex) => {
+                            {Array.from({ length: 3 }).map((_, blockIndex) => {
                                 const blockBaseSkills = baseSkills.slice(blockIndex * 8, (blockIndex + 1) * 8);
 
                                 if (blockBaseSkills.length === 0) return null;
