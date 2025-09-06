@@ -473,35 +473,11 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                     <ScrollArea className="h-[950px] pr-4">
                         <div className="flex flex-col items-start gap-y-8">
                             {Array.from({ length: 1 }).map((_, blockIndex) => {
-                                const exclusiveSkillInfo = exclusiveSkills[blockIndex];
                                 const blockBaseSkills = baseSkills.slice(blockIndex * 8, (blockIndex + 1) * 8);
 
                                 return (
                                     <div key={`block-${blockIndex}`} className="flex items-start gap-x-4">
-                                        {/* Exclusive Skill */}
-                                        <div className="flex-shrink-0 mt-8">
-                                            {exclusiveSkillInfo ? (
-                                                <div className="flex flex-col items-center justify-start p-2 gap-2 border rounded-lg w-28 h-40">
-                                                    <div className="w-20 h-20 rounded-md overflow-hidden relative">
-                                                        <Image src={exclusiveSkillInfo.imagePath} alt={exclusiveSkillInfo.name} layout="fill" className="object-cover" unoptimized />
-                                                    </div>
-                                                    <span className="text-center text-xs h-8 leading-tight flex items-center">{exclusiveSkillInfo.name}</span>
-                                                    <FormField
-                                                        key={`exclusive-${exclusiveSkillInfo.name}`}
-                                                        control={form.control}
-                                                        name={`skills.${skillFields.findIndex(sf => sf.name === exclusiveSkillInfo.name)}.points`}
-                                                        render={({ field }) => (
-                                                            <FormItem>
-                                                                <FormControl><Input type="number" placeholder="0" {...field} className="w-20 h-8 text-center px-1" /></FormControl>
-                                                            </FormItem>
-                                                        )}
-                                                    />
-                                                </div>
-                                            ) : (
-                                                <div className="w-28" /> // Spacer
-                                            )}
-                                        </div>
-
+                                        
                                         {/* Base Skills Block */}
                                         {blockBaseSkills.length > 0 && (
                                           <div className="grid grid-cols-4 gap-4">
