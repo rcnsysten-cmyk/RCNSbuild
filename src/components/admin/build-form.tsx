@@ -17,7 +17,7 @@ import { useRouter } from 'next/navigation';
 import { MultiSelect } from '@/components/ui/multi-select';
 import { SubClass, SkillConfig } from '@/lib/types';
 import { Input } from '../ui/input';
-import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { Button } from '../ui/button';
 import { createOrUpdateBuild, updateBuild } from '@/lib/firestore';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
@@ -471,24 +471,24 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                         </div>
                     ) : (
                     <ScrollArea className="h-[950px] pr-4">
-                        <div className="flex flex-col items-start gap-y-8">
+                        <div className="flex flex-col items-center gap-y-8">
                             {Array.from({ length: 1 }).map((_, blockIndex) => {
                                 const blockBaseSkills = baseSkills.slice(blockIndex * 8, (blockIndex + 1) * 8);
 
                                 return (
-                                    <div key={`block-${blockIndex}`} className="flex items-start gap-x-4">
+                                    <div key={`block-${blockIndex}`} className="flex items-start gap-x-8">
                                         
                                         {/* Base Skills Block */}
                                         {blockBaseSkills.length > 0 && (
-                                          <div className="grid grid-cols-4 gap-4">
+                                          <div className="grid grid-cols-4 gap-x-8 gap-y-4">
                                             {blockBaseSkills.map((skillInfo) => {
                                               const skillFieldIndex = skillFields.findIndex(sf => sf.name === skillInfo.name);
                                               return (
-                                                <div key={skillInfo.name} className="flex flex-col items-center justify-start p-2 gap-2 border rounded-lg w-28 h-40">
+                                                <div key={skillInfo.name} className="flex flex-col items-center p-2 gap-2 border rounded-lg w-28">
                                                   <div className="w-20 h-20 rounded-md overflow-hidden relative">
                                                     <Image src={skillInfo.imagePath} alt={skillInfo.name} layout="fill" className="object-cover" unoptimized />
                                                   </div>
-                                                  <span className="text-center text-xs h-8 leading-tight flex items-center">{skillInfo.name}</span>
+                                                  <span className="text-center text-xs h-8 leading-tight flex items-center justify-center">{skillInfo.name}</span>
                                                   {skillFieldIndex !== -1 && (
                                                     <FormField
                                                       key={`${skillInfo.name}-input`}
