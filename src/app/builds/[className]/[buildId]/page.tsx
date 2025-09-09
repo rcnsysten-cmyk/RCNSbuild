@@ -6,7 +6,7 @@ import { getBuildById } from '@/lib/firestore';
 import { Build, SubClass } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Dna, Gem, ListTree, ShieldCheck, Swords, Star, Info } from 'lucide-react';
+import { ArrowLeft, Dna, Gem, ListTree, ShieldCheck, Swords, Star, Info, Eye } from 'lucide-react';
 import { DkIcon, DlIcon, DwIcon, ElfaIcon } from '@/components/icons';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
