@@ -146,6 +146,7 @@ export function ConstellationTable({ value, onChange }: ConstellationTableProps)
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
         <Button
+          type="button"
           variant="outline"
           size="sm"
           onClick={() => setCurrentPage(currentPage - 1)}
@@ -155,6 +156,7 @@ export function ConstellationTable({ value, onChange }: ConstellationTableProps)
           Anterior
         </Button>
         <Button
+          type="button"
           variant="outline"
           size="sm"
           onClick={() => setCurrentPage(currentPage + 1)}
