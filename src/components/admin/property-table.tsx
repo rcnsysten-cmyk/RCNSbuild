@@ -12,8 +12,10 @@ import {
 import { Input } from "../ui/input";
 import { PropertyPage } from "@/lib/types";
 import { Button } from "../ui/button";
-import { ChevronLeft, ChevronRight, Eye } from "lucide-react";
+import { ChevronLeft, ChevronRight, Eye, Info } from "lucide-react";
 import { PropertySummaryDialog } from "./property-summary-dialog";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 
 interface PropertyTableProps {
     value: PropertyPage[];
@@ -27,9 +29,13 @@ export function PropertyTable({ value, onChange, data }: PropertyTableProps) {
   
     if (!data || data.length === 0) {
       return (
-        <div className="text-center text-muted-foreground p-8 border rounded-md">
-          Nenhuma propriedade disponível para esta classe/subclasse.
-        </div>
+        <Alert variant="default" className="border-yellow-500/50 text-yellow-500 [&>svg]:text-yellow-500">
+          <Info className="h-4 w-4" />
+          <AlertTitle>Configuração Pendente</AlertTitle>
+          <AlertDescription>
+            A aba de Propriedades para esta classe ainda não foi configurada. Por favor, aguarde as atualizações futuras antes de adicionar ou editar estes dados.
+          </AlertDescription>
+        </Alert>
       );
     }
   
