@@ -71,39 +71,29 @@ export function ConstellationTable({ value, onChange, currentPage }: Constellati
   const [selections, setSelections] = useState<Record<number, "left" | "right">>({});
 
   useEffect(() => {
-    const initialSelections: Record<number, "left" | "right"> = {};
-    const dataMap = new Map(constellationData.map(row => [row.level, row]));
+    const newSelections: Record<number, "left" | "right"> = {};
     const valueSet = new Set(value);
-  
-    value.forEach(selectedValue => {
-      for (const row of constellationData) {
-        if (row.left === selectedValue) {
-          initialSelections[row.level] = "left";
-          break; 
-        }
-        if (row.right === selectedValue) {
-          initialSelections[row.level] = "right";
-          break;
-        }
-      }
-    });
 
-    const recoveredSelections: Record<number, "left" | "right"> = {};
-    const allSelectedValues = new Set(value);
-
-    for(const item of constellationData){
-        if(allSelectedValues.has(item.left)){
-            recoveredSelections[item.level] = "left";
-        }
-        if(allSelectedValues.has(item.right)){
-            recoveredSelections[item.level] = "right";
+    for (const row of constellationData) {
+        if (valueSet.has(row.left)) {
+            newSelections[row.level] = "left";
+        } else if (valueSet.has(row.right)) {
+            newSelections[row.level] = "right";
         }
     }
-    setSelections(recoveredSelections);
+    setSelections(newSelections);
   }, [value]);
 
   const handleSelect = (level: number, choice: "left" | "right") => {
-    const newSelections = { ...selections, [level]: choice };
+    const newSelections = { ...selections };
+
+    // Toggle selection for the same level
+    if (newSelections[level] === choice) {
+      delete newSelections[level];
+    } else {
+      newSelections[level] = choice;
+    }
+
     setSelections(newSelections);
 
     const newValues = constellationData

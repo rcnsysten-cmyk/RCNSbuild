@@ -543,7 +543,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                                             </div>
                                         </div>
 
-                                        {exclusiveSkill && blockIndex < 2 && (
+                                        {exclusiveSkill && (
                                             <div className="flex justify-center w-full my-4">
                                                 <div key={exclusiveSkill.name} className="flex flex-col items-center p-2 gap-2 border rounded-lg w-28">
                                                     <div className="w-20 h-20 rounded-md overflow-hidden relative">
