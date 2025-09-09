@@ -29,6 +29,9 @@ import { ConstellationTable } from './constellation-table';
 import { getConstellationData } from '@/lib/constellation-data';
 import { PropertyTable } from './property-table';
 import { getPropertyData } from '@/lib/property-data';
+import { SetsGallery } from './sets-gallery';
+import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
+import { Info } from 'lucide-react';
 
 const attributeConfigSchema = z.object({
   levelRange: z.string(),
@@ -85,20 +88,6 @@ const classSubclassMap: { [key: string]: string[] } = {
 const classNames = Object.keys(classSubclassMap);
 
 const predefinedOptions: { [key: string]: string[] } = {
-    properties: [
-      "Aumento de Dano Mágico: 20%",
-      "Aumento de Dano Físico: 15%",
-      "Redução de Dano: 10%",
-      "Taxa de Acerto: 5%",
-      "Velocidade de Ataque: 10",
-      "HP Máximo: +500",
-    ],
-    sets: [
-        "Grand Soul",
-        "Dragon Knight",
-        "Venom Mist",
-        "Legendary",
-    ],
     runes: [
         "Runa de Energia Mística",
         "Runa de Força Bruta",
@@ -113,7 +102,7 @@ const allFields: { name: keyof Omit<BuildFormValues, 'class' | 'name' | 'buildNa
     { name: 'skills', label: 'Habilidades', description: 'Defina os pontos para cada habilidade.' },
     { name: 'constellation', label: 'Constelação', description: 'Selecione os pontos da constelação clicando em uma das opções de cada nível.' },
     { name: 'properties', label: 'Propriedade', description: 'Adicione as propriedades para cada nível.' },
-    { name: 'sets', label: 'Conjuntos', description: 'Adicione os conjuntos (sets). Ex: Grand Soul', isMultiSelect: true },
+    { name: 'sets', label: 'Conjuntos', description: 'Veja os conjuntos (sets) disponíveis para esta build.' },
     { name: 'runes', label: 'Runas', description: 'Adicione as runas. Ex: Runa de Energia Mística', isMultiSelect: true },
 ];
 
@@ -329,12 +318,14 @@ export function BuildForm({ buildId, buildData, category, className, children }:
             if (category) {
                 if (category === 'skills') {
                     updateData.skills = dataToSave.skills;
-                } else {
+                } else if (category === 'sets') {
+                    // Sets are visual only for now, so we don't save anything.
+                    // We can just show the toast and go back.
+                }
+                else {
                     (updateData as any)[category] = (dataToSave as any)[category];
                 }
             } else {
-                // If no category, it means we are in a state where we can update everything.
-                // This branch might not be used with the current flow but good for future.
                  Object.assign(updateData, {
                     config: dataToSave.config,
                     runes: dataToSave.runes,
@@ -344,7 +335,10 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                  });
             }
 
-            await updateBuild(buildId, data.name, updateData);
+            if (Object.keys(updateData).length > 0) {
+              await updateBuild(buildId, data.name, updateData);
+            }
+            
             toast({
                 title: `Build Atualizada!`,
                 description: `A build para ${data.class} - ${data.name} foi salva com sucesso.`,
@@ -373,7 +367,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
 
   const fieldInfo = allFields.find(f => f.name === category);
   
-  const submitButton = <Button type="submit" form="build-form">Salvar Alterações</Button>;
+  const submitButton = <Button type="submit" form="build-form" disabled={category === 'sets'}>Salvar Alterações</Button>;
 
   const formContent = (
     <>
@@ -637,6 +631,18 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                                         onChange={handlePropertyChange}
                                         data={propertyData}
                                     />
+                                ) : fieldInfo.name === 'sets' ? (
+                                    className?.toLowerCase() === 'dark wizard' && buildData?.name.toLowerCase() === 'agi' ? (
+                                        <SetsGallery className={className} subClassName={buildData.name} />
+                                    ) : (
+                                        <Alert variant="default" className="border-yellow-500/50 text-yellow-500 [&>svg]:text-yellow-500">
+                                            <Info className="h-4 w-4" />
+                                            <AlertTitle>Configuração Pendente</AlertTitle>
+                                            <AlertDescription>
+                                                A galeria de Conjuntos para esta classe ainda não foi configurada. Por favor, aguarde as atualizações futuras.
+                                            </AlertDescription>
+                                        </Alert>
+                                    )
                                 ) : fieldInfo.isMultiSelect ? (
                                     <MultiSelect
                                         selected={field.value as string[]}
