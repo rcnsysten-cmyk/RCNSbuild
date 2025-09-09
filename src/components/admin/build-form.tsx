@@ -15,7 +15,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { MultiSelect } from '@/components/ui/multi-select';
-import { SubClass, SkillConfig } from '@/lib/types';
+import { SubClass, SkillConfig, PropertyPage } from '@/lib/types';
 import { Input } from '../ui/input';
 import React, { useState, useEffect, useMemo } from 'react';
 import { Button } from '../ui/button';
@@ -26,7 +26,9 @@ import { Skeleton } from '../ui/skeleton';
 import { ScrollArea } from '../ui/scroll-area';
 import Image from 'next/image';
 import { ConstellationTable } from './constellation-table';
-import { getConstellationData, ConstellationData } from '@/lib/constellation-data';
+import { getConstellationData } from '@/lib/constellation-data';
+import { PropertyTable } from './property-table';
+import { getPropertyData } from '@/lib/property-data';
 
 const attributeConfigSchema = z.object({
   levelRange: z.string(),
@@ -41,6 +43,14 @@ const skillConfigSchema = z.object({
     points: z.coerce.number().min(0, "Deve ser um número positivo.").default(0),
 });
 
+const propertyPageSchema = z.object({
+    page: z.number(),
+    title: z.string(),
+    left: z.array(z.union([z.string(), z.coerce.number()])),
+    middle: z.array(z.union([z.string(), z.coerce.number()])),
+    right: z.array(z.union([z.string(), z.coerce.number()])),
+});
+
 const formSchema = z.object({
   buildName: z.string().min(1, "O nome da build é obrigatório."),
   class: z.string().min(1, "Selecione uma classe."),
@@ -48,7 +58,7 @@ const formSchema = z.object({
   config: z.array(attributeConfigSchema),
   runes: z.array(z.string()),
   skills: z.array(skillConfigSchema),
-  properties: z.array(z.string()),
+  properties: z.array(propertyPageSchema),
   constellation: z.array(z.string()),
   sets: z.array(z.string()),
 });
@@ -98,7 +108,7 @@ const allFields: { name: keyof Omit<BuildFormValues, 'class' | 'name' | 'buildNa
     { name: 'config', label: 'Atributos', description: 'Defina os pontos de atributos para cada faixa de nível.' },
     { name: 'skills', label: 'Habilidades', description: 'Defina os pontos para cada habilidade.' },
     { name: 'constellation', label: 'Constelação', description: 'Selecione os pontos da constelação clicando em uma das opções de cada nível.' },
-    { name: 'properties', label: 'Propriedade', description: 'Adicione as propriedades. Ex: Aumento de Dano Mágico: 20%', isMultiSelect: true },
+    { name: 'properties', label: 'Propriedade', description: 'Adicione as propriedades para cada nível.' },
     { name: 'sets', label: 'Conjuntos', description: 'Adicione os conjuntos (sets). Ex: Grand Soul', isMultiSelect: true },
     { name: 'runes', label: 'Runas', description: 'Adicione as runas. Ex: Runa de Energia Mística', isMultiSelect: true },
 ];
@@ -147,6 +157,13 @@ export function BuildForm({ buildId, buildData, category, className, children }:
     return [];
   }, [className, buildData?.name]);
 
+  const propertyData = useMemo(() => {
+    if (className && buildData?.name) {
+      return getPropertyData(className, buildData.name);
+    }
+    return [];
+  }, [className, buildData?.name]);
+
   const defaultValues = useMemo(() => {
     const baseValues = buildData ? {
         buildName: buildId || '',
@@ -158,7 +175,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
         }),
         runes: buildData.runes || [],
         skills: buildData.skills || [],
-        properties: buildData.properties || [],
+        properties: buildData.properties?.length > 0 ? buildData.properties : propertyData,
         constellation: buildData.constellation || [],
         sets: buildData.sets || [],
       } : {
@@ -168,7 +185,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
         config: levelRanges.map(range => ({ levelRange: range, str: 0, agi: 0, vit: 0, ene: 0 })),
         runes: [],
         skills: [],
-        properties: [],
+        properties: propertyData,
         constellation: [],
         sets: [],
       };
@@ -182,7 +199,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
     }
 
     return baseValues;
-  }, [buildData, buildId, className, allAvailableSkills, category]);
+  }, [buildData, buildId, className, allAvailableSkills, category, propertyData]);
 
   const form = useForm<BuildFormValues>({
     resolver: zodResolver(formSchema),
@@ -195,6 +212,11 @@ export function BuildForm({ buildId, buildData, category, className, children }:
   const { fields: configFields } = useFieldArray({
     control: form.control,
     name: 'config',
+  });
+
+  const { fields: propertyFields } = useFieldArray({
+    control: form.control,
+    name: 'properties',
   });
 
   useEffect(() => {
@@ -325,7 +347,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
               router.refresh();
 
         } else { // Creating new build
-            await createOrUpdateBuild(data.buildName, { class: data.class, name: data.name, skills: dataToSave.skills });
+            await createOrUpdateBuild(data.buildName, { class: data.class, name: data.name, skills: dataToSave.skills, properties: dataToSave.properties });
             toast({
                 title: `Build Criada!`,
                 description: `A build ${data.buildName} foi criada com sucesso.`,
@@ -600,9 +622,14 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                             <FormControl>
                                 {fieldInfo.name === 'constellation' ? (
                                     <ConstellationTable
-                                        value={field.value as string[]}
+                                        value={field.value || []}
                                         onChange={field.onChange}
                                         data={constellationData}
+                                    />
+                                ) : fieldInfo.name === 'properties' ? (
+                                    <PropertyTable
+                                        value={field.value || []}
+                                        onChange={field.onChange}
                                     />
                                 ) : fieldInfo.isMultiSelect ? (
                                     <MultiSelect

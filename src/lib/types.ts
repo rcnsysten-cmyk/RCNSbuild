@@ -10,12 +10,20 @@ export interface AttributeConfig {
     name: string;
     points: number;
   }
+
+  export interface PropertyPage {
+    page: number;
+    title: string;
+    left: (string | number)[];
+    middle: (string | number)[];
+    right: (string | number)[];
+  }
   
   export interface SubClass {
     name: string;
     runes: string[];
     skills: SkillConfig[];
-    properties: string[];
+    properties: PropertyPage[];
     config: AttributeConfig[];
     constellation: string[];
     sets: string[];
