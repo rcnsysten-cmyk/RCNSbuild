@@ -19,17 +19,17 @@ const attackSectionPage1: PropertySection = {
 const defenseSectionPage2: PropertySection = {
   title: "Propriedade de Defesa",
   rows: [
-      [9, 10, 10],
-      [9, null, 15],
-      [null, 1, null],
-      [6, 0, 10],
-      [5, 1, 5],
-      [1, 10, 1],
-      [10, null, 0],
-      [10, null, 0],
-      [10, null, 0],
-      [10, null, 0],
-  ]
+    [9, 10, 10],
+    [9, null, 15],
+    [null, 1, null],
+    [6, 0, 10],
+    [5, 1, 5],
+    [1, 10, 1],
+    [10, null, 0],
+    [10, null, 0],
+    [10, null, 0],
+    [10, null, 0],
+  ],
 };
 
 const attackSectionPage3: PropertySection = {
@@ -194,22 +194,44 @@ const attackSectionPage12: PropertySection = {
 
 const defenseSectionPage13: PropertySection = {
     title: "Propriedade de Defesa",
-    rows: Array(10).fill([0, 0, 0]).map(() => [0, 0, 0])
+    rows: [
+        [10, 10, 10],
+        [15, null, 15],
+        [null, 10, null],
+        [10, 0, 10],
+        [5, 1, 5],
+        [1, 10, 1],
+        [10, null, 10],
+        [10, 0, 10],
+        [10, null, 10],
+        [10, null, 10],
+    ]
 };
 
 const commonSectionPage14: PropertySection = {
     title: "Propriedade Comum",
-    rows: Array(10).fill([0, 0, 0]).map(() => [0, 0, 0])
+    rows: [
+        [9, null, 6],
+        [15, 10, 6],
+        [9, null, 9],
+        [15, null, 15],
+        [15, null, 15],
+        [10, null, 15],
+        [10, null, 10],
+        [10, null, 10],
+        [10, null, 10],
+        [10, null, 10],
+    ]
 };
 
 const defenseSectionPage15: PropertySection = {
     title: "Propriedade de Defesa",
-    rows: Array(10).fill([0, 0, 0]).map(() => [0, 0, 0])
+    rows: Array(10).fill([0, 0, 0]).map(() => [0, 0, 0]) as [number | null, number | null, number | null][]
 };
 
 const commonSectionPage16: PropertySection = {
     title: "Propriedade Comum",
-    rows: Array(10).fill([0, 0, 0]).map(() => [0, 0, 0])
+    rows: Array(10).fill([0, 0, 0]).map(() => [0, 0, 0]) as [number | null, number | null, number | null][]
 };
 
 const pageTypeMap: { [key: number]: PropertySection[] } = {
@@ -244,6 +266,8 @@ const pageTitleMap: { [key: number]: string } = {
     10: "Parte 10 - Nível 810 a 890 (80 pontos)",
     11: "Parte 11 - Nível 890 a 970 (80 pontos)",
     12: "Parte 12 - Nível 970 a 986 (16 pontos)",
+    13: "Parte 13 - Nível 986 a 997 (11 pontos)",
+    14: "Parte 14 - Nível 997 a 1071 (74 pontos)",
 }
 
 
