@@ -11,7 +11,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "../ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export const constellationData = [
   // Page 1
@@ -72,17 +71,21 @@ export function ConstellationTable({ value, onChange, currentPage }: Constellati
 
   useEffect(() => {
     const newSelections: Record<number, "left" | "right"> = {};
-    const valueSet = new Set(value);
-
-    for (const row of constellationData) {
-        if (valueSet.has(row.left)) {
-            newSelections[row.level] = "left";
-        } else if (valueSet.has(row.right)) {
-            newSelections[row.level] = "right";
+    // Rebuild the selections map based on the values from the form.
+    // This is critical to correctly display the saved state.
+    for (const val of value) {
+      const row = constellationData.find(r => r.left === val || r.right === val);
+      if (row) {
+        if (row.left === val) {
+          newSelections[row.level] = "left";
+        } else if (row.right === val) {
+          newSelections[row.level] = "right";
         }
+      }
     }
     setSelections(newSelections);
   }, [value]);
+
 
   const handleSelect = (level: number, choice: "left" | "right") => {
     const newSelections = { ...selections };
