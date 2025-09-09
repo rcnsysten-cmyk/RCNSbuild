@@ -1,14 +1,14 @@
 import { PropertyPage, PropertySection } from "./types";
 
-const attackSection: PropertySection = {
+const attackSectionPage1: PropertySection = {
   title: "Propriedade de Ataque",
   rows: [
       [6, 8, 15],
       [9, null, 10],
       [null, 10, null],
-      [6, 1, 6],
-      [5, 10, 5],
-      [1, 1, 1],
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0],
       [0, 0, 0],
       [0, 0, 0],
       [0, 0, 0],
@@ -16,7 +16,23 @@ const attackSection: PropertySection = {
   ]
 };
 
-const defenseSection: PropertySection = {
+const attackSectionPage3: PropertySection = {
+    title: "Propriedade de Ataque",
+    rows: [
+        [6, 8, 15],
+        [9, null, 10],
+        [null, 10, null],
+        [6, 1, 6],
+        [5, 10, 5],
+        [1, 1, 1],
+        [10, null, 10],
+        [10, 0, 10],
+        [10, null, 10],
+        [10, null, 10],
+    ]
+  };
+
+const defenseSectionPage2: PropertySection = {
   title: "Propriedade de Defesa",
   rows: [
       [9, 10, 10],
@@ -32,95 +48,66 @@ const defenseSection: PropertySection = {
   ]
 };
 
-const commonSection: PropertySection = {
-  title: "Propriedade Comum",
-  rows: [
-      [0, 0, 0],
-      [0, 0, 0],
-      [0, 0, 0],
-      [0, 0, 0],
-      [0, 0, 0],
-      [0, 0, 0],
-      [0, 0, 0],
-      [0, 0, 0],
-      [0, 0, 0],
-      [0, 0, 0],
-  ]
+const commonSectionPage4: PropertySection = {
+    title: "Propriedade Comum",
+    rows: [
+        [0, null, 6],
+        [0, 0, 6],
+        [0, null, 9],
+        [0, null, 9],
+        [0, null, 15],
+        [0, null, 0],
+        [0, null, 0],
+        [0, null, 0],
+        [0, null, 0],
+        [0, null, 0],
+    ]
 };
 
-const elementalSection: PropertySection = {
+const attackSectionDefault: PropertySection = {
+    title: "Propriedade de Ataque",
+    rows: Array(10).fill([0, 0, 0]),
+};
+
+const defenseSectionDefault: PropertySection = {
+  title: "Propriedade de Defesa",
+  rows: Array(10).fill([0, 0, 0]),
+};
+
+const commonSectionDefault: PropertySection = {
+  title: "Propriedade Comum",
+  rows: Array(10).fill([0, 0, 0]),
+};
+
+const elementalSectionDefault: PropertySection = {
   title: "Propriedade Elemental",
-  rows: [
-      [0, 0, 0],
-      [0, 0, 0],
-      [0, 0, 0],
-      [0, 0, 0],
-      [0, 0, 0],
-      [0, 0, 0],
-      [0, 0, 0],
-      [0, 0, 0],
-      [0, 0, 0],
-      [0, 0, 0],
-  ]
+  rows: Array(10).fill([0, 0, 0]),
 };
 
 const pageTypeMap: { [key: number]: PropertySection[] } = {
-    1: [{ ...attackSection, rows: [
-        [6, 8, 15],
-        [9, null, 10],
-        [null, 10, null],
-        [6, 1, 6],
-        [5, 10, 5],
-        [1, 1, 1],
-        [0, 0, 0],
-        [0, 0, 0],
-        [0, 0, 0],
-        [0, 0, 0],
-    ]}], 
-    2: [{ ...defenseSection, rows: [
-        [9, 10, 10],
-        [9, null, 15],
-        [null, 1, null],
-        [6, 0, 10],
-        [5, 1, 5],
-        [1, 10, 1],
-        [10, null, 0],
-        [10, null, 0],
-        [10, null, 0],
-        [10, null, 0],
-    ]}],
-    3: [{ ...attackSection, rows: [
-        [6, 8, 15],
-        [9, null, 10],
-        [null, 10, null],
-        [6, 1, 6],
-        [5, 10, 5],
-        [1, 1, 1],
-        [10, null, 10],
-        [10, 0, 10],
-        [10, null, 10],
-        [10, null, 10],
-    ]}], 
-    4: [commonSection],
-    5: [defenseSection],
-    6: [commonSection],
-    7: [commonSection],
-    8: [attackSection], 
-    9: [defenseSection],
-    10: [elementalSection],
-    11: [elementalSection],
-    12: [attackSection], 
-    13: [defenseSection],
-    14: [commonSection],
-    15: [defenseSection],
-    16: [commonSection],
+    1: [attackSectionPage1], 
+    2: [defenseSectionPage2],
+    3: [attackSectionPage3], 
+    4: [commonSectionPage4],
+    5: [defenseSectionDefault],
+    6: [commonSectionDefault],
+    7: [commonSectionDefault],
+    8: [attackSectionDefault], 
+    9: [defenseSectionDefault],
+    10: [elementalSectionDefault],
+    11: [elementalSectionDefault],
+    12: [attackSectionDefault], 
+    13: [defenseSectionDefault],
+    14: [commonSectionDefault],
+    15: [defenseSectionDefault],
+    16: [commonSectionDefault],
 };
 
 const pageTitleMap: { [key: number]: string } = {
     1: "Parte 1 - Nível 290 a 384 (95 pontos)",
     2: "Parte 2 - Nível 385 a 479 (95 pontos)",
     3: "Parte 3 - Nível 517 a 597 (80 pontos)",
-    // Add other titles as they become available
+    4: "Parte 4 - Nível 597 a 642 (45 pontos)",
 }
 
 const dwAgiProperties: PropertyPage[] = Array.from({ length: 16 }, (_, i) => {
