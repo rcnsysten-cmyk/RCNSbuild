@@ -46,15 +46,15 @@ const attackSectionPage3: PropertySection = {
         [10, null, 10],
         [10, null, 10],
     ]
-  };
+};
 
 const commonSectionPage4: PropertySection = {
     title: "Propriedade Comum",
     rows: [
-        [0, null, 6],
-        [0, 0, 6],
-        [0, null, 9],
-        [0, null, 9],
+        [9, null, 6],
+        [15, 1, 6],
+        [9, null, 9],
+        [15, null, 15],
         [0, null, 15],
         [0, null, 0],
         [0, null, 0],
@@ -96,24 +96,76 @@ const commonSectionPage6: PropertySection = {
     ]
 };
 
-const attackSectionDefault: PropertySection = {
+const commonSectionPage7: PropertySection = {
+    title: "Propriedade Comum",
+    rows: [
+        [9, null, 6],
+        [15, 1, 6],
+        [9, null, 9],
+        [15, null, 15],
+        [0, null, 15],
+        [0, null, 15],
+        [0, null, 10],
+        [0, null, 10],
+        [0, null, 10],
+        [0, null, 10],
+    ]
+};
+
+const attackSectionPage8: PropertySection = {
     title: "Propriedade de Ataque",
-    rows: Array(10).fill([0, 0, 0]),
+    rows: [
+        [6, 8, 15],
+        [9, null, 10],
+        [null, 10, null],
+        [6, 1, 6],
+        [5, 10, 5],
+        [1, 10, 1],
+        [10, null, 10],
+        [10, 0, 10],
+        [10, null, 10],
+        [10, null, 10],
+    ]
 };
 
-const defenseSectionDefault: PropertySection = {
-  title: "Propriedade de Defesa",
-  rows: Array(10).fill([0, 0, 0]),
+const defenseSectionPage9: PropertySection = {
+    title: "Propriedade de Defesa",
+    rows: Array(10).fill([0, 0, 0])
 };
 
-const commonSectionDefault: PropertySection = {
-  title: "Propriedade Comum",
-  rows: Array(10).fill([0, 0, 0]),
+const elementalSectionPage10: PropertySection = {
+    title: "Propriedade Elemental",
+    rows: Array(10).fill([0, 0, 0])
 };
 
-const elementalSectionDefault: PropertySection = {
-  title: "Propriedade Elemental",
-  rows: Array(10).fill([0, 0, 0]),
+const elementalSectionPage11: PropertySection = {
+    title: "Propriedade Elemental",
+    rows: Array(10).fill([0, 0, 0])
+};
+
+const attackSectionPage12: PropertySection = {
+    title: "Propriedade de Ataque",
+    rows: Array(10).fill([0, 0, 0])
+};
+
+const defenseSectionPage13: PropertySection = {
+    title: "Propriedade de Defesa",
+    rows: Array(10).fill([0, 0, 0])
+};
+
+const commonSectionPage14: PropertySection = {
+    title: "Propriedade Comum",
+    rows: Array(10).fill([0, 0, 0])
+};
+
+const defenseSectionPage15: PropertySection = {
+    title: "Propriedade de Defesa",
+    rows: Array(10).fill([0, 0, 0])
+};
+
+const commonSectionPage16: PropertySection = {
+    title: "Propriedade Comum",
+    rows: Array(10).fill([0, 0, 0])
 };
 
 const pageTypeMap: { [key: number]: PropertySection[] } = {
@@ -123,16 +175,16 @@ const pageTypeMap: { [key: number]: PropertySection[] } = {
     4: [commonSectionPage4],
     5: [defenseSectionPage5],
     6: [commonSectionPage6],
-    7: [commonSectionDefault],
-    8: [attackSectionDefault], 
-    9: [defenseSectionDefault],
-    10: [elementalSectionDefault],
-    11: [elementalSectionDefault],
-    12: [attackSectionDefault], 
-    13: [defenseSectionDefault],
-    14: [commonSectionDefault],
-    15: [defenseSectionDefault],
-    16: [commonSectionDefault],
+    7: [commonSectionPage7],
+    8: [attackSectionPage8], 
+    9: [defenseSectionPage9],
+    10: [elementalSectionPage10],
+    11: [elementalSectionPage11],
+    12: [attackSectionPage12], 
+    13: [defenseSectionPage13],
+    14: [commonSectionPage14],
+    15: [defenseSectionPage15],
+    16: [commonSectionPage16],
 };
 
 const pageTitleMap: { [key: number]: string } = {
@@ -142,13 +194,8 @@ const pageTitleMap: { [key: number]: string } = {
     4: "Parte 4 - Nível 597 a 642 (45 pontos)",
     5: "Parte 5 - Nível 642 a 682 (40 pontos)",
     6: "Parte 6 - Nível 682 a 737 (55 pontos)",
-}
-
-const pageClassMap: { [key: number]: 'attack' | 'defense' | 'common' | 'elemental' } = {
-    1: 'attack', 3: 'attack', 8: 'attack', 12: 'attack',
-    2: 'defense', 5: 'defense', 9: 'defense', 13: 'defense', 15: 'defense',
-    4: 'common', 6: 'common', 7: 'common', 14: 'common', 16: 'common',
-    10: 'elemental', 11: 'elemental',
+    7: "Parte 7 - Nível 737 a 792 (55 pontos)",
+    8: "Parte 8 - Nível 792 a 801 (9 pontos)",
 }
 
 
