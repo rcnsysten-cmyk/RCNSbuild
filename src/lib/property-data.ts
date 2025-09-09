@@ -130,12 +130,34 @@ const attackSectionPage8: PropertySection = {
 
 const defenseSectionPage9: PropertySection = {
     title: "Propriedade de Defesa",
-    rows: Array(10).fill([0, 0, 0])
+    rows: [
+        [9, 10, 10],
+        [9, null, 15],
+        [null, 10, null],
+        [6, 0, 10],
+        [5, 1, 5],
+        [1, 10, 1],
+        [10, null, 10],
+        [10, 0, 10],
+        [10, null, 10],
+        [10, null, 10],
+    ]
 };
 
 const elementalSectionPage10: PropertySection = {
-    title: "Propriedade Elemental",
-    rows: Array(10).fill([0, 0, 0])
+    title: "Propriedade do Tipo Elemental",
+    rows: [
+        [10, null, 10],
+        [10, 0, 10],
+        [10, null, 10],
+        [10, 0, 10],
+        [0, null, 0],
+        [0, 0, 0],
+        [0, null, 0],
+        [0, 0, 0],
+        [null, null, null],
+        [null, null, null],
+    ]
 };
 
 const elementalSectionPage11: PropertySection = {
@@ -196,6 +218,8 @@ const pageTitleMap: { [key: number]: string } = {
     6: "Parte 6 - Nível 682 a 737 (55 pontos)",
     7: "Parte 7 - Nível 737 a 792 (55 pontos)",
     8: "Parte 8 - Nível 792 a 801 (9 pontos)",
+    9: "Parte 9 - Nível 801 a 810 (9 pontos)",
+    10: "Parte 10 - Nível 810 a 890 (80 pontos)",
 }
 
 
