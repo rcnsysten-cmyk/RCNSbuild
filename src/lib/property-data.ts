@@ -6,9 +6,9 @@ const attackSection: PropertySection = {
       [6, 8, 15],
       [9, null, 10],
       [null, 10, null],
-      [0, 0, 0],
-      [0, 0, 0],
-      [0, 0, 0],
+      [6, 1, 6],
+      [5, 10, 5],
+      [1, 1, 1],
       [0, 0, 0],
       [0, 0, 0],
       [0, 0, 0],
@@ -65,9 +65,42 @@ const elementalSection: PropertySection = {
 };
 
 const pageTypeMap: { [key: number]: PropertySection[] } = {
-    1: [attackSection], 
-    2: [defenseSection],
-    3: [attackSection], 
+    1: [{ ...attackSection, rows: [
+        [6, 8, 15],
+        [9, null, 10],
+        [null, 10, null],
+        [6, 1, 6],
+        [5, 10, 5],
+        [1, 1, 1],
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0],
+    ]}], 
+    2: [{ ...defenseSection, rows: [
+        [9, 10, 10],
+        [9, null, 15],
+        [null, 1, null],
+        [6, 0, 10],
+        [5, 1, 5],
+        [1, 10, 1],
+        [10, null, 0],
+        [10, null, 0],
+        [10, null, 0],
+        [10, null, 0],
+    ]}],
+    3: [{ ...attackSection, rows: [
+        [6, 8, 15],
+        [9, null, 10],
+        [null, 10, null],
+        [6, 1, 6],
+        [5, 10, 5],
+        [1, 1, 1],
+        [10, null, 10],
+        [10, 0, 10],
+        [10, null, 10],
+        [10, null, 10],
+    ]}], 
     4: [commonSection],
     5: [defenseSection],
     6: [commonSection],
@@ -83,18 +116,24 @@ const pageTypeMap: { [key: number]: PropertySection[] } = {
     16: [commonSection],
 };
 
+const pageTitleMap: { [key: number]: string } = {
+    1: "Parte 1 - Nível 290 a 384 (95 pontos)",
+    2: "Parte 2 - Nível 385 a 479 (95 pontos)",
+    3: "Parte 3 - Nível 517 a 597 (80 pontos)",
+    // Add other titles as they become available
+}
+
 const dwAgiProperties: PropertyPage[] = Array.from({ length: 16 }, (_, i) => {
     const pageNum = i + 1;
-    // This is a placeholder for level ranges, can be updated later
-    const startLevel = 290 + (i * 95); 
-    const endLevel = startLevel + 94;
+    
+    // Default title generation
+    let title = pageTitleMap[pageNum] || `Parte ${pageNum}`;
 
     const sectionsForPage = pageTypeMap[pageNum] || [];
     
     return {
       page: pageNum,
-      // Titles can be customized per page if needed
-      title: `Parte ${pageNum} - Nível ${startLevel} a ${endLevel} (95 pontos)`,
+      title: title,
       // Deep copy to prevent mutations across pages
       sections: JSON.parse(JSON.stringify(sectionsForPage)) 
     };
