@@ -29,6 +29,7 @@ const formatSetName = (fileName: string): string => {
         case 5: return 'Conjunto Haion Visconde III';
         case 6: return 'Conjunto Chrono Mágico';
         case 7: return 'Conjunto Solar Portador da Morte';
+        case 8: return 'Conjunto Celestial Divindade';
         default:
             // Default behavior for other tiers
             const nameWithoutTier = nameWithoutExt.replace(/^t\d+-?/, '');
