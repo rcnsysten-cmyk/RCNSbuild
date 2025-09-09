@@ -2,19 +2,13 @@ import { PropertyPage } from "./types";
 
 const dwAgiBasePropertyPage: Omit<PropertyPage, 'page' | 'title'> = {
     left: [
-        0, 6, 8, 15, 9, 10, 10,
-        0, 6, 1, 6,
-        0, 5, 10, 5, 4
+        6, 9, 0, 6, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
     ],
     middle: [
-        null, null, null, null, null, null, null,
-        null, null, null, null,
-        null, null, null, null, null
+        8, null, 10, 1, 10, 1, null, 0, 0, 0, null, null, null, null, null, null
     ],
     right: [
-        null, 10, 10, 6, 1, 6, 5,
-        null, 10, 5, 4,
-        null, 1, null, null, null
+        15, 10, null, 6, 5, 1, 0, 0, 0, 0, null, null, null, null, null, null
     ]
 };
 
