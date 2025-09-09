@@ -14,9 +14,9 @@ export interface AttributeConfig {
   export interface PropertyPage {
     page: number;
     title: string;
-    left: (string | number | null)[];
-    middle: (string | number | null)[];
-    right: (string | number | null)[];
+    left: (number | null)[];
+    middle: (number | null)[];
+    right: (number | null)[];
   }
   
   export interface SubClass {

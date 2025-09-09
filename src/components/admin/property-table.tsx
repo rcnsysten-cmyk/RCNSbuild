@@ -82,17 +82,6 @@ export function PropertyTable({ value, onChange }: PropertyTableProps) {
             </TableHeader>
             <TableBody>
             {rows.map((row, rowIndex) => {
-                // Handle section headers that span all columns
-                if (typeof row.leftValue === 'string') {
-                    return (
-                        <TableRow key={rowIndex}>
-                            <TableCell colSpan={3} className="text-center font-bold bg-muted/50 p-2">
-                                {row.leftValue}
-                            </TableCell>
-                        </TableRow>
-                    )
-                }
-
                 return (
                     <TableRow key={rowIndex}>
                     {/* Left Column */}
