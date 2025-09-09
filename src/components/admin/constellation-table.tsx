@@ -10,10 +10,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 
-const constellationData = [
+export const constellationData = [
   // Page 1
   { level: 25, left: "DEF +3%", right: "Redução de Espera 2%" },
   { level: 29, left: "Dano Crít. (+) +10%", right: "Aumento de DANO de Veneno 10%" },
@@ -63,11 +61,11 @@ const ITEMS_PER_PAGE = 17;
 interface ConstellationTableProps {
   value: string[];
   onChange: (value: string[]) => void;
+  currentPage: number;
 }
 
-export function ConstellationTable({ value, onChange }: ConstellationTableProps) {
+export function ConstellationTable({ value, onChange, currentPage }: ConstellationTableProps) {
   const [selections, setSelections] = useState<Record<number, "left" | "right">>({});
-  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     const initialSelections: Record<number, "left" | "right"> = {};
@@ -99,7 +97,6 @@ export function ConstellationTable({ value, onChange }: ConstellationTableProps)
     onChange(newValues);
   };
 
-  const totalPages = Math.ceil(constellationData.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
   const currentData = constellationData.slice(startIndex, endIndex);
@@ -143,28 +140,6 @@ export function ConstellationTable({ value, onChange }: ConstellationTableProps)
             ))}
           </TableBody>
         </Table>
-      </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={() => setCurrentPage(currentPage - 1)}
-          disabled={currentPage === 1}
-        >
-          <ChevronLeft className="mr-2 h-4 w-4" />
-          Anterior
-        </Button>
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={() => setCurrentPage(currentPage + 1)}
-          disabled={currentPage === totalPages}
-        >
-          Próximo
-          <ChevronRight className="ml-2 h-4 w-4" />
-        </Button>
       </div>
     </div>
   );

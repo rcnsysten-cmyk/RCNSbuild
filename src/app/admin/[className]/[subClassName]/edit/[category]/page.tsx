@@ -7,7 +7,8 @@ import { notFound, useParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react';
+import { constellationData } from '@/components/admin/constellation-table';
 
 const validCategories = ['config', 'skills', 'constellation', 'properties', 'sets', 'runes'];
 
@@ -20,6 +21,8 @@ const categoryNames: { [key: string]: string } = {
     runes: 'Runas',
 };
 
+const ITEMS_PER_PAGE = 17;
+
 export default function EditCategoryPage() {
   const params = useParams();
   const { className, subClassName, category } = params;
@@ -27,6 +30,8 @@ export default function EditCategoryPage() {
   const [build, setBuild] = useState<Build | null>(null);
   const [subClass, setSubClass] = useState<SubClass | null>(null);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = Math.ceil(constellationData.length / ITEMS_PER_PAGE);
 
   if (
     !className || 
@@ -90,6 +95,7 @@ export default function EditCategoryPage() {
         buildId={build.id}
         category={category as any}
         className={build.class}
+        currentPage={currentPage}
       >
         {(form, submitButton, handleBack) => (
           <>
@@ -99,6 +105,33 @@ export default function EditCategoryPage() {
                     <ArrowLeft className="mr-2 h-4 w-4" />
                     Voltar
                 </Button>
+                {category === 'constellation' && (
+                    <div className="flex items-center justify-center gap-2">
+                        <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setCurrentPage(currentPage - 1)}
+                            disabled={currentPage === 1}
+                            >
+                            <ChevronLeft className="mr-2 h-4 w-4" />
+                            Anterior
+                        </Button>
+                        <span className="text-sm font-medium">
+                            Página {currentPage} de {totalPages}
+                        </span>
+                        <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setCurrentPage(currentPage + 1)}
+                            disabled={currentPage === totalPages}
+                            >
+                            Próximo
+                            <ChevronRight className="ml-2 h-4 w-4" />
+                        </Button>
+                    </div>
+                )}
                 {submitButton}
               </div>
             </div>

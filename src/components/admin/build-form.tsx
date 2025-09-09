@@ -84,6 +84,7 @@ interface BuildFormProps {
     buildData?: SubClass;
     category?: keyof Omit<BuildFormValues, 'class' | 'name' | 'buildName'>;
     className?: string; // The character class name (e.g. 'Dark Wizard')
+    currentPage?: number;
     children?: (form: React.ReactNode, submitButton: React.ReactNode, handleBack: () => void) => React.ReactNode;
 }
 
@@ -106,7 +107,7 @@ const dwEneExclusiveSkills = ["Conhecimento Espaco Temporal", "Controle Espaco T
 const dwAgiExclusiveSkills = ["Veterania Em Veneno", "Veterania Do Escudo De Veneno"];
 
 
-export function BuildForm({ buildId, buildData, category, className, children }: BuildFormProps) {
+export function BuildForm({ buildId, buildData, category, className, currentPage, children }: BuildFormProps) {
   const { toast } = useToast();
   const router = useRouter();
   const [isExitConfirmOpen, setIsExitConfirmOpen] = useState(false);
@@ -510,7 +511,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                                         </div>
 
                                         {exclusiveSkill && blockIndex < 2 && (
-                                            <div className="flex justify-center w-full">
+                                            <div className="flex justify-center w-full my-4">
                                                 <div key={exclusiveSkill.name} className="flex flex-col items-center p-2 gap-2 border rounded-lg w-28">
                                                     <div className="w-20 h-20 rounded-md overflow-hidden relative">
                                                         <Image src={exclusiveSkill.imagePath} alt={exclusiveSkill.name} layout="fill" className="object-cover" unoptimized />
@@ -554,6 +555,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                                      <ConstellationTable
                                         value={field.value as string[]}
                                         onChange={field.onChange}
+                                        currentPage={currentPage || 1}
                                      />
                                 ) : fieldInfo.isMultiSelect ? (
                                     <MultiSelect
