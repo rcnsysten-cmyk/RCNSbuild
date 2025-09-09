@@ -113,8 +113,6 @@ export function BuildForm({ buildId, buildData, category, className, children }:
   const [baseSkills, setBaseSkills] = useState<AvailableSkill[]>([]);
   const [exclusiveSkills, setExclusiveSkills] = useState<AvailableSkill[]>([]);
   const [loadingSkills, setLoadingSkills] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-
   
   const allAvailableSkills = useMemo(() => [...baseSkills, ...exclusiveSkills], [baseSkills, exclusiveSkills]);
 
