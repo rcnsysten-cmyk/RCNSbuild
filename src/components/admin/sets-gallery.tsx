@@ -21,7 +21,7 @@ interface SetsGalleryProps {
 }
 
 export function SetsGallery({ className, subClassName }: SetsGalleryProps) {
-  const [setsByTier, setSetsByTier] = useState<Record<number, SetItem[]>>({});
+  const [sets, setSets] = useState<SetItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -39,20 +39,11 @@ export function SetsGallery({ className, subClassName }: SetsGalleryProps) {
 
         if (data.length === 0) {
             // This is not an error, just means no sets are configured.
-            setSetsByTier({});
+            setSets([]);
             return;
         }
 
-        const grouped = data.reduce((acc, set) => {
-          const tier = set.tier;
-          if (!acc[tier]) {
-            acc[tier] = [];
-          }
-          acc[tier].push(set);
-          return acc;
-        }, {} as Record<number, SetItem[]>);
-
-        setSetsByTier(grouped);
+        setSets(data);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Ocorreu um erro desconhecido.");
         console.error(err);
@@ -66,22 +57,13 @@ export function SetsGallery({ className, subClassName }: SetsGalleryProps) {
 
   if (loading) {
     return (
-      <div className="space-y-6">
-        {Array.from({ length: 3 }).map((_, i) => (
-          <Card key={i}>
-            <CardHeader>
-              <Skeleton className="h-8 w-24" />
-            </CardHeader>
-            <CardContent className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {Array.from({ length: 4 }).map((_, j) => (
-                <div key={j} className="flex flex-col items-center gap-2">
-                  <Skeleton className="h-32 w-32 rounded-md" />
-                  <Skeleton className="h-4 w-24" />
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-        ))}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {Array.from({ length: 8 }).map((_, j) => (
+            <div key={j} className="flex flex-col items-center gap-2">
+              <Skeleton className="h-32 w-32 rounded-md" />
+              <Skeleton className="h-4 w-24" />
+            </div>
+          ))}
       </div>
     );
   }
@@ -96,7 +78,7 @@ export function SetsGallery({ className, subClassName }: SetsGalleryProps) {
      )
   }
 
-  const isDataAvailable = Object.keys(setsByTier).length > 0;
+  const isDataAvailable = sets.length > 0;
 
   if (!isDataAvailable) {
     return (
@@ -111,32 +93,22 @@ export function SetsGallery({ className, subClassName }: SetsGalleryProps) {
   }
 
   return (
-    <div className="space-y-8">
-      {Object.entries(setsByTier)
-        .sort(([a], [b]) => Number(a) - Number(b))
-        .map(([tier, sets]) => (
-        <Card key={tier}>
-            <CardHeader>
-                <CardTitle>Tier {tier}</CardTitle>
-            </CardHeader>
-            <CardContent className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {sets.map(set => (
-                    <div key={set.name} className="flex flex-col items-center justify-center text-center gap-3 p-4 border rounded-lg bg-muted/20 hover:bg-muted/50 transition-colors">
-                        <div className="relative w-32 h-32">
-                           <Image 
-                             src={set.imagePath}
-                             alt={set.name}
-                             fill
-                             className="object-contain"
-                             unoptimized
-                           />
-                        </div>
-                        <h3 className="font-semibold text-lg">{set.name}</h3>
-                    </div>
-                ))}
-            </CardContent>
-        </Card>
-      ))}
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {sets.map(set => (
+            <div key={set.name} className="flex flex-col items-center justify-center text-center gap-3 p-4 border rounded-lg bg-muted/20 hover:bg-muted/50 transition-colors">
+                <div className="relative w-32 h-32">
+                   <Image 
+                     src={set.imagePath}
+                     alt={set.name}
+                     fill
+                     className="object-contain"
+                     unoptimized
+                   />
+                </div>
+                <h3 className="font-semibold text-lg">{set.name}</h3>
+                <Badge variant="outline">Tier {set.tier}</Badge>
+            </div>
+        ))}
     </div>
   );
 }

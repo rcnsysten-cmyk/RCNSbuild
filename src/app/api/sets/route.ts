@@ -20,6 +20,13 @@ const formatClassName = (folderName: string): string => {
 // Helper to format set name from file name (e.g., 't1-grand-soul.png' -> 'Grand Soul')
 const formatSetName = (fileName: string): string => {
     const nameWithoutExt = path.parse(fileName).name;
+    const tier = extractTier(fileName);
+
+    // Specific override for a known problematic name
+    if (tier === 3) {
+      return 'Conjunto Qiraji Eclipse';
+    }
+
     // Remove tier prefix (e.g., "t1-")
     const nameWithoutTier = nameWithoutExt.replace(/^t\d+-/, '');
     return nameWithoutTier
