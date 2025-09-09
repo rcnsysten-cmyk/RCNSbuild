@@ -13,7 +13,6 @@ import { Input } from "../ui/input";
 import { PropertyPage } from "@/lib/types";
 import { Button } from "../ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 interface PropertyTableProps {
     value: PropertyPage[];
@@ -38,7 +37,7 @@ export function PropertyTable({ value, onChange, data }: PropertyTableProps) {
     const handleInputChange = (
       sectionIndex: number,
       rowIndex: number,
-      columnIndex: "left" | "middle" | "right",
+      columnIndex: number,
       newValue: string
     ) => {
       const numericValue = parseInt(newValue, 10);
@@ -48,11 +47,10 @@ export function PropertyTable({ value, onChange, data }: PropertyTableProps) {
       const newSections = newPageData.sections;
       const newRows = newSections[sectionIndex].rows;
       
-      const newRow = [...newRows[rowIndex]];
-      const colMap = { left: 0, middle: 1, right: 2 };
-      newRow[colMap[columnIndex]] = newValue === "" ? 0 : numericValue;
+      const newRow = [...newRows[rowIndex]] as [number | null, number | null, number | null];
+      newRow[columnIndex] = newValue === "" ? 0 : numericValue;
 
-      newRows[rowIndex] = newRow as [number | null, number | null, number | null];
+      newRows[rowIndex] = newRow;
       
       onChange(currentPageIndex, newPageData);
     };
@@ -86,75 +84,70 @@ export function PropertyTable({ value, onChange, data }: PropertyTableProps) {
       );
   
     return (
-      <div className="space-y-4">
+      <div className="space-y-6">
         <PaginationControls />
         <h3 className="text-xl font-bold text-center">{currentPageData.title}</h3>
-        <div className="max-w-md mx-auto">
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="text-center w-[33%]">Lado Esquerdo</TableHead>
-                  <TableHead className="text-center w-[33%]">Meio</TableHead>
-                  <TableHead className="text-center w-[33%]">Lado Direito</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {currentPageData.sections.map((section, sectionIndex) => (
-                    <React.Fragment key={section.title}>
-                        <TableRow>
-                            <TableCell colSpan={3} className="p-2 bg-muted/30">
-                                <h4 className="font-bold text-center text-sm">{section.title}</h4>
-                            </TableCell>
-                        </TableRow>
-                        {section.rows.map((row, rowIndex) => (
-                             <TableRow key={rowIndex}>
-                                <TableCell className="p-1 align-middle">
+        <div className="max-w-md mx-auto space-y-6">
+            {currentPageData.sections.map((section, sectionIndex) => (
+                 <div key={section.title}>
+                    <h4 className="font-bold text-center text-lg mb-2">{section.title}</h4>
+                    <div className="rounded-md border">
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                <TableHead className="text-center w-[33%]">Lado Esquerdo</TableHead>
+                                <TableHead className="text-center w-[33%]">Meio</TableHead>
+                                <TableHead className="text-center w-[33%]">Lado Direito</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {section.rows.map((row, rowIndex) => (
+                                <TableRow key={rowIndex}>
+                                    <TableCell className="p-1 align-middle">
                                     {typeof row[0] === "number" ? (
-                                    <Input
+                                        <Input
                                         type="number"
                                         value={row[0]}
-                                        onChange={(e) => handleInputChange(sectionIndex, rowIndex, "left", e.target.value)}
+                                        onChange={(e) => handleInputChange(sectionIndex, rowIndex, 0, e.target.value)}
                                         className="w-16 mx-auto text-center h-8"
-                                    />
+                                        />
                                     ) : (
-                                    <div className="w-16 h-8 mx-auto" />
+                                        <div className="w-16 h-8 mx-auto" />
                                     )}
-                                </TableCell>
-                                <TableCell className="p-1 align-middle">
+                                    </TableCell>
+                                    <TableCell className="p-1 align-middle">
                                     {typeof row[1] === "number" ? (
-                                    <Input
+                                        <Input
                                         type="number"
                                         value={row[1]}
-                                        onChange={(e) => handleInputChange(sectionIndex, rowIndex, "middle", e.target.value)}
+                                        onChange={(e) => handleInputChange(sectionIndex, rowIndex, 1, e.target.value)}
                                         className="w-16 mx-auto text-center h-8"
-                                    />
+                                        />
                                     ) : (
                                         <div className="w-16 h-8 mx-auto" />
                                     )}
-                                </TableCell>
-                                <TableCell className="p-1 align-middle">
+                                    </TableCell>
+                                    <TableCell className="p-1 align-middle">
                                     {typeof row[2] === "number" ? (
-                                    <Input
+                                        <Input
                                         type="number"
                                         value={row[2]}
-                                        onChange={(e) => handleInputChange(sectionIndex, rowIndex, "right", e.target.value)}
+                                        onChange={(e) => handleInputChange(sectionIndex, rowIndex, 2, e.target.value)}
                                         className="w-16 mx-auto text-center h-8"
-                                    />
+                                        />
                                     ) : (
                                         <div className="w-16 h-8 mx-auto" />
                                     )}
-                                </TableCell>
-                             </TableRow>
-                        ))}
-                    </React.Fragment>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+                                    </TableCell>
+                                </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </div>
+                 </div>
+            ))}
         </div>
         <PaginationControls />
       </div>
     );
   }
-  
