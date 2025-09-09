@@ -26,6 +26,7 @@ import { Skeleton } from '../ui/skeleton';
 import { ScrollArea } from '../ui/scroll-area';
 import Image from 'next/image';
 import { ConstellationTable } from './constellation-table';
+import { getConstellationData } from '@/lib/constellation-data';
 
 const attributeConfigSchema = z.object({
   levelRange: z.string(),
@@ -115,6 +116,13 @@ export function BuildForm({ buildId, buildData, category, className, children }:
   const [loadingSkills, setLoadingSkills] = useState(false);
   
   const allAvailableSkills = useMemo(() => [...baseSkills, ...exclusiveSkills], [baseSkills, exclusiveSkills]);
+  
+  const constellationData = useMemo(() => {
+    if (className && buildData?.name) {
+      return getConstellationData(className, buildData.name);
+    }
+    return [];
+  }, [className, buildData?.name]);
 
   const defaultValues = useMemo(() => {
     const baseValues = buildData ? {
@@ -557,6 +565,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                                     <ConstellationTable
                                         value={field.value as string[]}
                                         onChange={field.onChange}
+                                        data={constellationData}
                                     />
                                 ) : fieldInfo.isMultiSelect ? (
                                     <MultiSelect
