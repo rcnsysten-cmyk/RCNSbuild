@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { getBuilds } from '@/lib/firestore';
+import { getBuildsByClass } from '@/lib/firestore';
 import { Build } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
@@ -26,9 +26,9 @@ export default function ClassBuildsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = getBuilds((data) => {
-      const filteredBuilds = data.filter(build => build.class === className);
-      setBuilds(filteredBuilds);
+    if (!className) return;
+    const unsubscribe = getBuildsByClass(className, (data) => {
+      setBuilds(data);
       setLoading(false);
     });
     return () => unsubscribe();

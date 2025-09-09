@@ -24,6 +24,15 @@ export function getBuilds(callback: (builds: Build[]) => void) {
   });
 }
 
+// Get all builds for a specific class with real-time updates
+export function getBuildsByClass(className: string, callback: (builds: Build[]) => void) {
+  const q = query(buildsCollection, where('class', '==', className));
+  return onSnapshot(q, (snapshot) => {
+    const builds = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Build));
+    callback(builds);
+  });
+}
+
 // Get a single build by its ID (which is the custom build name)
 export async function getBuildByClassName(className: string): Promise<Build | null> {
     const docRef = doc(db, 'builds', className);
