@@ -47,7 +47,7 @@ const formSchema = z.object({
   config: z.array(attributeConfigSchema),
   runes: z.array(z.string()),
   skills: z.array(skillConfigSchema),
-  properties: z.array(z/string()),
+  properties: z.array(z.string()),
   constellation: z.array(z.string()),
   sets: z.array(z.string()),
 });
