@@ -37,12 +37,23 @@ const elementalSection: PropertySection = {
 };
 
 const pageTypeMap: { [key: number]: PropertySection[] } = {
-    1: [attackSection], 3: [attackSection], 8: [attackSection], 12: [attackSection],
-    2: [defenseSection], 5: [defenseSection], 9: [defenseSection], 13: [defenseSection], 15: [defenseSection],
-    4: [commonSection], 6: [commonSection], 7: [commonSection], 14: [commonSection], 16: [commonSection],
-    10: [elementalSection], 11: [elementalSection],
+    1: [attackSection], 
+    2: [defenseSection],
+    3: [attackSection], 
+    4: [commonSection],
+    5: [defenseSection],
+    6: [commonSection],
+    7: [commonSection],
+    8: [attackSection], 
+    9: [defenseSection],
+    10: [elementalSection],
+    11: [elementalSection],
+    12: [attackSection], 
+    13: [defenseSection],
+    14: [commonSection],
+    15: [defenseSection],
+    16: [commonSection],
 };
-
 
 const dwAgiProperties: PropertyPage[] = Array.from({ length: 16 }, (_, i) => {
     const pageNum = i + 1;

@@ -31,7 +31,8 @@ export function PropertyTable({ value, onChange, data }: PropertyTableProps) {
       );
     }
   
-    const currentPageData = value[currentPageIndex] || data[currentPageIndex];
+    // Use the value from the form if it exists, otherwise use the base data
+    const currentPageData = (value && value[currentPageIndex]) ? value[currentPageIndex] : data[currentPageIndex];
     const totalPages = data.length;
   
     const handleInputChange = (
@@ -44,13 +45,10 @@ export function PropertyTable({ value, onChange, data }: PropertyTableProps) {
       if (isNaN(numericValue) && newValue !== "") return;
   
       const newPageData = JSON.parse(JSON.stringify(currentPageData)) as PropertyPage;
-      const newSections = newPageData.sections;
-      const newRows = newSections[sectionIndex].rows;
       
-      const newRow = [...newRows[rowIndex]] as [number | null, number | null, number | null];
+      const newRow = [...newPageData.sections[sectionIndex].rows[rowIndex]] as [number | null, number | null, number | null];
       newRow[columnIndex] = newValue === "" ? 0 : numericValue;
-
-      newRows[rowIndex] = newRow;
+      newPageData.sections[sectionIndex].rows[rowIndex] = newRow;
       
       onChange(currentPageIndex, newPageData);
     };
