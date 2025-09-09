@@ -10,8 +10,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const constellationData = [
+  // Page 1
   { level: 25, left: "DEF +3%", right: "Redução de Espera 2%" },
   { level: 29, left: "Dano Crít. (+) +10%", right: "Aumento de DANO de Veneno 10%" },
   { level: 33, left: "ATQ +3%", right: "Redução de Espera 2%" },
@@ -29,7 +32,33 @@ const constellationData = [
   { level: 81, left: "Taxa de RES Crítica +5%", right: "Redução de Espera 2%" },
   { level: 85, left: "Dano Crít. (+) +10%", right: "Aumento de DANO de Veneno 10%" },
   { level: 89, left: "Taxa de RES E. +5%", right: "Redução de Espera 2%" },
+  // Page 2
+  { level: 93, left: "Velocidade de ATQ +7", right: "Aumento de DANO de Veneno 10%" },
+  { level: 97, left: "DANO E. (+) +10%", right: "Redução de Espera 2%" },
+  { level: 101, left: "DEF Ignorada +5%", right: "Aumento de DANO de Veneno 10%" },
+  { level: 105, left: "Dano Crít. (-) +10%", right: "Redução de Espera 2%" },
+  { level: 109, left: "Dano Crít. (+) +10%", right: "Aumento de DANO de Veneno 10%" },
+  { level: 113, left: "Velocidade de ATQ +7", right: "Redução de Espera 2%" },
+  { level: 117, left: "Taxa de RES E. +5%", right: "Aumento de DANO de Veneno 10%" },
+  { level: 121, left: "DANO E. (+) +10%", right: "Redução de Espera 2%" },
+  { level: 125, left: "Taxa de RES Crítica +5%", right: "Aumento de DANO de Veneno 10%" },
+  { level: 129, left: "Dano Elemental (-) +10%", right: "Redução de Espera 2%" },
+  { level: 133, left: "DEF Ignorada +5%", right: "Aumento de DANO de Veneno 10%" },
+  { level: 148, left: "DEF Ignorada +6%", right: "Aumentar DANO de Habilidade +15%" },
+  { level: 163, left: "HP máximo +2%", right: "Aumento de DANO de Veneno 10%" },
+  { level: 178, left: "ATQ +2%", right: "Redução de Espera 2%" },
+  { level: 193, left: "Taxa de RES E. +5%", right: "Aumentar DANO de Habilidade +15%" },
+  { level: 208, left: "DEF Ignorada +5%", right: "DANO Crítico (-) +5%" },
+  { level: 223, left: "DEF Ignorada +5%", right: "Taxa de RES E. +5%" },
+  { level: 238, left: "ATQ +2%", right: "Redução de Espera 2%" },
+  { level: 253, left: "HP máximo +2%", right: "Taxa de RES Crítica +5%" },
+  { level: 268, left: "Dano Elemental (-) +5%", right: "DEF Ignorada +5%" },
+  { level: 283, left: "Dano Elemental (-) +5%", right: "DEF Ignorada +5%" },
+  { level: 298, left: "DEF +2%", right: "Taxa de RES Crítica +5%" },
+  { level: 313, left: "DEF +2%", right: "Taxa de RES Crítica +5%" },
 ];
+
+const ITEMS_PER_PAGE = 17;
 
 interface ConstellationTableProps {
   value: string[];
@@ -37,10 +66,9 @@ interface ConstellationTableProps {
 }
 
 export function ConstellationTable({ value, onChange }: ConstellationTableProps) {
-  // State to hold the selection for each level: 'left' or 'right'
   const [selections, setSelections] = useState<Record<number, "left" | "right">>({});
+  const [currentPage, setCurrentPage] = useState(1);
 
-  // When the component mounts, parse the initial `value` array to populate selections
   useEffect(() => {
     const initialSelections: Record<number, "left" | "right"> = {};
     const valueSet = new Set(value);
@@ -59,7 +87,6 @@ export function ConstellationTable({ value, onChange }: ConstellationTableProps)
     const newSelections = { ...selections, [level]: choice };
     setSelections(newSelections);
 
-    // Update the parent form's value
     const newValues = constellationData
       .map((row) => {
         const selection = newSelections[row.level];
@@ -72,44 +99,71 @@ export function ConstellationTable({ value, onChange }: ConstellationTableProps)
     onChange(newValues);
   };
 
+  const totalPages = Math.ceil(constellationData.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const currentData = constellationData.slice(startIndex, endIndex);
+
   return (
-    <div className="rounded-md border">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-[100px] text-center">NÍVEL</TableHead>
-            <TableHead className="text-center">ESQUERDA</TableHead>
-            <TableHead className="text-center">DIREITA</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {constellationData.map((row) => (
-            <TableRow key={row.level}>
-              <TableCell className="font-medium text-center">{row.level}</TableCell>
-              <TableCell
-                className={cn(
-                  "text-center cursor-pointer hover:bg-muted/50",
-                  selections[row.level] === "left" &&
-                    "bg-green-800/50 border border-green-500"
-                )}
-                onClick={() => handleSelect(row.level, "left")}
-              >
-                {row.left}
-              </TableCell>
-              <TableCell
-                className={cn(
-                  "text-center cursor-pointer hover:bg-muted/50",
-                  selections[row.level] === "right" &&
-                  "bg-green-800/50 border border-green-500"
-                )}
-                onClick={() => handleSelect(row.level, "right")}
-              >
-                {row.right}
-              </TableCell>
+    <div>
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[100px] text-center">NÍVEL</TableHead>
+              <TableHead className="text-center">ESQUERDA</TableHead>
+              <TableHead className="text-center">DIREITA</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {currentData.map((row) => (
+              <TableRow key={row.level}>
+                <TableCell className="font-medium text-center">{row.level}</TableCell>
+                <TableCell
+                  className={cn(
+                    "text-center cursor-pointer hover:bg-muted/50",
+                    selections[row.level] === "left" &&
+                      "bg-green-800/50 border border-green-500"
+                  )}
+                  onClick={() => handleSelect(row.level, "left")}
+                >
+                  {row.left}
+                </TableCell>
+                <TableCell
+                  className={cn(
+                    "text-center cursor-pointer hover:bg-muted/50",
+                    selections[row.level] === "right" &&
+                    "bg-green-800/50 border border-green-500"
+                  )}
+                  onClick={() => handleSelect(row.level, "right")}
+                >
+                  {row.right}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+      <div className="flex items-center justify-end space-x-2 py-4">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setCurrentPage(currentPage - 1)}
+          disabled={currentPage === 1}
+        >
+          <ChevronLeft className="mr-2 h-4 w-4" />
+          Anterior
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setCurrentPage(currentPage + 1)}
+          disabled={currentPage === totalPages}
+        >
+          Próximo
+          <ChevronRight className="ml-2 h-4 w-4" />
+        </Button>
+      </div>
     </div>
   );
 }
