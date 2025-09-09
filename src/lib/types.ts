@@ -10,13 +10,16 @@ export interface AttributeConfig {
     name: string;
     points: number;
   }
+  
+  export interface PropertySection {
+    title: string;
+    rows: Array<[number | null, number | null, number | null]>;
+  }
 
   export interface PropertyPage {
     page: number;
     title: string;
-    left: (number | null)[];
-    middle: (number | null)[];
-    right: (number | null)[];
+    sections: PropertySection[];
   }
   
   export interface SubClass {

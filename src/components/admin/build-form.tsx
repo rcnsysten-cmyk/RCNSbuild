@@ -43,13 +43,17 @@ const skillConfigSchema = z.object({
     points: z.coerce.number().min(0, "Deve ser um número positivo.").default(0),
 });
 
+const propertySectionSchema = z.object({
+    title: z.string(),
+    rows: z.array(z.tuple([z.number().nullable(), z.number().nullable(), z.number().nullable()])),
+});
+
 const propertyPageSchema = z.object({
     page: z.number(),
     title: z.string(),
-    left: z.array(z.union([z.string(), z.coerce.number(), z.null()])),
-    middle: z.array(z.union([z.string(), z.coerce.number(), z.null()])),
-    right: z.array(z.union([z.string(), z.coerce.number(), z.null()])),
+    sections: z.array(propertySectionSchema),
 });
+
 
 const formSchema = z.object({
   buildName: z.string().min(1, "O nome da build é obrigatório."),
@@ -214,11 +218,6 @@ export function BuildForm({ buildId, buildData, category, className, children }:
     name: 'config',
   });
 
-  const { fields: propertyFields, update: updatePropertyField } = useFieldArray({
-    control: form.control,
-    name: 'properties',
-  });
-  
   const handlePropertyChange = (pageIndex: number, newPageData: PropertyPage) => {
     const currentProperties = form.getValues('properties');
     const newProperties = [...currentProperties];
@@ -622,7 +621,6 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                     name={fieldInfo.name as any}
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>{fieldInfo.label}</FormLabel>
                             <FormDescription>
                                 {fieldInfo.description}
                             </FormDescription>
