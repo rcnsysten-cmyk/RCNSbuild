@@ -20,9 +20,10 @@ interface ConstellationTableProps {
   value: string[]; // Expects values like "25-1", "29-2"
   onChange: (value: string[]) => void;
   data: ConstellationData[];
+  readOnly?: boolean;
 }
 
-export function ConstellationTable({ value, onChange, data }: ConstellationTableProps) {
+export function ConstellationTable({ value, onChange, data, readOnly = false }: ConstellationTableProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = Math.ceil(data.length / ITEMS_PER_PAGE);
 
@@ -46,6 +47,7 @@ export function ConstellationTable({ value, onChange, data }: ConstellationTable
   }
 
   const handleSelect = (level: number, choice: "1" | "2") => {
+    if (readOnly) return;
     const newValues = value.filter(v => !v.startsWith(`${level}-`));
     const currentSelection = getSelectionForLevel(level);
 
@@ -108,7 +110,8 @@ export function ConstellationTable({ value, onChange, data }: ConstellationTable
                   <TableCell className="font-medium text-center">{row.level}</TableCell>
                   <TableCell
                     className={cn(
-                      "text-center cursor-pointer hover:bg-muted/50",
+                      "text-center",
+                      !readOnly && "cursor-pointer hover:bg-muted/50",
                       selection === "1" &&
                         "bg-green-800/50 border border-green-500"
                     )}
@@ -118,7 +121,8 @@ export function ConstellationTable({ value, onChange, data }: ConstellationTable
                   </TableCell>
                   <TableCell
                     className={cn(
-                      "text-center cursor-pointer hover:bg-muted/50",
+                      "text-center",
+                      !readOnly && "cursor-pointer hover:bg-muted/50",
                       selection === "2" &&
                       "bg-green-800/50 border border-green-500"
                     )}
