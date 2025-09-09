@@ -70,6 +70,29 @@ const classSubclassMap: { [key: string]: string[] } = {
 };
 const classNames = Object.keys(classSubclassMap);
 
+const predefinedOptions: { [key: string]: string[] } = {
+    properties: [
+      "Aumento de Dano Mágico: 20%",
+      "Aumento de Dano Físico: 15%",
+      "Redução de Dano: 10%",
+      "Taxa de Acerto: 5%",
+      "Velocidade de Ataque: 10",
+      "HP Máximo: +500",
+    ],
+    sets: [
+        "Grand Soul",
+        "Dragon Knight",
+        "Venom Mist",
+        "Legendary",
+    ],
+    runes: [
+        "Runa de Energia Mística",
+        "Runa de Força Bruta",
+        "Runa de Vitalidade",
+        "Runa de Agilidade",
+    ]
+  };
+  
 
 const allFields: { name: keyof Omit<BuildFormValues, 'class' | 'name' | 'buildName'>; label: string; description: string, isMultiSelect?: boolean }[] = [
     { name: 'config', label: 'Atributos', description: 'Defina os pontos de atributos para cada faixa de nível.' },
@@ -276,26 +299,40 @@ export function BuildForm({ buildId, buildData, category, className, children }:
         if (buildId) { // Editing existing build
             const updateData: Partial<SubClass> = {};
             if (category) {
-              if (category === 'skills') {
-                updateData.skills = dataToSave.skills;
-              } else {
-                (updateData as any)[category] = (dataToSave as any)[category];
-              }
+                if (category === 'skills') {
+                    updateData.skills = dataToSave.skills;
+                } else {
+                    (updateData as any)[category] = (dataToSave as any)[category];
+                }
+            } else {
+                // If no category, it means we are in a state where we can update everything.
+                // This branch might not be used with the current flow but good for future.
+                 Object.assign(updateData, {
+                    config: dataToSave.config,
+                    runes: dataToSave.runes,
+                    properties: dataToSave.properties,
+                    constellation: dataToSave.constellation,
+                    sets: dataToSave.sets,
+                 });
             }
+
             await updateBuild(buildId, data.name, updateData);
             toast({
                 title: `Build Atualizada!`,
                 description: `A build para ${data.class} - ${data.name} foi salva com sucesso.`,
               });
+              router.back();
+              router.refresh();
+
         } else { // Creating new build
             await createOrUpdateBuild(data.buildName, { class: data.class, name: data.name, skills: dataToSave.skills });
             toast({
                 title: `Build Criada!`,
                 description: `A build ${data.buildName} foi criada com sucesso.`,
               });
+            router.push('/admin');
+            router.refresh();
         }
-      router.push('/admin');
-      router.refresh();
     } catch (error) {
       console.error("Erro ao salvar a build:", error);
       toast({
@@ -573,8 +610,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                                         onChange={field.onChange}
                                         placeholder={`Adicione ${fieldInfo.label.toLowerCase()}...`}
                                         className="min-h-48"
-                                        itemType={'text'}
-                                        classNameProp={className}
+                                        options={predefinedOptions[fieldInfo.name] || []}
                                     />
                                 ) : null}
                             </FormControl>

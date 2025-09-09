@@ -14,22 +14,12 @@ import {
 import { Command as CommandPrimitive } from "cmdk";
 import { cn } from "@/lib/utils";
 
-// Helper function to generate the image path for a skill
-function getSkillImagePath(skillName: string, className?: string) {
-    if (!className) return "/placeholder.png"; // Fallback image
-    const formattedClassName = className.toLowerCase().replace(/\s+/g, '-');
-    const formattedSkillName = skillName.toLowerCase().replace(/\s+/g, '-');
-    return `/${formattedClassName}/skill/imagens/${formattedSkillName}.png`;
-}
-
-
 interface MultiSelectProps {
   selected: string[];
   onChange: React.Dispatch<React.SetStateAction<string[]>>;
   placeholder?: string;
   className?: string;
-  itemType?: 'skill' | 'text';
-  classNameProp?: string;
+  options?: string[]; // New prop for predefined options
 }
 
 export function MultiSelect({
@@ -37,8 +27,7 @@ export function MultiSelect({
   onChange,
   placeholder = "Select options",
   className,
-  itemType = 'text',
-  classNameProp,
+  options = [],
 }: MultiSelectProps) {
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [open, setOpen] = React.useState(false);
@@ -75,6 +64,15 @@ export function MultiSelect({
     }
   }
 
+  const filteredOptions = options.filter(option => 
+    !selected.includes(option) && 
+    option.toLowerCase().includes(inputValue.toLowerCase())
+  );
+
+  // Option to add a custom value if it doesn't exist in the options
+  const canAddCustom = inputValue.trim() !== "" && !options.includes(inputValue.trim()) && !selected.includes(inputValue.trim());
+
+
   return (
     <Command
       onKeyDown={handleKeyDown}
@@ -90,16 +88,6 @@ export function MultiSelect({
           {selected.map((option) => {
             return (
               <Badge key={option} variant="secondary" className="flex items-center gap-2">
-                {itemType === 'skill' && (
-                    <Image
-                        src={getSkillImagePath(option, classNameProp)}
-                        alt={option}
-                        width={20}
-                        height={20}
-                        className="rounded-sm"
-                        unoptimized
-                    />
-                )}
                 {option}
                 <button
                   className="ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
@@ -126,7 +114,7 @@ export function MultiSelect({
             onBlur={() => setOpen(false)}
             onFocus={() => setOpen(true)}
             onKeyDown={(e) => {
-                if(e.key === "Enter" && inputValue.trim() !== "") {
+                if(e.key === "Enter" && canAddCustom) {
                     e.preventDefault();
                     handleSelect(inputValue.trim());
                 }
@@ -137,32 +125,35 @@ export function MultiSelect({
         </div>
       </div>
       <div className="relative mt-2">
-        {open &&
-        inputValue.length > 0 &&
-        !selected.includes(inputValue.trim()) ? (
+        {open && (filteredOptions.length > 0 || canAddCustom) ? (
           <div className="absolute top-0 z-10 w-full rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in">
             <CommandList>
               <CommandGroup>
-                <CommandItem
-                  onMouseDown={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                  }}
-                  onSelect={() => handleSelect(inputValue.trim())}
-                  className={"cursor-pointer flex items-center gap-2"}
-                >
-                    {itemType === 'skill' && (
-                         <Image
-                            src={getSkillImagePath(inputValue.trim(), classNameProp)}
-                            alt={inputValue.trim()}
-                            width={20}
-                            height={20}
-                            className="rounded-sm"
-                            unoptimized
-                        />
-                    )}
-                  Adicionar "{inputValue}"
-                </CommandItem>
+                {filteredOptions.map((option) => (
+                   <CommandItem
+                    key={option}
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                    }}
+                    onSelect={() => handleSelect(option)}
+                    className={"cursor-pointer"}
+                  >
+                    {option}
+                  </CommandItem>
+                ))}
+                 {canAddCustom && (
+                    <CommandItem
+                        onMouseDown={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        }}
+                        onSelect={() => handleSelect(inputValue.trim())}
+                        className={"cursor-pointer"}
+                    >
+                        Adicionar "{inputValue}"
+                    </CommandItem>
+                 )}
               </CommandGroup>
             </CommandList>
           </div>
