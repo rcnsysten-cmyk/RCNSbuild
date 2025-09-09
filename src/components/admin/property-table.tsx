@@ -41,6 +41,7 @@ export function PropertyTable({ value, onChange, data }: PropertyTableProps) {
       newValue: string
     ) => {
       const numericValue = parseInt(newValue, 10);
+      // Allow empty string to clear the input, otherwise check for valid number
       if (isNaN(numericValue) && newValue !== "") return;
   
       const newPageData = { ...currentPageData };
@@ -52,16 +53,16 @@ export function PropertyTable({ value, onChange, data }: PropertyTableProps) {
     };
   
     const maxRows = Math.max(
-      currentPageData.left.length,
-      currentPageData.middle.length,
-      currentPageData.right.length
+      (currentPageData.left || []).length,
+      (currentPageData.middle || []).length,
+      (currentPageData.right || []).length
     );
   
     const rows = Array.from({ length: maxRows }).map((_, rowIndex) => {
-      const leftValue = currentPageData.left[rowIndex];
-      const middleValue = currentPageData.middle[rowIndex];
-      const rightValue = currentPageData.right[rowIndex];
-      return { leftValue, middleValue, rightValue };
+        const leftValue = currentPageData.left?.[rowIndex];
+        const middleValue = currentPageData.middle?.[rowIndex];
+        const rightValue = currentPageData.right?.[rowIndex];
+        return { leftValue, middleValue, rightValue };
     });
 
     const PaginationControls = () => (
@@ -96,58 +97,60 @@ export function PropertyTable({ value, onChange, data }: PropertyTableProps) {
       <div className="space-y-4">
         <PaginationControls />
         <h3 className="text-xl font-bold text-center">{currentPageData.title}</h3>
-        <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="text-center">Lado Esquerdo</TableHead>
-                <TableHead className="text-center">Meio</TableHead>
-                <TableHead className="text-center">Lado Direito</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {rows.map((row, rowIndex) => (
-                <TableRow key={rowIndex}>
-                  <TableCell className="p-1 align-middle">
-                    {typeof row.leftValue === "number" ? (
-                      <Input
-                        type="number"
-                        value={row.leftValue}
-                        onChange={(e) => handleInputChange("left", rowIndex, e.target.value)}
-                        className="w-24 mx-auto text-center h-8"
-                      />
-                    ) : (
-                      <div className="w-24 h-8 mx-auto" />
-                    )}
-                  </TableCell>
-                  <TableCell className="p-1 align-middle">
-                    {typeof row.middleValue === "number" ? (
-                      <Input
-                        type="number"
-                        value={row.middleValue}
-                        onChange={(e) => handleInputChange("middle", rowIndex, e.target.value)}
-                        className="w-24 mx-auto text-center h-8"
-                      />
-                    ) : (
-                        <div className="w-24 h-8 mx-auto" />
-                    )}
-                  </TableCell>
-                  <TableCell className="p-1 align-middle">
-                    {typeof row.rightValue === "number" ? (
-                      <Input
-                        type="number"
-                        value={row.rightValue}
-                        onChange={(e) => handleInputChange("right", rowIndex, e.target.value)}
-                        className="w-24 mx-auto text-center h-8"
-                      />
-                    ) : (
-                        <div className="w-24 h-8 mx-auto" />
-                    )}
-                  </TableCell>
+        <div className="max-w-md mx-auto">
+          <div className="rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="text-center">Lado Esquerdo</TableHead>
+                  <TableHead className="text-center">Meio</TableHead>
+                  <TableHead className="text-center">Lado Direito</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {rows.map((row, rowIndex) => (
+                  <TableRow key={rowIndex}>
+                    <TableCell className="p-1 align-middle">
+                      {typeof row.leftValue === "number" ? (
+                        <Input
+                          type="number"
+                          value={row.leftValue}
+                          onChange={(e) => handleInputChange("left", rowIndex, e.target.value)}
+                          className="w-16 mx-auto text-center h-8"
+                        />
+                      ) : (
+                        <div className="w-16 h-8 mx-auto" />
+                      )}
+                    </TableCell>
+                    <TableCell className="p-1 align-middle">
+                      {typeof row.middleValue === "number" ? (
+                        <Input
+                          type="number"
+                          value={row.middleValue}
+                          onChange={(e) => handleInputChange("middle", rowIndex, e.target.value)}
+                          className="w-16 mx-auto text-center h-8"
+                        />
+                      ) : (
+                          <div className="w-16 h-8 mx-auto" />
+                      )}
+                    </TableCell>
+                    <TableCell className="p-1 align-middle">
+                      {typeof row.rightValue === "number" ? (
+                        <Input
+                          type="number"
+                          value={row.rightValue}
+                          onChange={(e) => handleInputChange("right", rowIndex, e.target.value)}
+                          className="w-16 mx-auto text-center h-8"
+                        />
+                      ) : (
+                          <div className="w-16 h-8 mx-auto" />
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </div>
         <PaginationControls />
       </div>
