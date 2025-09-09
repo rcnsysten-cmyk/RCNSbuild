@@ -4,25 +4,28 @@ const dwAgiPropertyPage1: PropertyPage = {
     page: 1,
     title: "Parte 1 - Nível 290 a 384 (95 pontos)",
     left: [
-        "Ignorar Taxa de Redução de DANO", 6,
-        "Aumento de DANO de Habilidade", 8,
-        "DANO Crítico", 15,
-        "DANO Excelente", 9,
-        "Ataque PvP", 10,
-        "Ataque PvM", 10,
-        "Aumento de DANO de Veneno", 6,
-        "Chance de Veneno", 1,
-        "Duração do Veneno", 6,
-        "DANO da Besta", 5,
-        "Ataque Mágico", 10,
-        "Aumento de DANO de Água", 5,
-        "Ataque bem sucedido", 4,
+        "Propriedade de Ataque",
+        6, 8, 15, 9, 10, 10,
+        "Propriedade de Veneno",
+        6, 1, 6,
+        "Propriedade de Aprimoramento",
+        5, 10, 5, 4
     ],
     middle: [
-        10, 10, 6, 1, 6, 5, 10, 5, 4, 1,
+        null, // Spacer for header
+        null, null, null, null, null, null,
+        null, // Spacer for header
+        null, null, null,
+        null, // Spacer for header
+        null, null, null, null
     ],
     right: [
-        6, 8, 15, 9, 10, 10, 6, 1, 6, 5, 10, 5, 4,
+        null, // Spacer for header
+        10, 10, 6, 1, 6, 5,
+        null, // Spacer for header
+        10, 5, 4,
+        null, // Spacer for header
+        1, null, null, null
     ]
 };
 

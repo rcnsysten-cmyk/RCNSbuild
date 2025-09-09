@@ -36,12 +36,19 @@ export function PropertyTable({ value, onChange }: PropertyTableProps) {
     newValue: string
   ) => {
     const numericValue = parseInt(newValue, 10);
-    if (isNaN(numericValue) && newValue !== "") return; // Allow empty string but not non-numeric
+    // Allow empty string to clear the input, but prevent non-numeric values
+    if (isNaN(numericValue) && newValue !== "") return; 
 
     const newPageData = { ...currentPageData };
-    (newPageData[columnIndex] as number[])[rowIndex] = isNaN(numericValue) ? 0 : numericValue;
+    // Create a mutable copy of the column array
+    const newColumnArray = [...(newPageData[columnIndex] as (string | number | null)[])];
+    // Update the value
+    newColumnArray[rowIndex] = newValue === "" ? 0 : numericValue;
+    // Assign the new array back
+    (newPageData[columnIndex] as (string | number | null)[]) = newColumnArray;
 
-    // Update the properties array
+
+    // Update the entire properties array
     const newProperties = [...value];
     newProperties[0] = newPageData;
     onChange(newProperties);
@@ -74,49 +81,56 @@ export function PropertyTable({ value, onChange }: PropertyTableProps) {
             </TableRow>
             </TableHeader>
             <TableBody>
-            {rows.map((row, rowIndex) => (
-                <TableRow key={rowIndex}>
-                {/* Left Column */}
-                <TableCell className="text-center p-2">
-                    {typeof row.leftValue === "string" ? (
-                    <span>{row.leftValue}</span>
-                    ) : (
-                    <Input
-                        type="number"
-                        value={row.leftValue}
-                        onChange={(e) => handleInputChange("left", rowIndex, e.target.value)}
-                        className="w-20 mx-auto text-center"
-                    />
-                    )}
-                </TableCell>
-                {/* Middle Column */}
-                <TableCell className="text-center p-2">
-                    {typeof row.middleValue === "string" ? (
-                    <span>{row.middleValue}</span>
-                    ) : (
-                    <Input
-                        type="number"
-                        value={row.middleValue}
-                        onChange={(e) => handleInputChange("middle", rowIndex, e.target.value)}
-                        className="w-20 mx-auto text-center"
-                    />
-                    )}
-                </TableCell>
-                {/* Right Column */}
-                <TableCell className="text-center p-2">
-                    {typeof row.rightValue === "string" ? (
-                    <span>{row.rightValue}</span>
-                    ) : (
-                    <Input
-                        type="number"
-                        value={row.rightValue}
-                        onChange={(e) => handleInputChange("right", rowIndex, e.target.value)}
-                        className="w-20 mx-auto text-center"
-                    />
-                    )}
-                </TableCell>
-                </TableRow>
-            ))}
+            {rows.map((row, rowIndex) => {
+                // Handle section headers that span all columns
+                if (typeof row.leftValue === 'string') {
+                    return (
+                        <TableRow key={rowIndex}>
+                            <TableCell colSpan={3} className="text-center font-bold bg-muted/50 p-2">
+                                {row.leftValue}
+                            </TableCell>
+                        </TableRow>
+                    )
+                }
+
+                return (
+                    <TableRow key={rowIndex}>
+                    {/* Left Column */}
+                    <TableCell className="p-1 align-middle">
+                        {typeof row.leftValue === "number" ? (
+                        <Input
+                            type="number"
+                            value={row.leftValue}
+                            onChange={(e) => handleInputChange("left", rowIndex, e.target.value)}
+                            className="w-24 mx-auto text-center h-8"
+                        />
+                        ) : null}
+                    </TableCell>
+                    {/* Middle Column */}
+                    <TableCell className="p-1 align-middle">
+                        {typeof row.middleValue === "number" ? (
+                        <Input
+                            type="number"
+                            value={row.middleValue}
+                            onChange={(e) => handleInputChange("middle", rowIndex, e.target.value)}
+                            className="w-24 mx-auto text-center h-8"
+                        />
+                        ) : null}
+                    </TableCell>
+                    {/* Right Column */}
+                    <TableCell className="p-1 align-middle">
+                        {typeof row.rightValue === "number" ? (
+                        <Input
+                            type="number"
+                            value={row.rightValue}
+                            onChange={(e) => handleInputChange("right", rowIndex, e.target.value)}
+                            className="w-24 mx-auto text-center h-8"
+                        />
+                        ) : null}
+                    </TableCell>
+                    </TableRow>
+                )
+            })}
             </TableBody>
         </Table>
         </div>
