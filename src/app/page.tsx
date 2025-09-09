@@ -104,14 +104,6 @@ export default function Home() {
           </div>
         )}
       </main>
-      <div className="fixed bottom-4 right-4">
-          <Button asChild variant="outline" className="bg-background/80 backdrop-blur-sm">
-            <Link href="/admin">
-              <Shield className="mr-2 h-4 w-4" />
-              Painel Admin
-            </Link>
-          </Button>
-      </div>
     </div>
   );
 }
