@@ -62,51 +62,27 @@ const constellationData = [
 const ITEMS_PER_PAGE = 17;
 
 interface ConstellationTableProps {
-  value: string[];
+  value: string[]; // Now expects values like "25-1", "29-2"
   onChange: (value: string[]) => void;
 }
 
 export function ConstellationTable({ value, onChange }: ConstellationTableProps) {
-  const [selections, setSelections] = useState<Record<number, "left" | "right">>({});
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = Math.ceil(constellationData.length / ITEMS_PER_PAGE);
 
-  useEffect(() => {
-    const newSelections: Record<number, "left" | "right"> = {};
-    for (const val of value) {
-      // Find the first row that matches the value to avoid issues with duplicate text
-      const row = constellationData.find(r => r.left === val || r.right === val);
-      if (row && !newSelections[row.level]) { // Ensure we only set it once per level
-          if (row.left === val) {
-              newSelections[row.level] = "left";
-          } else if (row.right === val) {
-              newSelections[row.level] = "right";
-          }
-      }
+  const getSelectionForLevel = (level: number): "1" | "2" | null => {
+    const found = value.find(v => v.startsWith(`${level}-`));
+    if (!found) return null;
+    return found.endsWith("-1") ? "1" : "2";
+  }
+
+  const handleSelect = (level: number, choice: "1" | "2") => {
+    const newValues = value.filter(v => !v.startsWith(`${level}-`));
+    const currentSelection = getSelectionForLevel(level);
+
+    if (currentSelection !== choice) {
+      newValues.push(`${level}-${choice}`);
     }
-    setSelections(newSelections);
-  }, [value]);
-
-
-  const handleSelect = (level: number, choice: "left" | "right") => {
-    const newSelections = { ...selections };
-
-    if (newSelections[level] === choice) {
-      delete newSelections[level];
-    } else {
-      newSelections[level] = choice;
-    }
-
-    setSelections(newSelections);
-
-    const newValues = Object.entries(newSelections).map(([levelStr, choice]) => {
-        const levelNum = parseInt(levelStr, 10);
-        const row = constellationData.find(r => r.level === levelNum);
-        if (row) {
-            return row[choice];
-        }
-        return null;
-    }).filter((v): v is string => v !== null);
 
     onChange(newValues);
   };
@@ -151,36 +127,39 @@ export function ConstellationTable({ value, onChange }: ConstellationTableProps)
           <TableHeader>
             <TableRow>
               <TableHead className="w-[100px] text-center">NÍVEL</TableHead>
-              <TableHead className="text-center">ESQUERDA</TableHead>
-              <TableHead className="text-center">DIREITA</TableHead>
+              <TableHead className="text-center">OPÇÃO 1</TableHead>
+              <TableHead className="text-center">OPÇÃO 2</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {currentData.map((row) => (
-              <TableRow key={row.level}>
-                <TableCell className="font-medium text-center">{row.level}</TableCell>
-                <TableCell
-                  className={cn(
-                    "text-center cursor-pointer hover:bg-muted/50",
-                    selections[row.level] === "left" &&
+            {currentData.map((row) => {
+              const selection = getSelectionForLevel(row.level);
+              return (
+                <TableRow key={row.level}>
+                  <TableCell className="font-medium text-center">{row.level}</TableCell>
+                  <TableCell
+                    className={cn(
+                      "text-center cursor-pointer hover:bg-muted/50",
+                      selection === "1" &&
+                        "bg-green-800/50 border border-green-500"
+                    )}
+                    onClick={() => handleSelect(row.level, "1")}
+                  >
+                    {row.left}
+                  </TableCell>
+                  <TableCell
+                    className={cn(
+                      "text-center cursor-pointer hover:bg-muted/50",
+                      selection === "2" &&
                       "bg-green-800/50 border border-green-500"
-                  )}
-                  onClick={() => handleSelect(row.level, "left")}
-                >
-                  {row.left}
-                </TableCell>
-                <TableCell
-                  className={cn(
-                    "text-center cursor-pointer hover:bg-muted/50",
-                    selections[row.level] === "right" &&
-                    "bg-green-800/50 border border-green-500"
-                  )}
-                  onClick={() => handleSelect(row.level, "right")}
-                >
-                  {row.right}
-                </TableCell>
-              </TableRow>
-            ))}
+                    )}
+                    onClick={() => handleSelect(row.level, "2")}
+                  >
+                    {row.right}
+                  </TableCell>
+                </TableRow>
+              )}
+            )}
           </TableBody>
         </Table>
       </div>
