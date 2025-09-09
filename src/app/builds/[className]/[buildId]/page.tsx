@@ -210,7 +210,7 @@ export default function BuildDetailsPage() {
                             <CardHeader>
                                 <CardTitle>Constelação</CardTitle>
                                 <CardDescription>Pontos selecionados na árvore de constelação para otimizar sua build.</CardDescription>
-                            </CardHeader>
+                            </Header>
                             <CardContent>
                                <ConstellationTable value={subClass.constellation} onChange={() => {}} data={constellationData} readOnly={true} />
                             </CardContent>
