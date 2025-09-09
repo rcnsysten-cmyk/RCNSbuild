@@ -26,7 +26,7 @@ import { Skeleton } from '../ui/skeleton';
 import { ScrollArea } from '../ui/scroll-area';
 import Image from 'next/image';
 import { ConstellationTable } from './constellation-table';
-import { getConstellationData } from '@/lib/constellation-data';
+import { getConstellationData, ConstellationData } from '@/lib/constellation-data';
 
 const attributeConfigSchema = z.object({
   levelRange: z.string(),
