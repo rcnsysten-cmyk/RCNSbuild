@@ -72,16 +72,34 @@ export function ConstellationTable({ value, onChange, currentPage }: Constellati
 
   useEffect(() => {
     const initialSelections: Record<number, "left" | "right"> = {};
+    const dataMap = new Map(constellationData.map(row => [row.level, row]));
     const valueSet = new Set(value);
-
-    constellationData.forEach((row) => {
-      if (valueSet.has(row.left)) {
-        initialSelections[row.level] = "left";
-      } else if (valueSet.has(row.right)) {
-        initialSelections[row.level] = "right";
+  
+    value.forEach(selectedValue => {
+      for (const row of constellationData) {
+        if (row.left === selectedValue) {
+          initialSelections[row.level] = "left";
+          break; 
+        }
+        if (row.right === selectedValue) {
+          initialSelections[row.level] = "right";
+          break;
+        }
       }
     });
-    setSelections(initialSelections);
+
+    const recoveredSelections: Record<number, "left" | "right"> = {};
+    const allSelectedValues = new Set(value);
+
+    for(const item of constellationData){
+        if(allSelectedValues.has(item.left)){
+            recoveredSelections[item.level] = "left";
+        }
+        if(allSelectedValues.has(item.right)){
+            recoveredSelections[item.level] = "right";
+        }
+    }
+    setSelections(recoveredSelections);
   }, [value]);
 
   const handleSelect = (level: number, choice: "left" | "right") => {
