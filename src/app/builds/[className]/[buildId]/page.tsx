@@ -168,7 +168,7 @@ export default function BuildDetailsPage() {
                             <CardHeader>
                                 <CardTitle>Pontos de Habilidade</CardTitle>
                                 <CardDescription>Distribuição de pontos nas habilidades principais e da especialização.</CardDescription>
-                            </Header>
+                            </CardHeader>
                             <CardContent>
                                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-8 gap-4">
                                     {subClass.skills.map(skill => {
@@ -210,7 +210,7 @@ export default function BuildDetailsPage() {
                             <CardHeader>
                                 <CardTitle>Constelação</CardTitle>
                                 <CardDescription>Pontos selecionados na árvore de constelação para otimizar sua build.</CardDescription>
-                            </Header>
+                            </CardHeader>
                             <CardContent>
                                <ConstellationTable value={subClass.constellation} onChange={() => {}} data={constellationData} readOnly={true} />
                             </CardContent>
@@ -221,7 +221,7 @@ export default function BuildDetailsPage() {
                             <CardHeader>
                                 <CardTitle>Conjuntos Recomendados</CardTitle>
                                 <CardDescription>Estes são os conjuntos (sets) recomendados para esta build.</CardDescription>
-                            </Header>
+                            </CardHeader>
                             <CardContent>
                                 <SetsGallery className={build.class} subClassName={subClass.name} />
                             </CardContent>
@@ -232,7 +232,7 @@ export default function BuildDetailsPage() {
                             <CardHeader>
                                 <CardTitle>Runas</CardTitle>
                                 <CardDescription>Runas recomendadas para equipar.</CardDescription>
-                            </Header>
+                            </CardHeader>
                             <CardContent>
                                {subClass.runes.length > 0 ? (
                                  <div className="flex flex-wrap gap-4">
