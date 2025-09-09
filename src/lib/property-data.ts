@@ -1,5 +1,7 @@
+
 import { PropertyPage, PropertySection } from "./types";
 
+// Page 1
 const attackSectionPage1: PropertySection = {
   title: "Propriedade de Ataque",
   rows: [
@@ -16,6 +18,7 @@ const attackSectionPage1: PropertySection = {
   ]
 };
 
+// Page 2
 const defenseSectionPage2: PropertySection = {
   title: "Propriedade de Defesa",
   rows: [
@@ -32,6 +35,7 @@ const defenseSectionPage2: PropertySection = {
   ],
 };
 
+// Page 3
 const attackSectionPage3: PropertySection = {
     title: "Propriedade de Ataque",
     rows: [
@@ -48,6 +52,7 @@ const attackSectionPage3: PropertySection = {
     ]
 };
 
+// Page 4
 const commonSectionPage4: PropertySection = {
     title: "Propriedade Comum",
     rows: [
@@ -64,6 +69,7 @@ const commonSectionPage4: PropertySection = {
     ]
 };
 
+// Page 5
 const defenseSectionPage5: PropertySection = {
     title: "Propriedade de Defesa",
     rows: [
@@ -80,6 +86,7 @@ const defenseSectionPage5: PropertySection = {
     ]
 };
 
+// Page 6
 const commonSectionPage6: PropertySection = {
     title: "Propriedade Comum",
     rows: [
@@ -96,6 +103,7 @@ const commonSectionPage6: PropertySection = {
     ]
 };
 
+// Page 7
 const commonSectionPage7: PropertySection = {
     title: "Propriedade Comum",
     rows: [
@@ -112,6 +120,7 @@ const commonSectionPage7: PropertySection = {
     ]
 };
 
+// Page 8
 const attackSectionPage8: PropertySection = {
     title: "Propriedade de Ataque",
     rows: [
@@ -128,6 +137,7 @@ const attackSectionPage8: PropertySection = {
     ]
 };
 
+// Page 9
 const defenseSectionPage9: PropertySection = {
     title: "Propriedade de Defesa",
     rows: [
@@ -144,6 +154,7 @@ const defenseSectionPage9: PropertySection = {
     ]
 };
 
+// Page 10
 const elementalSectionPage10: PropertySection = {
     title: "Propriedade do Tipo Elemental",
     rows: [
@@ -160,6 +171,7 @@ const elementalSectionPage10: PropertySection = {
     ]
 };
 
+// Page 11
 const elementalSectionPage11: PropertySection = {
     title: "Propriedade do Tipo Elemental",
     rows: [
@@ -176,6 +188,7 @@ const elementalSectionPage11: PropertySection = {
     ]
 };
 
+// Page 12
 const attackSectionPage12: PropertySection = {
     title: "Propriedade de Ataque",
     rows: [
@@ -192,6 +205,7 @@ const attackSectionPage12: PropertySection = {
     ]
 };
 
+// Page 13
 const defenseSectionPage13: PropertySection = {
     title: "Propriedade de Defesa",
     rows: [
@@ -208,6 +222,7 @@ const defenseSectionPage13: PropertySection = {
     ]
 };
 
+// Page 14
 const commonSectionPage14: PropertySection = {
     title: "Propriedade Comum",
     rows: [
@@ -224,15 +239,40 @@ const commonSectionPage14: PropertySection = {
     ]
 };
 
+// Page 15
 const defenseSectionPage15: PropertySection = {
     title: "Propriedade de Defesa",
-    rows: Array(10).fill([0, 0, 0]).map(() => [0, 0, 0]) as [number | null, number | null, number | null][]
+    rows: [
+        [10, 10, 10],
+        [15, null, 15],
+        [null, 10, null],
+        [10, 0, 10],
+        [5, 1, 5],
+        [1, 10, 1],
+        [10, null, 10],
+        [10, 10, 10],
+        [10, null, 10],
+        [10, null, 10],
+    ]
 };
 
+// Page 16
 const commonSectionPage16: PropertySection = {
     title: "Propriedade Comum",
-    rows: Array(10).fill([0, 0, 0]).map(() => [0, 0, 0]) as [number | null, number | null, number | null][]
+    rows: [
+        [15, null, 10],
+        [15, 10, 10],
+        [14, null, 9],
+        [15, null, 15],
+        [15, null, 15],
+        [10, null, 15],
+        [10, null, 10],
+        [10, null, 10],
+        [10, null, 10],
+        [10, null, 10],
+    ]
 };
+
 
 const pageTypeMap: { [key: number]: PropertySection[] } = {
     1: [attackSectionPage1], 
@@ -268,6 +308,8 @@ const pageTitleMap: { [key: number]: string } = {
     12: "Parte 12 - Nível 970 a 986 (16 pontos)",
     13: "Parte 13 - Nível 986 a 997 (11 pontos)",
     14: "Parte 14 - Nível 997 a 1071 (74 pontos)",
+    15: "Parte 15 - Nível 1071 a 1081 (10 pontos)",
+    16: "Parte 16 - Nível 1081 a 1100 (19 pontos)",
 }
 
 
