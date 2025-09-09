@@ -80,6 +80,22 @@ const defenseSectionPage5: PropertySection = {
     ]
 };
 
+const commonSectionPage6: PropertySection = {
+    title: "Propriedade Comum",
+    rows: [
+        [9, null, 6],
+        [15, 1, 6],
+        [9, null, 9],
+        [15, null, 15],
+        [0, null, 15],
+        [0, null, 0],
+        [0, null, 0],
+        [0, null, 0],
+        [0, null, 0],
+        [0, null, 0],
+    ]
+};
+
 const attackSectionDefault: PropertySection = {
     title: "Propriedade de Ataque",
     rows: Array(10).fill([0, 0, 0]),
@@ -106,7 +122,7 @@ const pageTypeMap: { [key: number]: PropertySection[] } = {
     3: [attackSectionPage3], 
     4: [commonSectionPage4],
     5: [defenseSectionPage5],
-    6: [commonSectionDefault],
+    6: [commonSectionPage6],
     7: [commonSectionDefault],
     8: [attackSectionDefault], 
     9: [defenseSectionDefault],
@@ -125,6 +141,7 @@ const pageTitleMap: { [key: number]: string } = {
     3: "Parte 3 - Nível 517 a 597 (80 pontos)",
     4: "Parte 4 - Nível 597 a 642 (45 pontos)",
     5: "Parte 5 - Nível 642 a 682 (40 pontos)",
+    6: "Parte 6 - Nível 682 a 737 (55 pontos)",
 }
 
 const pageClassMap: { [key: number]: 'attack' | 'defense' | 'common' | 'elemental' } = {
