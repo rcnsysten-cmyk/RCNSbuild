@@ -17,7 +17,7 @@ import { useRouter } from 'next/navigation';
 import { MultiSelect } from '@/components/ui/multi-select';
 import { SubClass, SkillConfig } from '@/lib/types';
 import { Input } from '../ui/input';
-import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Button } from '../ui/button';
 import { createOrUpdateBuild, updateBuild } from '@/lib/firestore';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
@@ -25,6 +25,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Skeleton } from '../ui/skeleton';
 import { ScrollArea } from '../ui/scroll-area';
 import Image from 'next/image';
+import { ConstellationTable } from './constellation-table';
 
 const attributeConfigSchema = z.object({
   levelRange: z.string(),
@@ -46,7 +47,7 @@ const formSchema = z.object({
   config: z.array(attributeConfigSchema),
   runes: z.array(z.string()),
   skills: z.array(skillConfigSchema),
-  properties: z.array(z.string()),
+  properties: z.array(z/string()),
   constellation: z.array(z.string()),
   sets: z.array(z.string()),
 });
@@ -72,7 +73,7 @@ const classNames = Object.keys(classSubclassMap);
 const allFields: { name: keyof Omit<BuildFormValues, 'class' | 'name' | 'buildName'>; label: string; description: string, isMultiSelect?: boolean }[] = [
     { name: 'config', label: 'Atributos', description: 'Defina os pontos de atributos para cada faixa de nível.' },
     { name: 'skills', label: 'Habilidades', description: 'Defina os pontos para cada habilidade.' },
-    { name: 'constellation', label: 'Constelação', description: 'Adicione os pontos da constelação.', isMultiSelect: true },
+    { name: 'constellation', label: 'Constelação', description: 'Selecione os pontos da constelação clicando em uma das opções de cada nível.' },
     { name: 'properties', label: 'Propriedade', description: 'Adicione as propriedades. Ex: Aumento de Dano Mágico: 20%', isMultiSelect: true },
     { name: 'sets', label: 'Conjuntos', description: 'Adicione os conjuntos (sets). Ex: Grand Soul', isMultiSelect: true },
     { name: 'runes', label: 'Runas', description: 'Adicione as runas. Ex: Runa de Energia Mística', isMultiSelect: true },
@@ -471,7 +472,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                         </div>
                     ) : (
                     <ScrollArea className="h-[950px] pr-4">
-                        <div className="flex flex-col items-center gap-y-8">
+                        <div className="flex flex-col items-center gap-y-10">
                             {Array.from({ length: 3 }).map((_, blockIndex) => {
                                 const blockBaseSkills = baseSkills.slice(blockIndex * 8, (blockIndex + 1) * 8);
                                 const exclusiveSkill = exclusiveSkills[blockIndex];
@@ -549,7 +550,12 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                         <FormItem>
                             <FormLabel>{fieldInfo.label}</FormLabel>
                             <FormControl>
-                                {fieldInfo.isMultiSelect ? (
+                                {fieldInfo.name === 'constellation' ? (
+                                     <ConstellationTable
+                                        value={field.value as string[]}
+                                        onChange={field.onChange}
+                                     />
+                                ) : fieldInfo.isMultiSelect ? (
                                     <MultiSelect
                                         selected={field.value as string[]}
                                         onChange={field.onChange}
