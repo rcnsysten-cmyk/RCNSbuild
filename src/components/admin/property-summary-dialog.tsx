@@ -1,7 +1,7 @@
 import React from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { pageTypeMap } from "@/lib/property-data";
-import { PropertyPage, PropertySection } from "@/lib/types";
+import { PropertyPage } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, TableFooter } from "../ui/table";
 
@@ -14,8 +14,8 @@ interface PropertySummaryDialogProps {
 type SummaryData = {
   [key: string]: {
     title: string;
-    rows: (number | null)[][];
-    totals: (number | null)[];
+    rows: (number)[][]; // No longer nullable
+    totals: number[]; // No longer nullable
   };
 };
 
@@ -27,22 +27,25 @@ const calculateSummary = (allPagesData: PropertyPage[]): SummaryData => {
     Elemental: { title: "Propriedade de Tipo Elemental", rows: Array(10).fill(null).map(() => [0, 0, 0]), totals: [0, 0, 0] },
   };
 
+  // Iterate through all 16 pages and accumulate the points
   allPagesData.forEach(page => {
     const pageType = pageTypeMap[page.page];
-    if (pageType && summary[pageType]) {
-      page.sections.forEach(section => {
-        section.rows.forEach((row, rowIndex) => {
+    if (pageType && summary[pageType] && page.sections.length > 0) {
+      // Assuming one section per page for simplicity, as per the current structure
+      const section = page.sections[0];
+      section.rows.forEach((row, rowIndex) => {
+        if (summary[pageType].rows[rowIndex]) {
           row.forEach((cell, colIndex) => {
             if (typeof cell === 'number') {
               (summary[pageType].rows[rowIndex][colIndex] as number) += cell;
             }
           });
-        });
+        }
       });
     }
   });
 
-  // Calculate totals for each column
+  // Calculate totals for each column for each property type
   Object.values(summary).forEach(propertyType => {
     for (let col = 0; col < 3; col++) {
       propertyType.totals[col] = propertyType.rows.reduce((acc, row) => acc + (row[col] || 0), 0);
@@ -121,7 +124,7 @@ export function PropertySummaryDialog({ isOpen, onOpenChange, allPagesData }: Pr
                     <TableRow>
                          {propertyOrder.map(key => (
                            <TableCell key={`${key}-total-label`} colSpan={3} className={cn("text-center font-extrabold text-lg p-3", propertyColors[key], propertyTextColors[key])}>
-                               TOTAL: {summary[key].totals.reduce((a,b) => (a || 0) + (b || 0), 0)}
+                               TOTAL: {summary[key].totals.reduce((a,b) => a + b, 0)}
                            </TableCell> 
                         ))}
                     </TableRow>
