@@ -24,6 +24,7 @@ export function SetsGallery({ className, subClassName }: SetsGalleryProps) {
   const [sets, setSets] = useState<SetItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [zoomedImage, setZoomedImage] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchSets() {
@@ -93,22 +94,44 @@ export function SetsGallery({ className, subClassName }: SetsGalleryProps) {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {sets.map(set => (
-            <div key={set.imagePath} className="flex flex-col items-center justify-center text-center gap-3 p-4 border rounded-lg bg-muted/20 hover:bg-muted/50 transition-colors">
-                <div className="relative w-32 h-32">
-                   <Image 
-                     src={set.imagePath}
-                     alt={set.name}
-                     fill
-                     className="object-contain"
-                     unoptimized
-                   />
-                </div>
-                <h3 className="font-semibold text-lg h-12 flex items-center justify-center">{set.name}</h3>
-                <Badge variant="outline">Tier {set.tier}</Badge>
-            </div>
-        ))}
-    </div>
+    <>
+      {zoomedImage && (
+        <div 
+          className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center"
+          onClick={() => setZoomedImage(null)}
+        >
+          <div className="relative w-3/4 h-3/4 max-w-4xl max-h-4xl">
+            <Image
+                src={zoomedImage}
+                alt="Zoomed set"
+                fill
+                className="object-contain"
+                unoptimized
+            />
+          </div>
+        </div>
+      )}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {sets.map(set => (
+              <div 
+                key={set.imagePath} 
+                className="flex flex-col items-center justify-center text-center gap-3 p-4 border rounded-lg bg-muted/20 hover:bg-muted/50 transition-colors cursor-pointer"
+                onClick={() => setZoomedImage(set.imagePath)}
+              >
+                  <div className="relative w-32 h-32">
+                    <Image 
+                      src={set.imagePath}
+                      alt={set.name}
+                      fill
+                      className="object-contain"
+                      unoptimized
+                    />
+                  </div>
+                  <h3 className="font-semibold text-lg h-12 flex items-center justify-center">{set.name}</h3>
+                  <Badge variant="outline">Tier {set.tier}</Badge>
+              </div>
+          ))}
+      </div>
+    </>
   );
 }

@@ -30,6 +30,7 @@ const formatSetName = (fileName: string): string => {
         case 6: return 'Conjunto Chrono Mágico';
         case 7: return 'Conjunto Solar Portador da Morte';
         case 8: return 'Conjunto Celestial Divindade';
+        case 9: return 'Conjunto Desconhecido'; // Placeholder
         default:
             // Default behavior for other tiers
             const nameWithoutTier = nameWithoutExt.replace(/^t\d+-?/, '');
@@ -42,7 +43,7 @@ const formatSetName = (fileName: string): string => {
 
 // Helper to extract tier from file name (e.g., 't3.png' -> 3, 't4-chrono.png' -> 4)
 const extractTier = (fileName: string): number => {
-    const match = path.parse(fileName).name.match(/^t(\d+)/);
+    const match = path.parse(fileName).name.toLowerCase().match(/^t(\d+)/);
     return match ? parseInt(match[1], 10) : 0;
 }
   
