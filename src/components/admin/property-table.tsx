@@ -12,7 +12,8 @@ import {
 import { Input } from "../ui/input";
 import { PropertyPage } from "@/lib/types";
 import { Button } from "../ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Eye } from "lucide-react";
+import { PropertySummaryDialog } from "./property-summary-dialog";
 
 interface PropertyTableProps {
     value: PropertyPage[];
@@ -22,6 +23,7 @@ interface PropertyTableProps {
 
 export function PropertyTable({ value, onChange, data }: PropertyTableProps) {
     const [currentPageIndex, setCurrentPageIndex] = useState(0);
+    const [isSummaryOpen, setIsSummaryOpen] = useState(false);
   
     if (!data || data.length === 0) {
       return (
@@ -82,70 +84,88 @@ export function PropertyTable({ value, onChange, data }: PropertyTableProps) {
       );
   
     return (
-      <div className="space-y-6">
-        <PaginationControls />
-        <h3 className="text-xl font-bold text-center">{currentPageData.title}</h3>
-        <div className="max-w-md mx-auto space-y-6">
-            {currentPageData.sections.map((section, sectionIndex) => (
-                 <div key={section.title}>
-                    <h4 className="font-bold text-center text-lg mb-2">{section.title}</h4>
-                    <div className="rounded-md border">
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                <TableHead className="text-center w-[33%]">Lado Esquerdo</TableHead>
-                                <TableHead className="text-center w-[33%]">Meio</TableHead>
-                                <TableHead className="text-center w-[33%]">Lado Direito</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {section.rows.map((row, rowIndex) => (
-                                <TableRow key={rowIndex}>
-                                    <TableCell className="p-1 align-middle">
-                                    {typeof row[0] === "number" ? (
-                                        <Input
-                                        type="number"
-                                        value={row[0]}
-                                        onChange={(e) => handleInputChange(sectionIndex, rowIndex, 0, e.target.value)}
-                                        className="w-16 mx-auto text-center h-8"
-                                        />
-                                    ) : (
-                                        <div className="w-16 h-8 mx-auto" />
-                                    )}
-                                    </TableCell>
-                                    <TableCell className="p-1 align-middle">
-                                    {typeof row[1] === "number" ? (
-                                        <Input
-                                        type="number"
-                                        value={row[1]}
-                                        onChange={(e) => handleInputChange(sectionIndex, rowIndex, 1, e.target.value)}
-                                        className="w-16 mx-auto text-center h-8"
-                                        />
-                                    ) : (
-                                        <div className="w-16 h-8 mx-auto" />
-                                    )}
-                                    </TableCell>
-                                    <TableCell className="p-1 align-middle">
-                                    {typeof row[2] === "number" ? (
-                                        <Input
-                                        type="number"
-                                        value={row[2]}
-                                        onChange={(e) => handleInputChange(sectionIndex, rowIndex, 2, e.target.value)}
-                                        className="w-16 mx-auto text-center h-8"
-                                        />
-                                    ) : (
-                                        <div className="w-16 h-8 mx-auto" />
-                                    )}
-                                    </TableCell>
-                                </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
+        <>
+        <PropertySummaryDialog 
+            isOpen={isSummaryOpen}
+            onOpenChange={setIsSummaryOpen}
+            allPagesData={value}
+        />
+        <div className="space-y-6">
+            <div className="flex items-center justify-center relative">
+                <PaginationControls />
+                <Button 
+                    type="button" 
+                    variant="outline" 
+                    onClick={() => setIsSummaryOpen(true)}
+                    className="absolute right-0 top-1/2 -translate-y-1/2"
+                >
+                    <Eye className="mr-2 h-4 w-4" />
+                    Ver Resultado Final
+                </Button>
+            </div>
+            <h3 className="text-xl font-bold text-center">{currentPageData.title}</h3>
+            <div className="max-w-md mx-auto space-y-6">
+                {currentPageData.sections.map((section, sectionIndex) => (
+                    <div key={section.title}>
+                        <h4 className="font-bold text-center text-lg mb-2">{section.title}</h4>
+                        <div className="rounded-md border">
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                    <TableHead className="text-center w-[33%]">Lado Esquerdo</TableHead>
+                                    <TableHead className="text-center w-[33%]">Meio</TableHead>
+                                    <TableHead className="text-center w-[33%]">Lado Direito</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {section.rows.map((row, rowIndex) => (
+                                    <TableRow key={rowIndex}>
+                                        <TableCell className="p-1 align-middle">
+                                        {typeof row[0] === "number" ? (
+                                            <Input
+                                            type="number"
+                                            value={row[0]}
+                                            onChange={(e) => handleInputChange(sectionIndex, rowIndex, 0, e.target.value)}
+                                            className="w-16 mx-auto text-center h-8"
+                                            />
+                                        ) : (
+                                            <div className="w-16 h-8 mx-auto" />
+                                        )}
+                                        </TableCell>
+                                        <TableCell className="p-1 align-middle">
+                                        {typeof row[1] === "number" ? (
+                                            <Input
+                                            type="number"
+                                            value={row[1]}
+                                            onChange={(e) => handleInputChange(sectionIndex, rowIndex, 1, e.target.value)}
+                                            className="w-16 mx-auto text-center h-8"
+                                            />
+                                        ) : (
+                                            <div className="w-16 h-8 mx-auto" />
+                                        )}
+                                        </TableCell>
+                                        <TableCell className="p-1 align-middle">
+                                        {typeof row[2] === "number" ? (
+                                            <Input
+                                            type="number"
+                                            value={row[2]}
+                                            onChange={(e) => handleInputChange(sectionIndex, rowIndex, 2, e.target.value)}
+                                            className="w-16 mx-auto text-center h-8"
+                                            />
+                                        ) : (
+                                            <div className="w-16 h-8 mx-auto" />
+                                        )}
+                                        </TableCell>
+                                    </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </div>
                     </div>
-                 </div>
-            ))}
+                ))}
+            </div>
+            <PaginationControls />
         </div>
-        <PaginationControls />
-      </div>
+      </>
     );
   }
