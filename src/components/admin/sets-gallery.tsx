@@ -105,7 +105,7 @@ export function SetsGallery({ className, subClassName }: SetsGalleryProps) {
                      unoptimized
                    />
                 </div>
-                <h3 className="font-semibold text-lg">{set.name}</h3>
+                <h3 className="font-semibold text-lg h-12 flex items-center justify-center">{set.name}</h3>
                 <Badge variant="outline">Tier {set.tier}</Badge>
             </div>
         ))}

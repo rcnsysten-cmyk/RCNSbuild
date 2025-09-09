@@ -17,27 +17,27 @@ const formatClassName = (folderName: string): string => {
     .join(' ');
 };
 
-// Helper to format set name from file name (e.g., 't1-grand-soul.png' -> 'Grand Soul')
+// Helper to format set name from file name (e.g., 't3-hades.png' -> 'Hades')
 const formatSetName = (fileName: string): string => {
     const nameWithoutExt = path.parse(fileName).name;
     const tier = extractTier(fileName);
 
     // Specific override for a known problematic name
-    if (tier === 3) {
+    if (nameWithoutExt.toLowerCase() === 't3') {
       return 'Conjunto Qiraji Eclipse';
     }
 
-    // Remove tier prefix (e.g., "t1-")
-    const nameWithoutTier = nameWithoutExt.replace(/^t\d+-/, '');
+    // Remove tier prefix (e.g., "t4-chrono" -> "Chrono")
+    const nameWithoutTier = nameWithoutExt.replace(/^t\d+-?/, '');
     return nameWithoutTier
       .split('-')
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
 };
 
-// Helper to extract tier from file name (e.g., 't1-grand-soul.png' -> 1)
+// Helper to extract tier from file name (e.g., 't3.png' -> 3, 't4-chrono.png' -> 4)
 const extractTier = (fileName: string): number => {
-    const match = path.parse(fileName).name.match(/^t(\d+)-/);
+    const match = path.parse(fileName).name.match(/^t(\d+)/);
     return match ? parseInt(match[1], 10) : 0;
 }
   
@@ -66,12 +66,14 @@ export async function GET(request: Request) {
             if (/\.(png|jpg|jpeg|gif|svg)$/.test(file)) {
                 const setName = formatSetName(file);
                 const tier = extractTier(file);
-                sets.push({
-                    name: setName,
-                    imagePath: `/${classFolder}/sets/${file}`,
-                    className: className,
-                    tier: tier,
-                });
+                if (tier > 0) { // Only add sets with a valid tier
+                    sets.push({
+                        name: setName,
+                        imagePath: `/${classFolder}/sets/${file}`,
+                        className: className,
+                        tier: tier,
+                    });
+                }
             }
         }
         
