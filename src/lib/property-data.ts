@@ -19,16 +19,16 @@ const attackSection: PropertySection = {
 const defenseSection: PropertySection = {
   title: "Propriedade de Defesa",
   rows: [
-      [0, 0, 0],
-      [0, 0, 0],
-      [0, 0, 0],
-      [0, 0, 0],
-      [0, 0, 0],
-      [0, 0, 0],
-      [0, 0, 0],
-      [0, 0, 0],
-      [0, 0, 0],
-      [0, 0, 0],
+      [9, 10, 10],
+      [9, null, 15],
+      [null, 1, null],
+      [6, 0, 10],
+      [5, 1, 5],
+      [1, 10, 1],
+      [10, null, 0],
+      [10, null, 0],
+      [10, null, 0],
+      [10, null, 0],
   ]
 };
 
@@ -85,13 +85,15 @@ const pageTypeMap: { [key: number]: PropertySection[] } = {
 
 const dwAgiProperties: PropertyPage[] = Array.from({ length: 16 }, (_, i) => {
     const pageNum = i + 1;
-    const startLevel = 290 + (i * 95);
+    // This is a placeholder for level ranges, can be updated later
+    const startLevel = 290 + (i * 95); 
     const endLevel = startLevel + 94;
 
     const sectionsForPage = pageTypeMap[pageNum] || [];
     
     return {
       page: pageNum,
+      // Titles can be customized per page if needed
       title: `Parte ${pageNum} - Nível ${startLevel} a ${endLevel} (95 pontos)`,
       // Deep copy to prevent mutations across pages
       sections: JSON.parse(JSON.stringify(sectionsForPage)) 
