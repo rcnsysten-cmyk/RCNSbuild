@@ -65,9 +65,6 @@ export default function AdminPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {builds.map((build) => {
             const Icon = iconMap[build.class];
-            const firstSubClass = build.subclasses[0];
-            if (!firstSubClass) return null; // Don't render card if no subclasses
-
             const subClassNames = build.subclasses.map(sc => sc.name).join(', ');
 
             return (
@@ -88,8 +85,8 @@ export default function AdminPage() {
                     >
                         <Link
                         href={`/admin/${encodeURIComponent(
-                            build.id
-                        )}/${encodeURIComponent(firstSubClass.name)}/edit`}
+                            build.class
+                        )}/${encodeURIComponent(build.subclasses[0].name)}/edit`}
                         >
                         Editar
                         </Link>
