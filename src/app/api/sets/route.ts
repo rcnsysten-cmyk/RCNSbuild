@@ -19,15 +19,17 @@ const formatClassName = (folderName: string): string => {
 
 // Helper to format set name from file name (e.g., 't3-hades.png' -> 'Hades')
 const formatSetName = (fileName: string): string => {
-    const nameWithoutExt = path.parse(fileName).name;
-    const tier = extractTier(fileName);
+    const nameWithoutExt = path.parse(fileName).name.toLowerCase();
 
-    // Specific override for a known problematic name
-    if (nameWithoutExt.toLowerCase() === 't3') {
+    // Specific overrides based on tier
+    if (nameWithoutExt === 't3') {
       return 'Conjunto Qiraji Eclipse';
     }
+    if (nameWithoutExt === 't4') {
+      return 'Conjunto Scallo Grande Alma';
+    }
 
-    // Remove tier prefix (e.g., "t4-chrono" -> "Chrono")
+    // Remove tier prefix (e.g., "t5-chrono" -> "Chrono")
     const nameWithoutTier = nameWithoutExt.replace(/^t\d+-?/, '');
     return nameWithoutTier
       .split('-')
