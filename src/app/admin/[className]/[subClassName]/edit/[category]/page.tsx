@@ -84,34 +84,39 @@ export default function EditCategoryPage() {
   const categoryName = categoryNames[category] || 'Categoria';
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="max-w-3xl mx-auto">
-        <BuildForm
-          buildData={subClass}
-          buildId={build.id}
-          category={category as any}
-          className={build.class}
-        >
-          {(form, submitButton, handleBack) => (
-            <>
-              <div className="flex justify-between items-center mb-6">
-                  <div>
-                      <Button variant="ghost" onClick={handleBack} className="mb-4">
-                          <ArrowLeft className="mr-2 h-4 w-4" />
-                          Voltar
-                      </Button>
-                      <h1 className="text-3xl font-bold">
-                          Editando {categoryName}: {decodedClassName} - {decodedSubClassName}
-                      </h1>
-                      <p className="text-muted-foreground mt-2">Adicione ou remova os itens abaixo.</p>
-                  </div>
-                  {submitButton}
+    <div className="relative">
+      <BuildForm
+        buildData={subClass}
+        buildId={build.id}
+        category={category as any}
+        className={build.class}
+      >
+        {(form, submitButton, handleBack) => (
+          <>
+            <div className="sticky top-0 z-10 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 mb-6">
+              <div className="container flex h-16 items-center justify-between">
+                <Button variant="ghost" onClick={handleBack}>
+                    <ArrowLeft className="mr-2 h-4 w-4" />
+                    Voltar
+                </Button>
+                {submitButton}
               </div>
-              {form}
-            </>
-          )}
-        </BuildForm>
-      </div>
+            </div>
+            
+            <div className="container mx-auto px-4 py-8 pt-0">
+                <div className="max-w-3xl mx-auto">
+                    <div className="mb-8">
+                        <h1 className="text-3xl font-bold">
+                            Editando {categoryName}: {decodedClassName} - {decodedSubClassName}
+                        </h1>
+                        <p className="text-muted-foreground mt-2">Adicione ou remova os itens abaixo.</p>
+                    </div>
+                    {form}
+                </div>
+            </div>
+          </>
+        )}
+      </BuildForm>
     </div>
   );
 }
