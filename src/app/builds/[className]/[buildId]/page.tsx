@@ -110,149 +110,151 @@ export default function BuildDetailsPage() {
     const constellationData = getConstellationData(build.class, subClass.name);
 
     return (
-        <div className="container mx-auto px-4 py-8">
-             <PropertySummaryDialog 
+        <div>
+            <PropertySummaryDialog 
                 isOpen={isPropertySummaryOpen}
                 onOpenChange={setIsPropertySummaryOpen}
                 allPagesData={subClass.properties}
             />
+            <div className="container mx-auto px-4 py-8">
+                <Button variant="ghost" onClick={() => router.back()} className="mb-4">
+                    <ArrowLeft className="mr-2 h-4 w-4" />
+                    Voltar
+                </Button>
+                <div className="flex items-center gap-3 mb-2">
+                    {Icon && <Icon className="h-8 w-8 text-primary" />}
+                    <h1 className="text-4xl font-bold font-headline">{build.id}</h1>
+                </div>
+                <p className="text-muted-foreground text-lg mb-8">{build.class} - {subClassNames}</p>
 
-            <Button variant="ghost" onClick={() => router.back()} className="mb-4">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Voltar
-            </Button>
-            <div className="flex items-center gap-3 mb-2">
-                {Icon && <Icon className="h-8 w-8 text-primary" />}
-                <h1 className="text-4xl font-bold font-headline">{build.id}</h1>
+                <Tabs defaultValue="attributes" className="w-full">
+                    <TabsList className="grid w-full grid-cols-3 md:grid-cols-6 h-auto">
+                        <TabsTrigger value="attributes"><Dna className="mr-2"/> Atributos</TabsTrigger>
+                        <TabsTrigger value="skills"><Swords className="mr-2"/> Habilidades</TabsTrigger>
+                        <TabsTrigger value="properties"><ListTree className="mr-2"/> Propriedades</TabsTrigger>
+                        <TabsTrigger value="constellation"><Star className="mr-2"/> Constelação</TabsTrigger>
+                        <TabsTrigger value="sets"><ShieldCheck className="mr-2"/> Conjuntos</TabsTrigger>
+                        <TabsTrigger value="runes"><Gem className="mr-2"/> Runas</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="attributes" className="mt-6">
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Distribuição de Atributos</CardTitle>
+                                <CardDescription>Pontos de Força, Agilidade, Vitalidade e Energia por faixa de nível.</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                 {subClass.config.map(attr => (
+                                    <Card key={attr.levelRange} className="bg-muted/30">
+                                        <CardHeader>
+                                            <CardTitle className="text-center text-lg">{getLevelRangeLabel(attr.levelRange)}</CardTitle>
+                                        </CardHeader>
+                                        <CardContent>
+                                            <ul className="space-y-2 text-center text-lg">
+                                                <li><span className="font-bold text-red-400">FOR:</span> {attr.str}</li>
+                                                <li><span className="font-bold text-green-400">AGI:</span> {attr.agi}</li>
+                                                <li><span className="font-bold text-blue-400">VIT:</span> {attr.vit}</li>
+                                                <li><span className="font-bold text-purple-400">ENE:</span> {attr.ene}</li>
+                                            </ul>
+                                        </CardContent>
+                                    </Card>
+                                 ))}
+                               </div>
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+                    <TabsContent value="skills" className="mt-6">
+                         <Card>
+                            <CardHeader>
+                                <CardTitle>Pontos de Habilidade</CardTitle>
+                                <CardDescription>Distribuição de pontos nas habilidades principais e da especialização.</CardDescription>
+                            </Header>
+                            <CardContent>
+                                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-8 gap-4">
+                                    {subClass.skills.map(skill => {
+                                        const skillInfo = availableSkills.find(s => s.name === skill.name);
+                                        return (
+                                            <div key={skill.name} className="flex flex-col items-center justify-center text-center gap-2 p-2 border rounded-lg bg-muted/30">
+                                                {skillInfo ? (
+                                                    <div className="relative w-20 h-20 rounded-md overflow-hidden">
+                                                        <Image src={skillInfo.imagePath} alt={skill.name} layout="fill" unoptimized/>
+                                                    </div>
+                                                ) : (
+                                                    <Skeleton className="w-20 h-20 rounded-md" />
+                                                )}
+                                                <span className="text-xs h-8 flex items-center">{skill.name}</span>
+                                                <Badge variant="default" className="text-base">{skill.points}</Badge>
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+                    <TabsContent value="properties" className="mt-6">
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Propriedades</CardTitle>
+                                <CardDescription>Resumo dos pontos de propriedade acumulados. Clique no botão para ver o resultado final.</CardDescription>
+                            </CardHeader>
+                            <CardContent className="flex items-center justify-center h-48">
+                                 <Button onClick={() => setIsPropertySummaryOpen(true)}>
+                                    <Eye className="mr-2 h-4 w-4" />
+                                    Ver Resultado Final das Propriedades
+                                 </Button>
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+                    <TabsContent value="constellation" className="mt-6">
+                         <Card>
+                            <CardHeader>
+                                <CardTitle>Constelação</CardTitle>
+                                <CardDescription>Pontos selecionados na árvore de constelação para otimizar sua build.</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                               <ConstellationTable value={subClass.constellation} onChange={() => {}} data={constellationData} readOnly={true} />
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+                    <TabsContent value="sets" className="mt-6">
+                         <Card>
+                            <CardHeader>
+                                <CardTitle>Conjuntos Recomendados</CardTitle>
+                                <CardDescription>Estes são os conjuntos (sets) recomendados para esta build.</CardDescription>
+                            </Header>
+                            <CardContent>
+                                <SetsGallery className={build.class} subClassName={subClass.name} />
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+                     <TabsContent value="runes" className="mt-6">
+                         <Card>
+                            <CardHeader>
+                                <CardTitle>Runas</CardTitle>
+                                <CardDescription>Runas recomendadas para equipar.</CardDescription>
+                            </Header>
+                            <CardContent>
+                               {subClass.runes.length > 0 ? (
+                                 <div className="flex flex-wrap gap-4">
+                                    {subClass.runes.map(rune => (
+                                        <Badge key={rune} variant="secondary" className="text-lg px-4 py-2">{rune}</Badge>
+
+                                    ))}
+                                 </div>
+                               ) : (
+                                <Alert variant="default" className="border-yellow-500/50 text-yellow-500 [&>svg]:text-yellow-500">
+                                    <Info className="h-4 w-4" />
+                                    <AlertTitle>Nenhuma Runa</AlertTitle>
+                                    <AlertDescription>
+                                        Nenhuma runa foi especificada para esta build ainda.
+                                    </AlertDescription>
+                                </Alert>
+                               )}
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+                </Tabs>
             </div>
-            <p className="text-muted-foreground text-lg mb-8">{build.class} - {subClassNames}</p>
-
-            <Tabs defaultValue="attributes" className="w-full">
-                <TabsList className="grid w-full grid-cols-3 md:grid-cols-6 h-auto">
-                    <TabsTrigger value="attributes"><Dna className="mr-2"/> Atributos</TabsTrigger>
-                    <TabsTrigger value="skills"><Swords className="mr-2"/> Habilidades</TabsTrigger>
-                    <TabsTrigger value="properties"><ListTree className="mr-2"/> Propriedades</TabsTrigger>
-                    <TabsTrigger value="constellation"><Star className="mr-2"/> Constelação</TabsTrigger>
-                    <TabsTrigger value="sets"><ShieldCheck className="mr-2"/> Conjuntos</TabsTrigger>
-                    <TabsTrigger value="runes"><Gem className="mr-2"/> Runas</TabsTrigger>
-                </TabsList>
-                <TabsContent value="attributes" className="mt-6">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Distribuição de Atributos</CardTitle>
-                            <CardDescription>Pontos de Força, Agilidade, Vitalidade e Energia por faixa de nível.</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                             {subClass.config.map(attr => (
-                                <Card key={attr.levelRange} className="bg-muted/30">
-                                    <CardHeader>
-                                        <CardTitle className="text-center text-lg">{getLevelRangeLabel(attr.levelRange)}</CardTitle>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <ul className="space-y-2 text-center text-lg">
-                                            <li><span className="font-bold text-red-400">FOR:</span> {attr.str}</li>
-                                            <li><span className="font-bold text-green-400">AGI:</span> {attr.agi}</li>
-                                            <li><span className="font-bold text-blue-400">VIT:</span> {attr.vit}</li>
-                                            <li><span className="font-bold text-purple-400">ENE:</span> {attr.ene}</li>
-                                        </ul>
-                                    </CardContent>
-                                </Card>
-                             ))}
-                           </div>
-                        </CardContent>
-                    </Card>
-                </TabsContent>
-                <TabsContent value="skills" className="mt-6">
-                     <Card>
-                        <CardHeader>
-                            <CardTitle>Pontos de Habilidade</CardTitle>
-                            <CardDescription>Distribuição de pontos nas habilidades principais e da especialização.</CardDescription>
-                        </Header>
-                        <CardContent>
-                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-8 gap-4">
-                                {subClass.skills.map(skill => {
-                                    const skillInfo = availableSkills.find(s => s.name === skill.name);
-                                    return (
-                                        <div key={skill.name} className="flex flex-col items-center justify-center text-center gap-2 p-2 border rounded-lg bg-muted/30">
-                                            {skillInfo ? (
-                                                <div className="relative w-20 h-20 rounded-md overflow-hidden">
-                                                    <Image src={skillInfo.imagePath} alt={skill.name} layout="fill" unoptimized/>
-                                                </div>
-                                            ) : (
-                                                <Skeleton className="w-20 h-20 rounded-md" />
-                                            )}
-                                            <span className="text-xs h-8 flex items-center">{skill.name}</span>
-                                            <Badge variant="default" className="text-base">{skill.points}</Badge>
-                                        </div>
-                                    )
-                                })}
-                            </div>
-                        </CardContent>
-                    </Card>
-                </TabsContent>
-                <TabsContent value="properties" className="mt-6">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Propriedades</CardTitle>
-                            <CardDescription>Resumo dos pontos de propriedade acumulados. Clique no botão para ver o resultado final.</CardDescription>
-                        </CardHeader>
-                        <CardContent className="flex items-center justify-center h-48">
-                             <Button onClick={() => setIsPropertySummaryOpen(true)}>
-                                <Eye className="mr-2 h-4 w-4" />
-                                Ver Resultado Final das Propriedades
-                             </Button>
-                        </CardContent>
-                    </Card>
-                </TabsContent>
-                <TabsContent value="constellation" className="mt-6">
-                     <Card>
-                        <CardHeader>
-                            <CardTitle>Constelação</CardTitle>
-                            <CardDescription>Pontos selecionados na árvore de constelação para otimizar sua build.</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                           <ConstellationTable value={subClass.constellation} onChange={() => {}} data={constellationData} readOnly />
-                        </CardContent>
-                    </Card>
-                </TabsContent>
-                <TabsContent value="sets" className="mt-6">
-                     <Card>
-                        <CardHeader>
-                            <CardTitle>Conjuntos Recomendados</CardTitle>
-                            <CardDescription>Estes são os conjuntos (sets) recomendados para esta build.</CardDescription>
-                        </Header>
-                        <CardContent>
-                            <SetsGallery className={build.class} subClassName={subClass.name} />
-                        </CardContent>
-                    </Card>
-                </TabsContent>
-                 <TabsContent value="runes" className="mt-6">
-                     <Card>
-                        <CardHeader>
-                            <CardTitle>Runas</CardTitle>
-                            <CardDescription>Runas recomendadas para equipar.</CardDescription>
-                        </Header>
-                        <CardContent>
-                           {subClass.runes.length > 0 ? (
-                             <div className="flex flex-wrap gap-4">
-                                {subClass.runes.map(rune => (
-                                    <Badge key={rune} variant="secondary" className="text-lg px-4 py-2">{rune}</Badge>
-                                ))}
-                             </div>
-                           ) : (
-                            <Alert variant="default" className="border-yellow-500/50 text-yellow-500 [&>svg]:text-yellow-500">
-                                <Info className="h-4 w-4" />
-                                <AlertTitle>Nenhuma Runa</AlertTitle>
-                                <AlertDescription>
-                                    Nenhuma runa foi especificada para esta build ainda.
-                                </AlertDescription>
-                            </Alert>
-                           )}
-                        </CardContent>
-                    </Card>
-                </TabsContent>
-            </Tabs>
         </div>
     );
 }
