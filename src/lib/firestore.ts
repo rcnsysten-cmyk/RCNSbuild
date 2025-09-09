@@ -34,8 +34,8 @@ export function getBuildsByClass(className: string, callback: (builds: Build[]) 
 }
 
 // Get a single build by its ID (which is the custom build name)
-export async function getBuildByClassName(className: string): Promise<Build | null> {
-    const docRef = doc(db, 'builds', className);
+export async function getBuildById(buildId: string): Promise<Build | null> {
+    const docRef = doc(db, 'builds', buildId);
     const docSnap = await getDoc(docRef);
     if (!docSnap.exists()) {
       return null;

@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { getBuildByClassName } from '@/lib/firestore';
+import { getBuildById } from '@/lib/firestore';
 import { Build } from '@/lib/types';
 import { ChevronRight, Dna, Gem, ListTree, ShieldCheck, Swords, Star, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
@@ -36,7 +36,7 @@ export default function EditBuildCategorySelectionPage() {
 
     useEffect(() => {
         const fetchBuild = async () => {
-            const buildData = await getBuildByClassName(decodedClassName);
+            const buildData = await getBuildById(decodedClassName);
             if (buildData) {
                 setBuild(buildData);
             } else {
@@ -72,7 +72,7 @@ export default function EditBuildCategorySelectionPage() {
         (sc) => sc.name.toLowerCase() === decodedSubClassName.toLowerCase()
     );
 
-    if (!subClass) {
+    if (!subClass || !build) {
         return notFound();
     }
 

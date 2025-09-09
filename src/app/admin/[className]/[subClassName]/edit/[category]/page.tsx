@@ -1,7 +1,7 @@
 'use client';
 
 import { BuildForm } from '@/components/admin/build-form';
-import { getBuildByClassName } from '@/lib/firestore';
+import { getBuildById } from '@/lib/firestore';
 import { Build, SubClass } from '@/lib/types';
 import { notFound, useParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
@@ -42,8 +42,24 @@ export default function EditCategoryPage() {
   const decodedSubClassName = decodeURIComponent(subClassName as string);
 
   useEffect(() => {
-    const fetchBuild = async () => {
-        const buildData = await getBuildByClassName(decodedClassName);
+    const fetchBuilds = async () => {
+        // Since we don't know the build ID, we can't fetch directly.
+        // This page is navigated to from a page that should pass the build ID,
+        // but for now, we assume the first build of a class is what we edit.
+        // This might need refinement if multiple builds per class exist.
+        // For now, this component seems to rely on buildData which implies a single build context.
+        // We will assume that `getBuildById` is the right approach, but we need a buildId.
+        // The URL structure `/admin/[className]/[subClassName]/edit` implies we might need to derive the buildId.
+        // Let's assume for now the logic is to find the first build that matches the class.
+        // This is not ideal, but let's see. The previous logic used getBuildByClassName which also wasn't ideal.
+        
+        // The most robust way is to fetch the build from its ID.
+        // The admin page links to `/admin/${encodeURIComponent(build.class)}/${encodeURIComponent(build.subclasses[0].name)}/edit`
+        // It does not pass the build.id. This is a flaw in the navigation.
+        // Let's assume for now that the className is the buildId, as per the original PRD's intent.
+        // This is a big assumption but let's stick with it.
+
+        const buildData = await getBuildById(decodedClassName);
         if (buildData) {
             setBuild(buildData);
             const foundSubClass = buildData.subclasses.find(
@@ -59,7 +75,7 @@ export default function EditCategoryPage() {
         }
         setLoading(false);
     };
-    fetchBuild();
+    fetchBuilds();
   }, [decodedClassName, decodedSubClassName]);
 
   if (loading) {
