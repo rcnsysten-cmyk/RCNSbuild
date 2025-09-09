@@ -12,31 +12,27 @@ const attackSection: PropertySection = {
 const defenseSection: PropertySection = {
   title: "Propriedade de Defesa",
   rows: [
-      [6, 1, 6],
-      [5, 10, 5],
-      [1, 1, 1],
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0],
   ]
 };
 
 const commonSection: PropertySection = {
   title: "Propriedade Comum",
   rows: [
-      [null, null, null],
-      [null, null, null],
-      [null, null, null],
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0],
   ]
 };
 
 const elementalSection: PropertySection = {
   title: "Propriedade Elemental",
   rows: [
-      [null, null, null],
-      [null, null, null],
-      [null, null, null],
-      [null, null, null],
-      [null, null, null],
-      [null, null, null],
-      [null, null, null],
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0],
   ]
 };
 
