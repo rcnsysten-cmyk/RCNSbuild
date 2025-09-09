@@ -6,12 +6,26 @@ const attackSection: PropertySection = {
       [6, 8, 15],
       [9, null, 10],
       [null, 10, null],
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0],
   ]
 };
 
 const defenseSection: PropertySection = {
   title: "Propriedade de Defesa",
   rows: [
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0],
       [0, 0, 0],
       [0, 0, 0],
       [0, 0, 0],
@@ -24,12 +38,26 @@ const commonSection: PropertySection = {
       [0, 0, 0],
       [0, 0, 0],
       [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0],
   ]
 };
 
 const elementalSection: PropertySection = {
   title: "Propriedade Elemental",
   rows: [
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0],
       [0, 0, 0],
       [0, 0, 0],
       [0, 0, 0],
