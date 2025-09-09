@@ -11,6 +11,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "../ui/button";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export const constellationData = [
   // Page 1
@@ -55,7 +56,7 @@ export const constellationData = [
   { level: 268, left: "Dano Elemental (-) +5%", right: "DEF Ignorada +5%" },
   { level: 283, left: "Dano Elemental (-) +5%", right: "DEF Ignorada +5%" },
   { level: 298, left: "DEF +2%", right: "Taxa de RES Crítica +5%" },
-  { level: 313, left: "DEF +2%", right: "Taxa de RES Crítica +5%" },
+  { level: 313, left: "DEF +2%", right: "Aumentar DANO de Habilidade +15%" },
 ];
 
 const ITEMS_PER_PAGE = 17;
@@ -63,25 +64,25 @@ const ITEMS_PER_PAGE = 17;
 interface ConstellationTableProps {
   value: string[];
   onChange: (value: string[]) => void;
-  currentPage: number;
 }
 
-export function ConstellationTable({ value, onChange, currentPage }: ConstellationTableProps) {
+export function ConstellationTable({ value, onChange }: ConstellationTableProps) {
   const [selections, setSelections] = useState<Record<number, "left" | "right">>({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = Math.ceil(constellationData.length / ITEMS_PER_PAGE);
 
   useEffect(() => {
     const newSelections: Record<number, "left" | "right"> = {};
-    // Rebuild the selections map based on the values from the form.
-    // This is critical to correctly display the saved state.
     for (const val of value) {
-      const row = constellationData.find(r => r.left === val || r.right === val);
-      if (row) {
-        if (row.left === val) {
-          newSelections[row.level] = "left";
-        } else if (row.right === val) {
-          newSelections[row.level] = "right";
+        // Find the first row that matches the value to avoid issues with duplicate text
+        const row = constellationData.find(r => r.left === val || r.right === val);
+        if (row && !newSelections[row.level]) { // Ensure we only set it once per level
+            if (row.left === val) {
+                newSelections[row.level] = "left";
+            } else if (row.right === val) {
+                newSelections[row.level] = "right";
+            }
         }
-      }
     }
     setSelections(newSelections);
   }, [value]);
@@ -90,7 +91,6 @@ export function ConstellationTable({ value, onChange, currentPage }: Constellati
   const handleSelect = (level: number, choice: "left" | "right") => {
     const newSelections = { ...selections };
 
-    // Toggle selection for the same level
     if (newSelections[level] === choice) {
       delete newSelections[level];
     } else {
@@ -99,14 +99,14 @@ export function ConstellationTable({ value, onChange, currentPage }: Constellati
 
     setSelections(newSelections);
 
-    const newValues = constellationData
-      .map((row) => {
-        const selection = newSelections[row.level];
-        if (selection === "left") return row.left;
-        if (selection === "right") return row.right;
+    const newValues = Object.entries(newSelections).map(([levelStr, choice]) => {
+        const levelNum = parseInt(levelStr, 10);
+        const row = constellationData.find(r => r.level === levelNum);
+        if (row) {
+            return row[choice];
+        }
         return null;
-      })
-      .filter((v): v is string => v !== null);
+    }).filter((v): v is string => v !== null);
 
     onChange(newValues);
   };
@@ -115,8 +115,37 @@ export function ConstellationTable({ value, onChange, currentPage }: Constellati
   const endIndex = startIndex + ITEMS_PER_PAGE;
   const currentData = constellationData.slice(startIndex, endIndex);
 
+  const PaginationControls = () => (
+    <div className="flex items-center justify-center gap-2 my-4">
+        <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => setCurrentPage(currentPage - 1)}
+            disabled={currentPage === 1}
+            >
+            <ChevronLeft className="h-4 w-4" />
+            <span className="hidden sm:inline ml-2">Anterior</span>
+        </Button>
+        <span className="text-sm font-medium w-24 text-center">
+            Página {currentPage} de {totalPages}
+        </span>
+        <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => setCurrentPage(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            >
+            <span className="hidden sm:inline mr-2">Próximo</span>
+            <ChevronRight className="h-4 w-4" />
+        </Button>
+    </div>
+  );
+
   return (
     <div>
+       <PaginationControls />
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -155,6 +184,7 @@ export function ConstellationTable({ value, onChange, currentPage }: Constellati
           </TableBody>
         </Table>
       </div>
+      <PaginationControls />
     </div>
   );
 }

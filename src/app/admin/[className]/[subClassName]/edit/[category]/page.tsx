@@ -23,7 +23,7 @@ const categoryNames: { [key: string]: string } = {
 export default function EditCategoryPage() {
   const params = useParams();
   const { className, subClassName, category } = params;
-
+  
   const [build, setBuild] = useState<Build | null>(null);
   const [subClass, setSubClass] = useState<SubClass | null>(null);
   const [loading, setLoading] = useState(true);
@@ -92,8 +92,8 @@ export default function EditCategoryPage() {
         className={build.class}
       >
         {(form, submitButton, handleBack) => (
-          <div className="container mx-auto px-4 py-8 pt-0">
-              <div className="max-w-3xl mx-auto">
+          <div className="container mx-auto px-4 py-8">
+              <div className="max-w-4xl mx-auto">
                   <div className="flex items-center justify-between mb-8">
                     <div className="flex-1">
                         <Button variant="ghost" onClick={handleBack} className="mb-4">

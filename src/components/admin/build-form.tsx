@@ -25,8 +25,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Skeleton } from '../ui/skeleton';
 import { ScrollArea } from '../ui/scroll-area';
 import Image from 'next/image';
-import { ConstellationTable, constellationData } from './constellation-table';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ConstellationTable } from './constellation-table';
 
 const attributeConfigSchema = z.object({
   levelRange: z.string(),
@@ -101,8 +100,6 @@ const getLevelRangeLabel = (levelRange: string) => {
     return `Lvl ${start} ao ${end}`;
 }
 
-const ITEMS_PER_PAGE = 17;
-
 // Skill Lists
 const dwBaseSkillOrder = ["Meteorito", "Pilar De Chamas", "Fogo Infernal", "Espirito Maligno", "Impulso De Mana", "Lampejo Aquatico", "Veneno Mortal", "Barreira Da Alma", "Lanca Venenosa", "Sensacao De Veneno", "Maldicao", "Enxame De Veneno", "Meteoro", "Selo De Gelo", "Teletransporte", "Nevasca", "Explosao", "Ilusao", "Meteoro Venenoso", "Alternancia", "Olho Do Ceifador", "Bolha", "Labareda", "Explosao Infernal"];
 const dwEneExclusiveSkills = ["Conhecimento Espaco Temporal", "Controle Espaco Temporal"];
@@ -117,7 +114,6 @@ export function BuildForm({ buildId, buildData, category, className, children }:
   const [exclusiveSkills, setExclusiveSkills] = useState<AvailableSkill[]>([]);
   const [loadingSkills, setLoadingSkills] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = Math.ceil(constellationData.length / ITEMS_PER_PAGE);
 
   
   const allAvailableSkills = useMemo(() => [...baseSkills, ...exclusiveSkills], [baseSkills, exclusiveSkills]);
@@ -307,34 +303,6 @@ export function BuildForm({ buildId, buildData, category, className, children }:
   const fieldInfo = allFields.find(f => f.name === category);
   
   const submitButton = <Button type="submit" form="build-form">Salvar Alterações</Button>;
-
-  const PaginationControls = () => (
-    <div className="flex items-center justify-center gap-2 my-4">
-        <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={() => setCurrentPage(currentPage - 1)}
-            disabled={currentPage === 1}
-            >
-            <ChevronLeft className="h-4 w-4" />
-            <span className="hidden sm:inline ml-2">Anterior</span>
-        </Button>
-        <span className="text-sm font-medium w-24 text-center">
-            Página {currentPage} de {totalPages}
-        </span>
-        <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={() => setCurrentPage(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            >
-            <span className="hidden sm:inline mr-2">Próximo</span>
-            <ChevronRight className="h-4 w-4" />
-        </Button>
-    </div>
-  );
 
   const formContent = (
     <>
@@ -588,15 +556,10 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                             </FormDescription>
                             <FormControl>
                                 {fieldInfo.name === 'constellation' ? (
-                                    <div>
-                                        <PaginationControls />
-                                        <ConstellationTable
-                                           value={field.value as string[]}
-                                           onChange={field.onChange}
-                                           currentPage={currentPage}
-                                        />
-                                        <PaginationControls />
-                                    </div>
+                                    <ConstellationTable
+                                        value={field.value as string[]}
+                                        onChange={field.onChange}
+                                    />
                                 ) : fieldInfo.isMultiSelect ? (
                                     <MultiSelect
                                         selected={field.value as string[]}
