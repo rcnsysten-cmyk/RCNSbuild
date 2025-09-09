@@ -10,7 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Input } from "../ui/input";
-import { PropertyPage } from "@/lib/types";
+import { PropertyPage, PropertyRow } from "@/lib/types";
 import { Button } from "../ui/button";
 import { ChevronLeft, ChevronRight, Eye, Info } from "lucide-react";
 import { PropertySummaryDialog } from "./property-summary-dialog";
@@ -46,7 +46,7 @@ export function PropertyTable({ value, onChange, data }: PropertyTableProps) {
     const handleInputChange = (
       sectionIndex: number,
       rowIndex: number,
-      columnIndex: number,
+      columnIndex: keyof PropertyRow,
       newValue: string
     ) => {
       const numericValue = parseInt(newValue, 10);
@@ -54,7 +54,7 @@ export function PropertyTable({ value, onChange, data }: PropertyTableProps) {
   
       const newPageData = JSON.parse(JSON.stringify(currentPageData)) as PropertyPage;
       
-      const newRow = [...newPageData.sections[sectionIndex].rows[rowIndex]] as [number | null, number | null, number | null];
+      const newRow = {...newPageData.sections[sectionIndex].rows[rowIndex]};
       newRow[columnIndex] = newValue === "" ? 0 : numericValue;
       newPageData.sections[sectionIndex].rows[rowIndex] = newRow;
       
@@ -127,11 +127,11 @@ export function PropertyTable({ value, onChange, data }: PropertyTableProps) {
                                     {section.rows.map((row, rowIndex) => (
                                     <TableRow key={rowIndex}>
                                         <TableCell className="p-1 align-middle">
-                                        {typeof row[0] === "number" ? (
+                                        {typeof row.left === "number" ? (
                                             <Input
                                             type="number"
-                                            value={row[0]}
-                                            onChange={(e) => handleInputChange(sectionIndex, rowIndex, 0, e.target.value)}
+                                            value={row.left}
+                                            onChange={(e) => handleInputChange(sectionIndex, rowIndex, 'left', e.target.value)}
                                             className="w-16 mx-auto text-center h-8"
                                             />
                                         ) : (
@@ -139,11 +139,11 @@ export function PropertyTable({ value, onChange, data }: PropertyTableProps) {
                                         )}
                                         </TableCell>
                                         <TableCell className="p-1 align-middle">
-                                        {typeof row[1] === "number" ? (
+                                        {typeof row.middle === "number" ? (
                                             <Input
                                             type="number"
-                                            value={row[1]}
-                                            onChange={(e) => handleInputChange(sectionIndex, rowIndex, 1, e.target.value)}
+                                            value={row.middle}
+                                            onChange={(e) => handleInputChange(sectionIndex, rowIndex, 'middle', e.target.value)}
                                             className="w-16 mx-auto text-center h-8"
                                             />
                                         ) : (
@@ -151,11 +151,11 @@ export function PropertyTable({ value, onChange, data }: PropertyTableProps) {
                                         )}
                                         </TableCell>
                                         <TableCell className="p-1 align-middle">
-                                        {typeof row[2] === "number" ? (
+                                        {typeof row.right === "number" ? (
                                             <Input
                                             type="number"
-                                            value={row[2]}
-                                            onChange={(e) => handleInputChange(sectionIndex, rowIndex, 2, e.target.value)}
+                                            value={row.right}
+                                            onChange={(e) => handleInputChange(sectionIndex, rowIndex, 'right', e.target.value)}
                                             className="w-16 mx-auto text-center h-8"
                                             />
                                         ) : (

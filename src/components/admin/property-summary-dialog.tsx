@@ -1,7 +1,7 @@
 import React from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { pageTypeMap } from "@/lib/property-data";
-import { PropertyPage } from "@/lib/types";
+import { PropertyPage, PropertyRow } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, TableFooter } from "../ui/table";
 
@@ -11,20 +11,26 @@ interface PropertySummaryDialogProps {
   allPagesData: PropertyPage[];
 }
 
+type SummaryRow = {
+    left: number;
+    middle: number;
+    right: number;
+}
+
 type SummaryData = {
   [key: string]: {
     title: string;
-    rows: (number)[][]; // No longer nullable
-    totals: number[]; // No longer nullable
+    rows: SummaryRow[];
+    totals: SummaryRow;
   };
 };
 
 const calculateSummary = (allPagesData: PropertyPage[]): SummaryData => {
   const summary: SummaryData = {
-    Ataque: { title: "Propriedade de Ataque", rows: Array(10).fill(null).map(() => [0, 0, 0]), totals: [0, 0, 0] },
-    Defesa: { title: "Propriedade de Defesa", rows: Array(10).fill(null).map(() => [0, 0, 0]), totals: [0, 0, 0] },
-    Comum: { title: "Propriedade Comum", rows: Array(10).fill(null).map(() => [0, 0, 0]), totals: [0, 0, 0] },
-    Elemental: { title: "Propriedade de Tipo Elemental", rows: Array(10).fill(null).map(() => [0, 0, 0]), totals: [0, 0, 0] },
+    Ataque: { title: "Propriedade de Ataque", rows: Array(10).fill(null).map(() => ({left: 0, middle: 0, right: 0})), totals: {left: 0, middle: 0, right: 0} },
+    Defesa: { title: "Propriedade de Defesa", rows: Array(10).fill(null).map(() => ({left: 0, middle: 0, right: 0})), totals: {left: 0, middle: 0, right: 0} },
+    Comum: { title: "Propriedade Comum", rows: Array(10).fill(null).map(() => ({left: 0, middle: 0, right: 0})), totals: {left: 0, middle: 0, right: 0} },
+    Elemental: { title: "Propriedade de Tipo Elemental", rows: Array(10).fill(null).map(() => ({left: 0, middle: 0, right: 0})), totals: {left: 0, middle: 0, right: 0} },
   };
 
   // Iterate through all 16 pages and accumulate the points
@@ -35,11 +41,10 @@ const calculateSummary = (allPagesData: PropertyPage[]): SummaryData => {
       const section = page.sections[0];
       section.rows.forEach((row, rowIndex) => {
         if (summary[pageType].rows[rowIndex]) {
-          row.forEach((cell, colIndex) => {
-            if (typeof cell === 'number') {
-              (summary[pageType].rows[rowIndex][colIndex] as number) += cell;
-            }
-          });
+            const summaryRow = summary[pageType].rows[rowIndex];
+            if (typeof row.left === 'number') summaryRow.left += row.left;
+            if (typeof row.middle === 'number') summaryRow.middle += row.middle;
+            if (typeof row.right === 'number') summaryRow.right += row.right;
         }
       });
     }
@@ -47,9 +52,9 @@ const calculateSummary = (allPagesData: PropertyPage[]): SummaryData => {
 
   // Calculate totals for each column for each property type
   Object.values(summary).forEach(propertyType => {
-    for (let col = 0; col < 3; col++) {
-      propertyType.totals[col] = propertyType.rows.reduce((acc, row) => acc + (row[col] || 0), 0);
-    }
+    propertyType.totals.left = propertyType.rows.reduce((acc, row) => acc + (row.left || 0), 0);
+    propertyType.totals.middle = propertyType.rows.reduce((acc, row) => acc + (row.middle || 0), 0);
+    propertyType.totals.right = propertyType.rows.reduce((acc, row) => acc + (row.right || 0), 0);
   });
 
   return summary;
@@ -99,11 +104,9 @@ export function PropertySummaryDialog({ isOpen, onOpenChange, allPagesData }: Pr
                     <TableRow key={rowIndex}>
                         {propertyOrder.map(key => (
                             <React.Fragment key={`${key}-${rowIndex}`}>
-                                {summary[key].rows[rowIndex].map((cellValue, colIndex) => (
-                                    <TableCell key={colIndex} className="text-center p-2">
-                                        {cellValue}
-                                    </TableCell>
-                                ))}
+                                <TableCell className="text-center p-2">{summary[key].rows[rowIndex].left}</TableCell>
+                                <TableCell className="text-center p-2">{summary[key].rows[rowIndex].middle}</TableCell>
+                                <TableCell className="text-center p-2">{summary[key].rows[rowIndex].right}</TableCell>
                             </React.Fragment>
                         ))}
                     </TableRow>
@@ -113,18 +116,16 @@ export function PropertySummaryDialog({ isOpen, onOpenChange, allPagesData }: Pr
                     <TableRow className="bg-muted/50 font-bold">
                          {propertyOrder.map(key => (
                             <React.Fragment key={`${key}-total`}>
-                                {summary[key].totals.map((total, colIndex) => (
-                                    <TableCell key={colIndex} className="text-center p-2">
-                                        {total}
-                                    </TableCell>
-                                ))}
+                                <TableCell className="text-center p-2">{summary[key].totals.left}</TableCell>
+                                <TableCell className="text-center p-2">{summary[key].totals.middle}</TableCell>
+                                <TableCell className="text-center p-2">{summary[key].totals.right}</TableCell>
                             </React.Fragment>
                         ))}
                     </TableRow>
                     <TableRow>
                          {propertyOrder.map(key => (
                            <TableCell key={`${key}-total-label`} colSpan={3} className={cn("text-center font-extrabold text-lg p-3", propertyColors[key], propertyTextColors[key])}>
-                               TOTAL: {summary[key].totals.reduce((a,b) => a + b, 0)}
+                               TOTAL: {summary[key].totals.left + summary[key].totals.middle + summary[key].totals.right}
                            </TableCell> 
                         ))}
                     </TableRow>

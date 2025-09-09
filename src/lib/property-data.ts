@@ -1,99 +1,101 @@
 
-import { PropertyPage, PropertySection } from "./types";
+import { PropertyPage, PropertySection, PropertyRow } from "./types";
+
+const createRow = (left: number | null, middle: number | null, right: number | null): PropertyRow => ({ left, middle, right });
 
 const attackSection: PropertySection = {
     title: "Propriedade de Ataque",
     rows: [
-      [0, 0, 0],
-      [0, null, 0],
-      [null, 0, null],
-      [0, 0, 0],
-      [0, 0, 0],
-      [0, 0, 0],
-      [0, null, 0],
-      [0, 0, 0],
-      [0, null, 0],
-      [0, null, 0],
+      createRow(0, 0, 0),
+      createRow(0, null, 0),
+      createRow(null, 0, null),
+      createRow(0, 0, 0),
+      createRow(0, 0, 0),
+      createRow(0, 0, 0),
+      createRow(0, null, 0),
+      createRow(0, 0, 0),
+      createRow(0, null, 0),
+      createRow(0, null, 0),
     ]
 };
 
 const attackSectionPage12: PropertySection = {
     title: "Propriedade de Ataque",
     rows: [
-        [0, 0, 0],
-        [0, null, 0],
-        [null, 0, null],
-        [0, 0, 0],
-        [0, 0, 0],
-        [0, 0, 0],
-        [0, null, 0],
-        [0, 0, 0],
-        [0, null, 0],
-        [0, null, 0],
+        createRow(0, 0, 0),
+        createRow(0, null, 0),
+        createRow(null, 0, null),
+        createRow(0, 0, 0),
+        createRow(0, 0, 0),
+        createRow(0, 0, 0),
+        createRow(0, null, 0),
+        createRow(0, 0, 0),
+        createRow(0, null, 0),
+        createRow(0, null, 0),
     ]
 };
 
 const defenseSection: PropertySection = {
     title: "Propriedade de Defesa",
     rows: [
-      [0, 0, 0],
-      [0, null, 0],
-      [null, 0, null],
-      [0, 0, 0],
-      [0, 0, 0],
-      [0, 0, 0],
-      [0, null, 0],
-      [0, null, 0],
-      [0, null, 0],
-      [0, null, 0],
+      createRow(0, 0, 0),
+      createRow(0, null, 0),
+      createRow(null, 0, null),
+      createRow(0, 0, 0),
+      createRow(0, 0, 0),
+      createRow(0, 0, 0),
+      createRow(0, null, 0),
+      createRow(0, null, 0),
+      createRow(0, null, 0),
+      createRow(0, null, 0),
     ],
 };
 
 const defenseSectionPage9: PropertySection = {
     title: "Propriedade de Defesa",
     rows: [
-        [0, 0, 0],
-        [0, null, 0],
-        [null, 0, null],
-        [0, 0, 0],
-        [0, 0, 0],
-        [0, 0, 0],
-        [0, null, 0],
-        [0, 0, 0],
-        [0, null, 0],
-        [0, null, 0],
+        createRow(0, 0, 0),
+        createRow(0, null, 0),
+        createRow(null, 0, null),
+        createRow(0, 0, 0),
+        createRow(0, 0, 0),
+        createRow(0, 0, 0),
+        createRow(0, null, 0),
+        createRow(0, 0, 0),
+        createRow(0, null, 0),
+        createRow(0, null, 0),
     ]
 };
 
 const defenseSectionPage13: PropertySection = {
     title: "Propriedade de Defesa",
     rows: [
-        [0, 0, 0],
-        [0, null, 0],
-        [null, 0, null],
-        [0, 0, 0],
-        [0, 0, 0],
-        [0, 0, 0],
-        [0, null, 0],
-        [0, 0, 0],
-        [0, null, 0],
-        [0, null, 0],
+        createRow(0, 0, 0),
+        createRow(0, null, 0),
+        createRow(null, 0, null),
+        createRow(0, 0, 0),
+        createRow(0, 0, 0),
+        createRow(0, 0, 0),
+        createRow(0, null, 0),
+        createRow(0, 0, 0),
+        createRow(0, null, 0),
+        createRow(0, null, 0),
     ]
 };
 
 const defenseSectionPage15: PropertySection = {
     title: "Propriedade de Defesa",
     rows: [
-        [0, 0, 0],
-        [0, null, 0],
-        [null, 0, null],
-        [0, 0, 0],
-        [0, 0, 0],
-        [0, 0, 0],
-        [0, null, 0],
-        [0, 0, 0],
-        [0, null, 0],
-        [0, null, 0],
+        createRow(0, 0, 0),
+        createRow(0, null, 0),
+        createRow(null, 0, null),
+        createRow(0, 0, 0),
+        createRow(0, 0, 0),
+        createRow(0, 0, 0),
+        createRow(0, null, 0),
+        createRow(0, 0, 0),
+        createRow(0, null, 0),
+        createRow(0, null, 0),
     ]
 };
 
@@ -101,112 +103,112 @@ const defenseSectionPage15: PropertySection = {
 const commonSection: PropertySection = {
     title: "Propriedade Comum",
     rows: [
-        [0, null, 0],
-        [0, 0, 0],
-        [0, null, 0],
-        [0, null, 0],
-        [0, null, 0],
-        [0, null, 0],
-        [0, null, 0],
-        [0, null, 0],
-        [0, null, 0],
-        [0, null, 0],
+        createRow(0, null, 0),
+        createRow(0, 0, 0),
+        createRow(0, null, 0),
+        createRow(0, null, 0),
+        createRow(0, null, 0),
+        createRow(0, null, 0),
+        createRow(0, null, 0),
+        createRow(0, null, 0),
+        createRow(0, null, 0),
+        createRow(0, null, 0),
     ]
 };
 
 const commonSectionPage6: PropertySection = {
     title: "Propriedade Comum",
     rows: [
-        [0, null, 0],
-        [0, 0, 0],
-        [0, null, 0],
-        [0, null, 0],
-        [0, null, 0],
-        [0, null, 0],
-        [0, null, 0],
-        [0, null, 0],
-        [0, null, 0],
-        [0, null, 0],
+        createRow(0, null, 0),
+        createRow(0, 0, 0),
+        createRow(0, null, 0),
+        createRow(0, null, 0),
+        createRow(0, null, 0),
+        createRow(0, null, 0),
+        createRow(0, null, 0),
+        createRow(0, null, 0),
+        createRow(0, null, 0),
+        createRow(0, null, 0),
     ]
 };
 
 const commonSectionPage7: PropertySection = {
     title: "Propriedade Comum",
     rows: [
-        [0, null, 0],
-        [0, 0, 0],
-        [0, null, 0],
-        [0, null, 0],
-        [0, null, 0],
-        [0, null, 0],
-        [0, null, 0],
-        [0, null, 0],
-        [0, null, 0],
-        [0, null, 0],
+        createRow(0, null, 0),
+        createRow(0, 0, 0),
+        createRow(0, null, 0),
+        createRow(0, null, 0),
+        createRow(0, null, 0),
+        createRow(0, null, 0),
+        createRow(0, null, 0),
+        createRow(0, null, 0),
+        createRow(0, null, 0),
+        createRow(0, null, 0),
     ]
 };
 
 const commonSectionPage14: PropertySection = {
     title: "Propriedade Comum",
     rows: [
-        [0, null, 0],
-        [0, 0, 0],
-        [0, null, 0],
-        [0, null, 0],
-        [0, null, 0],
-        [0, null, 0],
-        [0, null, 0],
-        [0, null, 0],
-        [0, null, 0],
-        [0, null, 0],
+        createRow(0, null, 0),
+        createRow(0, 0, 0),
+        createRow(0, null, 0),
+        createRow(0, null, 0),
+        createRow(0, null, 0),
+        createRow(0, null, 0),
+        createRow(0, null, 0),
+        createRow(0, null, 0),
+        createRow(0, null, 0),
+        createRow(0, null, 0),
     ]
 };
 
 const commonSectionPage16: PropertySection = {
     title: "Propriedade Comum",
     rows: [
-        [0, null, 0],
-        [0, 0, 0],
-        [0, null, 0],
-        [0, null, 0],
-        [0, null, 0],
-        [0, null, 0],
-        [0, null, 0],
-        [0, null, 0],
-        [0, null, 0],
-        [0, null, 0],
+        createRow(0, null, 0),
+        createRow(0, 0, 0),
+        createRow(0, null, 0),
+        createRow(0, null, 0),
+        createRow(0, null, 0),
+        createRow(0, null, 0),
+        createRow(0, null, 0),
+        createRow(0, null, 0),
+        createRow(0, null, 0),
+        createRow(0, null, 0),
     ]
 };
 
 const elementalSection: PropertySection = {
     title: "Propriedade do Tipo Elemental",
     rows: [
-        [0, null, 0],
-        [0, 0, 0],
-        [0, null, 0],
-        [0, 0, 0],
-        [0, null, 0],
-        [0, 0, 0],
-        [0, null, 0],
-        [0, 0, 0],
-        [null, null, null],
-        [null, null, null],
+        createRow(0, null, 0),
+        createRow(0, 0, 0),
+        createRow(0, null, 0),
+        createRow(0, 0, 0),
+        createRow(0, null, 0),
+        createRow(0, 0, 0),
+        createRow(0, null, 0),
+        createRow(0, 0, 0),
+        createRow(null, null, null),
+        createRow(null, null, null),
     ]
 };
 
 const elementalSectionPage11: PropertySection = {
     title: "Propriedade do Tipo Elemental",
     rows: [
-        [0, null, 0],
-        [0, 0, 0],
-        [0, null, 0],
-        [0, 0, 0],
-        [0, null, 0],
-        [0, 0, 0],
-        [0, null, 0],
-        [0, 0, 0],
-        [null, null, null],
-        [null, null, null],
+        createRow(0, null, 0),
+        createRow(0, 0, 0),
+        createRow(0, null, 0),
+        createRow(0, 0, 0),
+        createRow(0, null, 0),
+        createRow(0, 0, 0),
+        createRow(0, null, 0),
+        createRow(0, 0, 0),
+        createRow(null, null, null),
+        createRow(null, null, null),
     ]
 };
 

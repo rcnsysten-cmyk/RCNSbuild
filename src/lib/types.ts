@@ -11,9 +11,15 @@ export interface AttributeConfig {
     points: number;
   }
   
+  export interface PropertyRow {
+    left: number | null;
+    middle: number | null;
+    right: number | null;
+  }
+
   export interface PropertySection {
     title: string;
-    rows: Array<[number | null, number | null, number | null]>;
+    rows: PropertyRow[];
   }
 
   export interface PropertyPage {

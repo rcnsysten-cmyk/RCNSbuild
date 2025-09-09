@@ -15,7 +15,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { MultiSelect } from '@/components/ui/multi-select';
-import { SubClass, SkillConfig, PropertyPage } from '@/lib/types';
+import { SubClass, SkillConfig, PropertyPage, PropertyRow } from '@/lib/types';
 import { Input } from '../ui/input';
 import React, { useState, useEffect, useMemo } from 'react';
 import { Button } from '../ui/button';
@@ -46,9 +46,15 @@ const skillConfigSchema = z.object({
     points: z.coerce.number().min(0, "Deve ser um número positivo.").default(0),
 });
 
+const propertyRowSchema = z.object({
+    left: z.number().nullable(),
+    middle: z.number().nullable(),
+    right: z.number().nullable(),
+})
+
 const propertySectionSchema = z.object({
     title: z.string(),
-    rows: z.array(z.tuple([z.number().nullable(), z.number().nullable(), z.number().nullable()])),
+    rows: z.array(propertyRowSchema),
 });
 
 const propertyPageSchema = z.object({
