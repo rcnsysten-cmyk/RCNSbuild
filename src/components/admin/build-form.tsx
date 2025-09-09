@@ -46,9 +46,9 @@ const skillConfigSchema = z.object({
 const propertyPageSchema = z.object({
     page: z.number(),
     title: z.string(),
-    left: z.array(z.union([z.string(), z.coerce.number()])),
-    middle: z.array(z.union([z.string(), z.coerce.number()])),
-    right: z.array(z.union([z.string(), z.coerce.number()])),
+    left: z.array(z.union([z.string(), z.coerce.number(), z.null()])),
+    middle: z.array(z.union([z.string(), z.coerce.number(), z.null()])),
+    right: z.array(z.union([z.string(), z.coerce.number(), z.null()])),
 });
 
 const formSchema = z.object({
@@ -214,10 +214,17 @@ export function BuildForm({ buildId, buildData, category, className, children }:
     name: 'config',
   });
 
-  const { fields: propertyFields } = useFieldArray({
+  const { fields: propertyFields, update: updatePropertyField } = useFieldArray({
     control: form.control,
     name: 'properties',
   });
+  
+  const handlePropertyChange = (pageIndex: number, newPageData: PropertyPage) => {
+    const currentProperties = form.getValues('properties');
+    const newProperties = [...currentProperties];
+    newProperties[pageIndex] = newPageData;
+    form.setValue('properties', newProperties, { shouldDirty: true });
+  }
 
   useEffect(() => {
     form.reset(defaultValues);
@@ -629,7 +636,8 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                                 ) : fieldInfo.name === 'properties' ? (
                                     <PropertyTable
                                         value={field.value || []}
-                                        onChange={field.onChange}
+                                        onChange={handlePropertyChange}
+                                        data={propertyData}
                                     />
                                 ) : fieldInfo.isMultiSelect ? (
                                     <MultiSelect

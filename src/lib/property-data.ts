@@ -1,8 +1,6 @@
 import { PropertyPage } from "./types";
 
-const dwAgiPropertyPage1: PropertyPage = {
-    page: 1,
-    title: "Parte 1 - Nível 290 a 384 (95 pontos)",
+const dwAgiBasePropertyPage: Omit<PropertyPage, 'page' | 'title'> = {
     left: [
         0, 6, 8, 15, 9, 10, 10,
         0, 6, 1, 6,
@@ -20,10 +18,17 @@ const dwAgiPropertyPage1: PropertyPage = {
     ]
 };
 
-const dwAgiProperties: PropertyPage[] = [
-    dwAgiPropertyPage1,
-    // Add other pages here in the future
-];
+const dwAgiProperties: PropertyPage[] = Array.from({ length: 16 }, (_, i) => {
+    const pageNum = i + 1;
+    const startLevel = 290 + (i * 95);
+    const endLevel = startLevel + 94;
+    return {
+      ...dwAgiBasePropertyPage,
+      page: pageNum,
+      title: `Parte ${pageNum} - Nível ${startLevel} a ${endLevel} (95 pontos)`,
+    };
+  });
+  
 
 export function getPropertyData(className: string, subClassName: string): PropertyPage[] {
     const lowerClassName = className.toLowerCase();
