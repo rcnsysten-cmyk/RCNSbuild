@@ -177,7 +177,7 @@ export default function BuildDetailsPage() {
                                             <div key={skill.name} className="flex flex-col items-center justify-center text-center gap-2 p-2 border rounded-lg bg-muted/30">
                                                 {skillInfo ? (
                                                     <div className="relative w-20 h-20 rounded-md overflow-hidden">
-                                                        <Image src={skillInfo.imagePath} alt={skill.name} layout="fill" unoptimized/>
+                                                        <Image src={skillInfo.imagePath} alt={skill.name} fill unoptimized/>
                                                     </div>
                                                 ) : (
                                                     <Skeleton className="w-20 h-20 rounded-md" />
@@ -258,3 +258,5 @@ export default function BuildDetailsPage() {
         </div>
     );
 }
+
+    

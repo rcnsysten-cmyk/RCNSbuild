@@ -85,7 +85,7 @@ export default function AdminPage() {
                     >
                         <Link
                         href={`/admin/${encodeURIComponent(
-                            build.class
+                            build.id
                         )}/${encodeURIComponent(build.subclasses[0].name)}/edit`}
                         >
                         Editar

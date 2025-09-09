@@ -22,7 +22,7 @@ const categoryMap = [
 export default function EditBuildCategorySelectionPage() {
     const params = useParams();
     const router = useRouter();
-    const { className, subClassName } = params;
+    const { className, subClassName } = params; // className is now buildId
 
     const [build, setBuild] = useState<Build | null>(null);
     const [loading, setLoading] = useState(true);
@@ -31,12 +31,12 @@ export default function EditBuildCategorySelectionPage() {
         return notFound();
     }
 
-    const decodedClassName = decodeURIComponent(className as string);
+    const buildId = decodeURIComponent(className as string);
     const decodedSubClassName = decodeURIComponent(subClassName as string);
 
     useEffect(() => {
         const fetchBuild = async () => {
-            const buildData = await getBuildById(decodedClassName);
+            const buildData = await getBuildById(buildId);
             if (buildData) {
                 setBuild(buildData);
             } else {
@@ -45,7 +45,7 @@ export default function EditBuildCategorySelectionPage() {
             setLoading(false);
         };
         fetchBuild();
-    }, [decodedClassName]);
+    }, [buildId]);
     
     if (loading) {
         return (
@@ -83,7 +83,7 @@ export default function EditBuildCategorySelectionPage() {
                 Voltar
             </Button>
             <h1 className="text-3xl font-bold mb-2">
-                Editar Build: {decodedClassName} - {decodedSubClassName}
+                Editar Build: {build.class} - {decodedSubClassName}
             </h1>
             <p className="text-muted-foreground mb-6">Selecione uma categoria para editar.</p>
             <Card>
