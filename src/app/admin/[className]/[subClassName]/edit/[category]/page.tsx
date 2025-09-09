@@ -7,8 +7,7 @@ import { notFound, useParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react';
-import { constellationData } from '@/components/admin/constellation-table';
+import { ArrowLeft } from 'lucide-react';
 
 const validCategories = ['config', 'skills', 'constellation', 'properties', 'sets', 'runes'];
 
@@ -21,8 +20,6 @@ const categoryNames: { [key: string]: string } = {
     runes: 'Runas',
 };
 
-const ITEMS_PER_PAGE = 17;
-
 export default function EditCategoryPage() {
   const params = useParams();
   const { className, subClassName, category } = params;
@@ -30,9 +27,7 @@ export default function EditCategoryPage() {
   const [build, setBuild] = useState<Build | null>(null);
   const [subClass, setSubClass] = useState<SubClass | null>(null);
   const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = Math.ceil(constellationData.length / ITEMS_PER_PAGE);
-
+  
   if (
     !className || 
     !subClassName || 
@@ -95,63 +90,26 @@ export default function EditCategoryPage() {
         buildId={build.id}
         category={category as any}
         className={build.class}
-        currentPage={currentPage}
       >
         {(form, submitButton, handleBack) => (
-          <>
-            <div className="sticky top-0 z-10 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 mb-6">
-              <div className="container flex h-16 max-w-screen-2xl items-center justify-between">
-                <Button variant="ghost" onClick={handleBack}>
-                    <ArrowLeft className="mr-2 h-4 w-4" />
-                    Voltar
-                </Button>
-                
-                <div className="flex-1 flex justify-center">
-                    {category === 'constellation' && (
-                        <div className="flex items-center justify-center gap-2">
-                            <Button
-                                type="button"
-                                variant="outline"
-                                size="sm"
-                                onClick={() => setCurrentPage(currentPage - 1)}
-                                disabled={currentPage === 1}
-                                >
-                                <ChevronLeft className="h-4 w-4" />
-                                <span className="hidden sm:inline ml-2">Anterior</span>
-                            </Button>
-                            <span className="text-sm font-medium w-24 text-center">
-                                Página {currentPage} de {totalPages}
-                            </span>
-                            <Button
-                                type="button"
-                                variant="outline"
-                                size="sm"
-                                onClick={() => setCurrentPage(currentPage + 1)}
-                                disabled={currentPage === totalPages}
-                                >
-                                <span className="hidden sm:inline mr-2">Próximo</span>
-                                <ChevronRight className="h-4 w-4" />
-                            </Button>
-                        </div>
-                    )}
-                </div>
-
-                {submitButton}
-              </div>
-            </div>
-            
-            <div className="container mx-auto px-4 py-8 pt-0">
-                <div className="max-w-3xl mx-auto">
-                    <div className="mb-8">
+          <div className="container mx-auto px-4 py-8 pt-0">
+              <div className="max-w-3xl mx-auto">
+                  <div className="flex items-center justify-between mb-8">
+                    <div className="flex-1">
+                        <Button variant="ghost" onClick={handleBack} className="mb-4">
+                            <ArrowLeft className="mr-2 h-4 w-4" />
+                            Voltar
+                        </Button>
                         <h1 className="text-3xl font-bold">
                             Editando {categoryName}: {decodedClassName} - {decodedSubClassName}
                         </h1>
                         <p className="text-muted-foreground mt-2">Adicione ou remova os itens abaixo.</p>
                     </div>
-                    {form}
-                </div>
-            </div>
-          </>
+                    {submitButton}
+                  </div>
+                  {form}
+              </div>
+          </div>
         )}
       </BuildForm>
     </div>
