@@ -161,33 +161,55 @@ const elementalSectionPage10: PropertySection = {
 };
 
 const elementalSectionPage11: PropertySection = {
-    title: "Propriedade Elemental",
-    rows: Array(10).fill([0, 0, 0])
+    title: "Propriedade do Tipo Elemental",
+    rows: [
+        [10, null, 10],
+        [10, 0, 10],
+        [10, null, 10],
+        [10, 0, 10],
+        [10, null, 10],
+        [10, 0, 10],
+        [10, null, 10],
+        [10, 0, 10],
+        [null, null, null],
+        [null, null, null],
+    ]
 };
 
 const attackSectionPage12: PropertySection = {
     title: "Propriedade de Ataque",
-    rows: Array(10).fill([0, 0, 0])
+    rows: [
+        [10, 10, 15],
+        [15, null, 10],
+        [null, 10, null],
+        [10, 1, 6],
+        [5, 10, 5],
+        [1, 10, 1],
+        [10, null, 10],
+        [10, 0, 10],
+        [10, null, 10],
+        [10, null, 10],
+    ]
 };
 
 const defenseSectionPage13: PropertySection = {
     title: "Propriedade de Defesa",
-    rows: Array(10).fill([0, 0, 0])
+    rows: Array(10).fill([0, 0, 0]).map(() => [0, 0, 0])
 };
 
 const commonSectionPage14: PropertySection = {
     title: "Propriedade Comum",
-    rows: Array(10).fill([0, 0, 0])
+    rows: Array(10).fill([0, 0, 0]).map(() => [0, 0, 0])
 };
 
 const defenseSectionPage15: PropertySection = {
     title: "Propriedade de Defesa",
-    rows: Array(10).fill([0, 0, 0])
+    rows: Array(10).fill([0, 0, 0]).map(() => [0, 0, 0])
 };
 
 const commonSectionPage16: PropertySection = {
     title: "Propriedade Comum",
-    rows: Array(10).fill([0, 0, 0])
+    rows: Array(10).fill([0, 0, 0]).map(() => [0, 0, 0])
 };
 
 const pageTypeMap: { [key: number]: PropertySection[] } = {
@@ -220,6 +242,8 @@ const pageTitleMap: { [key: number]: string } = {
     8: "Parte 8 - Nível 792 a 801 (9 pontos)",
     9: "Parte 9 - Nível 801 a 810 (9 pontos)",
     10: "Parte 10 - Nível 810 a 890 (80 pontos)",
+    11: "Parte 11 - Nível 890 a 970 (80 pontos)",
+    12: "Parte 12 - Nível 970 a 986 (16 pontos)",
 }
 
 
