@@ -48,6 +48,7 @@ export const constellationData = [
   { level: 193, left: "Taxa de RES E. +5%", right: "Aumentar DANO de Habilidade +15%" },
   { level: 208, left: "DEF Ignorada +5%", right: "DANO Crítico (-) +5%" },
   { level: 223, left: "DEF Ignorada +5%", right: "Taxa de RES E. +5%" },
+    // Page 3
   { level: 238, left: "ATQ +2%", right: "Redução de Espera 2%" },
   { level: 253, left: "HP máximo +2%", right: "Taxa de RES Crítica +5%" },
   { level: 268, left: "Dano Elemental (-) +5%", right: "DEF Ignorada +5%" },
@@ -79,7 +80,7 @@ export function ConstellationTable({ value, onChange, currentPage }: Constellati
       }
     });
     setSelections(initialSelections);
-  }, []); // Run only on mount
+  }, [value]);
 
   const handleSelect = (level: number, choice: "left" | "right") => {
     const newSelections = { ...selections, [level]: choice };
