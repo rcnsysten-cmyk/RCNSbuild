@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { notFound, useParams, useRouter } from 'next/navigation';
 import { getBuildById } from '@/lib/firestore';
-import { Build, SubClass } from '@/lib/types';
+import { Build, RuneConfig, SubClass } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Dna, Gem, ListTree, ShieldCheck, Swords, Star, Info, Eye } from 'lucide-react';
@@ -18,6 +18,8 @@ import { PropertySummaryDialog } from '@/components/admin/property-summary-dialo
 import { SetsGallery } from '@/components/admin/sets-gallery';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { getAvailableRunes, rarityColors } from '@/lib/rune-data';
+import { cn } from '@/lib/utils';
 
 const iconMap: { [key: string]: React.ElementType } = {
     'Dark Wizard': DwIcon,
@@ -37,6 +39,17 @@ const getLevelRangeLabel = (levelRange: string) => {
     const [start, end] = levelRange.split('-');
     return `Lvl ${start}-${end}`;
 }
+
+const groupRunesByTier = (runes: RuneConfig[]) => {
+    return runes.reduce((acc, rune) => {
+        const tier = rune.tier;
+        if (!acc[tier]) {
+            acc[tier] = [];
+        }
+        acc[tier].push(rune);
+        return acc;
+    }, {} as Record<number, RuneConfig[]>);
+};
 
 export default function BuildDetailsPage() {
     const params = useParams();
@@ -108,6 +121,7 @@ export default function BuildDetailsPage() {
     const Icon = iconMap[build.class];
     const subClassNames = build.subclasses.map(sc => sc.name).join(' & ');
     const constellationData = getConstellationData(build.class, subClass.name);
+    const groupedRunes = groupRunesByTier(subClass.runes);
 
     return (
         <div>
@@ -230,16 +244,35 @@ export default function BuildDetailsPage() {
                      <TabsContent value="runes" className="mt-6">
                          <Card>
                             <CardHeader>
-                                <CardTitle>Runas</CardTitle>
-                                <CardDescription>Runas recomendadas para equipar.</CardDescription>
+                                <CardTitle>Fragmentos de Runa</CardTitle>
+                                <CardDescription>Fragmentos de runa recomendados e suas quantidades.</CardDescription>
                             </CardHeader>
                             <CardContent>
                                {subClass.runes.length > 0 ? (
-                                 <div className="flex flex-wrap gap-4">
-                                    {subClass.runes.map(rune => (
-                                        <Badge key={rune} variant="secondary" className="text-lg px-4 py-2">{rune}</Badge>
-
-                                    ))}
+                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                    {Object.entries(groupedRunes)
+                                        .sort(([tierA], [tierB]) => parseInt(tierA) - parseInt(tierB))
+                                        .map(([tier, runes]) => {
+                                            const allRunesForTier = getAvailableRunes(build.class, parseInt(tier));
+                                            return (
+                                                <div key={tier}>
+                                                    <h3 className="text-xl font-bold mb-4 border-b pb-2">Tier {tier}</h3>
+                                                    <ul className="space-y-3">
+                                                        {runes.map(rune => {
+                                                            const runeData = allRunesForTier.find(r => r.name === rune.name);
+                                                            const rarity = runeData?.rarity || 'common';
+                                                            const colorClass = rarityColors[rarity];
+                                                            return (
+                                                                <li key={rune.name} className="flex items-center justify-between p-3 rounded-md bg-muted/40">
+                                                                    <span className={cn("font-semibold", colorClass)}>{rune.name}</span>
+                                                                    <Badge variant="default" className="text-base font-bold">x{rune.quantity}</Badge>
+                                                                </li>
+                                                            )
+                                                        })}
+                                                    </ul>
+                                                </div>
+                                            )
+                                    })}
                                  </div>
                                ) : (
                                 <Alert variant="default" className="border-yellow-500/50 text-yellow-500 [&>svg]:text-yellow-500">
