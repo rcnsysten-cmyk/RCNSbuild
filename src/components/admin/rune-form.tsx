@@ -40,7 +40,9 @@ const rareRuneNames = [
     "Fragmento de Iluminação",
     "Fragmento de Injeção",
     "Fragmento de Melodia Venenosa",
-    "Fragmento de Gelo Estilhaçado"
+    "Fragmento de Gelo Estilhaçado",
+    "Visão Aprimorada",
+    "Mundo de Gelo"
 ];
 
 export function RuneForm({ className, value, onChange }: RuneFormProps) {
@@ -189,7 +191,7 @@ export function RuneForm({ className, value, onChange }: RuneFormProps) {
                                         type="number"
                                         min={0}
                                         value={getQuantityForRune(rune.name, selectedTier)}
-                                        onChange={(e) => handleQuantityChange(rune.name, selectedTier, e.target.value)}
+                                        onChange={(e) => handleQuantityChange(rune.name, selectedTier, e.targt.value)}
                                         className="w-20"
                                     />
                                 </div>
