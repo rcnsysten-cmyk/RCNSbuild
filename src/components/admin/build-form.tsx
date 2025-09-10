@@ -642,7 +642,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                                 ) : fieldInfo.name === 'runes' && className ? (
                                     <RuneForm 
                                         className={className}
-                                        value={field.value || []}
+                                        value={form.watch('runes')}
                                         onChange={handleRuneChange}
                                     />
                                 ) : fieldInfo.name === 'sets' ? (
