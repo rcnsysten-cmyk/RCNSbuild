@@ -56,10 +56,28 @@ const dwRunesByTier: { [tier: number]: AvailableRune[] } = {
         { name: "Fragmento de Ataque Poderoso", rarity: "common" },
     ],
     3: [
-        { name: "Fragmento do Mensageiro", rarity: "rare" },
+        // Raras
+        { name: "Fragmento do Escudo de Veneno", rarity: "rare" },
+        { name: "Fragmento do Espaço-Tempo", rarity: "rare" },
+        // Mágicas
         { name: "Percepção", rarity: "magic" },
+        { name: "Substituição", rarity: "magic" },
+        { name: "Chama Venenosa", rarity: "magic" },
+        { name: "Ilusão", rarity: "magic" },
+        { name: "Explosão Venenosa", rarity: "magic" },
+        // Especiais
         { name: "Fragmento de Percepção", rarity: "special" },
+        { name: "Fragmento de Substituição", rarity: "special" },
+        { name: "Fragmento da Chama Venenosa", rarity: "special" },
+        { name: "Fragmento da Ilusão", rarity: "special" },
+        { name: "Fragmento de Explosão Venenosa", rarity: "special" },
+        // Comuns
         { name: "Fragmento de Runa do Escalão", rarity: "common" },
+        { name: "Fragmento Guardião", rarity: "common" },
+        { name: "Fragmento de Paixão", rarity: "common" },
+        { name: "Fragmento de Transcendência", rarity: "common" },
+        { name: "Fragmento de Golpe Crucial", rarity: "common" },
+        { name: "Fragmento de Justiça", rarity: "common" },
     ],
     4: [
         { name: "Fragmento de Separação", rarity: "rare" },
