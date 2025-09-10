@@ -27,10 +27,16 @@ export interface AttributeConfig {
     title: string;
     sections: PropertySection[];
   }
+
+  export interface RuneConfig {
+    name: string;
+    tier: number;
+    quantity: number;
+  }
   
   export interface SubClass {
     name: string;
-    runes: string[];
+    runes: RuneConfig[];
     skills: SkillConfig[];
     properties: PropertyPage[];
     config: AttributeConfig[];

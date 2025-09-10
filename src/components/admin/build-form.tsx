@@ -14,8 +14,7 @@ import {
 } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
-import { MultiSelect } from '@/components/ui/multi-select';
-import { SubClass, SkillConfig, PropertyPage, PropertyRow } from '@/lib/types';
+import { SubClass, SkillConfig, PropertyPage, PropertyRow, RuneConfig } from '@/lib/types';
 import { Input } from '../ui/input';
 import React, { useState, useEffect, useMemo } from 'react';
 import { Button } from '../ui/button';
@@ -32,6 +31,7 @@ import { getPropertyData } from '@/lib/property-data';
 import { SetsGallery } from './sets-gallery';
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
 import { Info } from 'lucide-react';
+import { RuneForm } from './rune-form';
 
 const attributeConfigSchema = z.object({
   levelRange: z.string(),
@@ -63,13 +63,19 @@ const propertyPageSchema = z.object({
     sections: z.array(propertySectionSchema),
 });
 
+const runeConfigSchema = z.object({
+    name: z.string(),
+    tier: z.number(),
+    quantity: z.coerce.number().min(0).default(0),
+});
+
 
 const formSchema = z.object({
   buildName: z.string().min(1, "O nome da build é obrigatório."),
   class: z.string().min(1, "Selecione uma classe."),
   name: z.string().min(1, "Selecione uma subclasse."),
   config: z.array(attributeConfigSchema),
-  runes: z.array(z.string()),
+  runes: z.array(runeConfigSchema),
   skills: z.array(skillConfigSchema),
   properties: z.array(propertyPageSchema),
   constellation: z.array(z.string()),
@@ -93,23 +99,13 @@ const classSubclassMap: { [key: string]: string[] } = {
 };
 const classNames = Object.keys(classSubclassMap);
 
-const predefinedOptions: { [key: string]: string[] } = {
-    runes: [
-        "Runa de Energia Mística",
-        "Runa de Força Bruta",
-        "Runa de Vitalidade",
-        "Runa de Agilidade",
-    ]
-  };
-  
-
-const allFields: { name: keyof Omit<BuildFormValues, 'class' | 'name' | 'buildName'>; label: string; description: string, isMultiSelect?: boolean }[] = [
+const allFields: { name: keyof Omit<BuildFormValues, 'class' | 'name' | 'buildName'>; label: string; description: string }[] = [
     { name: 'config', label: 'Atributos', description: 'Defina os pontos de atributos para cada faixa de nível.' },
     { name: 'skills', label: 'Habilidades', description: 'Defina os pontos para cada habilidade.' },
     { name: 'constellation', label: 'Constelação', description: 'Selecione os pontos da constelação clicando em uma das opções de cada nível.' },
     { name: 'properties', label: 'Propriedade', description: 'Adicione as propriedades para cada nível.' },
     { name: 'sets', label: 'Conjuntos', description: 'Veja os conjuntos (sets) disponíveis para esta build.' },
-    { name: 'runes', label: 'Runas', description: 'Adicione as runas. Ex: Runa de Energia Mística', isMultiSelect: true },
+    { name: 'runes', label: 'Runas', description: 'Selecione a quantidade de fragmentos de runa para cada tier.' },
 ];
 
 interface BuildFormProps {
@@ -220,6 +216,10 @@ export function BuildForm({ buildId, buildData, category, className, children }:
     form.setValue('properties', newProperties, { shouldDirty: true });
   }
 
+  const handleRuneChange = (newRunes: RuneConfig[]) => {
+    form.setValue('runes', newRunes, { shouldDirty: true });
+  };
+
   useEffect(() => {
     form.reset(defaultValues);
   }, [defaultValues, form]);
@@ -314,9 +314,12 @@ export function BuildForm({ buildId, buildData, category, className, children }:
 
   async function onSubmit(data: BuildFormValues) {
     try {
-        const dataToSave: Omit<BuildFormValues, 'skills'> & { skills: SkillConfig[] } = {
+        const dataToSave = {
             ...data,
+            // Filter out skills with 0 points
             skills: data.skills.filter(skill => skill.points > 0),
+            // Filter out runes with 0 quantity
+            runes: data.runes.filter(rune => rune.quantity > 0),
         };
 
         if (buildId) { // Editing existing build
@@ -324,9 +327,10 @@ export function BuildForm({ buildId, buildData, category, className, children }:
             if (category) {
                 if (category === 'skills') {
                     updateData.skills = dataToSave.skills;
+                } else if (category === 'runes') {
+                    updateData.runes = dataToSave.runes;
                 } else if (category === 'sets') {
-                    // Sets are visual only for now, so we don't save anything.
-                    // We can just show the toast and go back.
+                    // Sets are visual only for now
                 }
                 else {
                     (updateData as any)[category] = (dataToSave as any)[category];
@@ -353,7 +357,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
               router.refresh();
 
         } else { // Creating new build
-            await createOrUpdateBuild(data.buildName, { class: data.class, name: data.name, skills: dataToSave.skills, properties: dataToSave.properties });
+            await createOrUpdateBuild(data.buildName, { class: data.class, name: data.name, skills: dataToSave.skills, properties: dataToSave.properties, runes: dataToSave.runes });
             toast({
                 title: `Build Criada!`,
                 description: `A build ${data.buildName} foi criada com sucesso.`,
@@ -637,6 +641,12 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                                         onChange={handlePropertyChange}
                                         data={propertyData}
                                     />
+                                ) : fieldInfo.name === 'runes' && className ? (
+                                    <RuneForm 
+                                        className={className}
+                                        value={field.value || []}
+                                        onChange={handleRuneChange}
+                                    />
                                 ) : fieldInfo.name === 'sets' ? (
                                     className?.toLowerCase() === 'dark wizard' && buildData?.name.toLowerCase() === 'agi' ? (
                                         <SetsGallery className={className} subClassName={buildData.name} />
@@ -649,15 +659,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                                             </AlertDescription>
                                         </Alert>
                                     )
-                                ) : fieldInfo.isMultiSelect ? (
-                                    <MultiSelect
-                                        selected={field.value as string[]}
-                                        onChange={field.onChange}
-                                        placeholder={`Adicione ${fieldInfo.label.toLowerCase()}...`}
-                                        className="min-h-48"
-                                        options={predefinedOptions[fieldInfo.name] || []}
-                                    />
-                                ) : null}
+                                ) : null }
                             </FormControl>
                             <FormMessage />
                         </FormItem>

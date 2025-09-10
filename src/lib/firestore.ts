@@ -12,7 +12,7 @@ import {
   onSnapshot,
   getDoc,
 } from 'firebase/firestore';
-import { Build, SubClass, PropertyPage } from './types';
+import { Build, SubClass, PropertyPage, RuneConfig } from './types';
 
 const buildsCollection = collection(db, 'builds');
 
@@ -44,13 +44,13 @@ export async function getBuildById(buildId: string): Promise<Build | null> {
 }
 
 // Create a new build or add a new subclass to an existing build
-export async function createOrUpdateBuild(buildName: string, data: { class: string; name: string, skills: any[], properties: PropertyPage[] }) {
+export async function createOrUpdateBuild(buildName: string, data: { class: string; name: string, skills: any[], properties: PropertyPage[], runes: RuneConfig[] }) {
     const buildDocRef = doc(db, 'builds', buildName);
     const docSnap = await getDoc(buildDocRef);
 
     const subClassData: SubClass = {
         name: data.name,
-        runes: [],
+        runes: data.runes || [],
         skills: data.skills || [],
         properties: data.properties || [],
         config: [],
