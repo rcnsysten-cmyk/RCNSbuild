@@ -7,7 +7,6 @@ import { Skeleton } from '../ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
 import { Info, PlusCircle, Trash2 } from 'lucide-react';
 import { RuneConfig } from '@/lib/types';
-import Image from 'next/image';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { cn } from '@/lib/utils';
@@ -161,14 +160,14 @@ export function RuneForm({ className, value, onChange }: RuneFormProps) {
                                    onChange={(e) => handleQuantityChange(rune.name, e.target.value)}
                                />
                             </div>
-                            <Button variant="ghost" size="icon" onClick={() => handleRemoveRune(rune.name)}>
+                            <Button type="button" variant="ghost" size="icon" onClick={() => handleRemoveRune(rune.name)}>
                                 <Trash2 className="h-4 w-4 text-destructive" />
                             </Button>
                          </div>
                        )
                      })}
                    </div>
-                   <Button variant="outline" onClick={handleAddRune} disabled={selectableRunes.length === 0}>
+                   <Button type="button" variant="outline" onClick={handleAddRune} disabled={selectableRunes.length === 0}>
                        <PlusCircle className="mr-2 h-4 w-4" />
                        Adicionar Runa
                    </Button>

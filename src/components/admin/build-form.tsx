@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
-import { SubClass, SkillConfig, PropertyPage, PropertyRow, RuneConfig } from '@/lib/types';
+import { SubClass, SkillConfig, PropertyPage, RuneConfig } from '@/lib/types';
 import { Input } from '../ui/input';
 import React, { useState, useEffect, useMemo } from 'react';
 import { Button } from '../ui/button';
@@ -307,6 +307,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
     if (save) {
         form.handleSubmit(onSubmit)();
     } else {
+        form.reset(); // Resets the form state to avoid isDirty being true
         router.back();
     }
     setIsExitConfirmOpen(false);
@@ -351,8 +352,13 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                 title: `Build Atualizada!`,
                 description: `A build para ${data.class} - ${data.name} foi salva com sucesso.`,
               });
-              router.back();
-              router.refresh();
+              form.reset(data); // reset form with new default values
+              if(isExitConfirmOpen) {
+                router.back();
+              } else {
+                router.refresh();
+              }
+              
 
         } else { // Creating new build
             await createOrUpdateBuild(data.buildName, { class: data.class, name: data.name, skills: dataToSave.skills, properties: dataToSave.properties, runes: dataToSave.runes });
@@ -360,6 +366,7 @@ export function BuildForm({ buildId, buildData, category, className, children }:
                 title: `Build Criada!`,
                 description: `A build ${data.buildName} foi criada com sucesso.`,
               });
+            form.reset();
             router.push('/admin');
             router.refresh();
         }
@@ -388,8 +395,8 @@ export function BuildForm({ buildId, buildData, category, className, children }:
             </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => handleConfirmExit(false)}>Descartar</AlertDialogCancel>
-            <AlertDialogAction onClick={() => handleConfirmExit(true)}>Salvar e Sair</AlertDialogAction>
+            <Button variant="ghost" onClick={() => handleConfirmExit(false)}>Descartar</Button>
+            <Button onClick={() => handleConfirmExit(true)}>Salvar e Sair</Button>
             </AlertDialogFooter>
         </AlertDialogContent>
     </AlertDialog>
