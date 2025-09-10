@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { notFound, useParams, useRouter } from 'next/navigation';
 import { getBuildById } from '@/lib/firestore';
 import { Build, RuneConfig, SubClass } from '@/lib/types';
@@ -10,7 +10,6 @@ import { ArrowLeft, Dna, Gem, ListTree, ShieldCheck, Swords, Star, Info, Eye } f
 import { DkIcon, DlIcon, DwIcon, ElfaIcon } from '@/components/icons';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import Image from 'next/image';
 import { ConstellationTable } from '@/components/admin/constellation-table';
 import { getConstellationData } from '@/lib/constellation-data';
@@ -28,12 +27,6 @@ const iconMap: { [key: string]: React.ElementType } = {
     'Dark Lord': DlIcon,
   };
   
-const categoryMap: { id: keyof Omit<SubClass, 'name' | 'config' | 'skills' | 'properties'>; name: string; icon: React.ElementType }[] = [
-    { id: 'constellation', name: 'Constelação', icon: Star },
-    { id: 'sets', name: 'Conjuntos', icon: ShieldCheck },
-    { id: 'runes', name: 'Runas', icon: Gem },
-];
-
 const getLevelRangeLabel = (levelRange: string) => {
     if (levelRange === '401+') return 'Lvl 401+';
     const [start, end] = levelRange.split('-');
@@ -99,6 +92,17 @@ export default function BuildDetailsPage() {
         fetchAllSkills();
     }, [subClass, build])
     
+    const groupedRunes = useMemo(() => {
+        if (!subClass?.runes) return {};
+        return groupRunesByTier(subClass.runes);
+    }, [subClass?.runes]);
+
+    const availableTiers = useMemo(() => {
+        return Object.keys(groupedRunes).map(Number).sort((a, b) => a - b);
+    }, [groupedRunes]);
+    
+    const initialTier = availableTiers.length > 0 ? String(availableTiers[0]) : undefined;
+
     if (loading) {
         return (
           <div className="container mx-auto px-4 py-8">
@@ -121,7 +125,6 @@ export default function BuildDetailsPage() {
     const Icon = iconMap[build.class];
     const subClassNames = build.subclasses.map(sc => sc.name).join(' & ');
     const constellationData = getConstellationData(build.class, subClass.name);
-    const groupedRunes = groupRunesByTier(subClass.runes);
 
     return (
         <div>
@@ -142,7 +145,7 @@ export default function BuildDetailsPage() {
                 <p className="text-muted-foreground text-lg mb-8">{build.class} - {subClassNames}</p>
 
                 <Tabs defaultValue="attributes" className="w-full">
-                    <TabsList className="grid w-full grid-cols-3 md:grid-cols-6 h-auto">
+                    <TabsList className="grid w-full grid-cols-3 md:grid-cols-6 h-auto flex-wrap">
                         <TabsTrigger value="attributes"><Dna className="mr-2"/> Atributos</TabsTrigger>
                         <TabsTrigger value="skills"><Swords className="mr-2"/> Habilidades</TabsTrigger>
                         <TabsTrigger value="properties"><ListTree className="mr-2"/> Propriedades</TabsTrigger>
@@ -245,35 +248,34 @@ export default function BuildDetailsPage() {
                          <Card>
                             <CardHeader>
                                 <CardTitle>Fragmentos de Runa</CardTitle>
-                                <CardDescription>Fragmentos de runa recomendados e suas quantidades.</CardDescription>
+                                <CardDescription>Fragmentos de runa recomendados e suas quantidades. Selecione um tier para ver.</CardDescription>
                             </CardHeader>
                             <CardContent>
-                               {subClass.runes.length > 0 ? (
-                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                    {Object.entries(groupedRunes)
-                                        .sort(([tierA], [tierB]) => parseInt(tierA) - parseInt(tierB))
-                                        .map(([tier, runes]) => {
-                                            const allRunesForTier = getAvailableRunes(build.class, parseInt(tier));
-                                            return (
-                                                <div key={tier}>
-                                                    <h3 className="text-xl font-bold mb-4 border-b pb-2">Tier {tier}</h3>
-                                                    <ul className="space-y-3">
-                                                        {runes.map(rune => {
-                                                            const runeData = allRunesForTier.find(r => r.name === rune.name);
-                                                            const rarity = runeData?.rarity || 'common';
-                                                            const colorClass = rarityColors[rarity];
-                                                            return (
-                                                                <li key={rune.name} className="flex items-center justify-between p-3 rounded-md bg-muted/40">
-                                                                    <span className={cn("font-semibold", colorClass)}>{rune.name}</span>
-                                                                    <Badge variant="default" className="text-base font-bold">x{rune.quantity}</Badge>
-                                                                </li>
-                                                            )
-                                                        })}
-                                                    </ul>
-                                                </div>
-                                            )
-                                    })}
-                                 </div>
+                               {availableTiers.length > 0 && initialTier ? (
+                                    <Tabs defaultValue={initialTier} className="w-full">
+                                        <TabsList className="justify-center flex-wrap h-auto">
+                                            {availableTiers.map(tier => (
+                                                <TabsTrigger key={tier} value={String(tier)}>Tier {tier}</TabsTrigger>
+                                            ))}
+                                        </TabsList>
+                                        {availableTiers.map(tier => (
+                                            <TabsContent key={`content-${tier}`} value={String(tier)} className="mt-6">
+                                                <ul className="space-y-3 max-w-lg mx-auto">
+                                                    {(groupedRunes[tier] || []).map(rune => {
+                                                        const runeData = getAvailableRunes(build.class, tier).find(r => r.name === rune.name);
+                                                        const rarity = runeData?.rarity || 'common';
+                                                        const colorClass = rarityColors[rarity];
+                                                        return (
+                                                            <li key={`${rune.tier}-${rune.name}`} className="flex items-center justify-between p-3 rounded-md bg-muted/40">
+                                                                <span className={cn("font-semibold", colorClass)}>{rune.name}</span>
+                                                                <Badge variant="default" className="text-base font-bold">x{rune.quantity}</Badge>
+                                                            </li>
+                                                        )
+                                                    })}
+                                                </ul>
+                                            </TabsContent>
+                                        ))}
+                                    </Tabs>
                                ) : (
                                 <Alert variant="default" className="border-yellow-500/50 text-yellow-500 [&>svg]:text-yellow-500">
                                     <Info className="h-4 w-4" />
