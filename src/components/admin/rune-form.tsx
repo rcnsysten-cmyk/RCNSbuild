@@ -22,6 +22,8 @@ interface RuneFormProps {
 
 const TOTAL_TIERS = 10;
 
+// Helper to create a unique value for a rune
+const getRuneValue = (rune: AvailableRune | RuneConfig) => `${rune.name}|${(rune as AvailableRune).rarity || ''}`;
 
 export function RuneForm({ className, value, onChange }: RuneFormProps) {
     const [availableRunes, setAvailableRunes] = useState<AvailableRune[]>([]);
@@ -50,26 +52,29 @@ export function RuneForm({ className, value, onChange }: RuneFormProps) {
     const handleAddRune = () => {
         if (selectableRunes.length > 0) {
             const firstAvailable = selectableRunes[0];
-            const newRune: RuneConfig = { name: firstAvailable.name, tier: selectedTier, quantity: 1 };
+            const newRune: RuneConfig = { name: firstAvailable.name, tier: selectedTier, quantity: 1, rarity: firstAvailable.rarity };
             onChange([...value, newRune]);
         }
     };
 
-    const handleRemoveRune = (runeName: string) => {
-        onChange(value.filter(r => !(r.name === runeName && r.tier === selectedTier)));
+    const handleRemoveRune = (runeName: string, runeRarity: Rarity) => {
+        onChange(value.filter(r => !(r.name === runeName && r.tier === selectedTier && r.rarity === runeRarity)));
     };
 
-    const handleRuneChange = (oldName: string, newName: string) => {
+    const handleRuneChange = (oldName: string, oldRarity: Rarity, newValue: string) => {
+        const [newName, newRarity] = newValue.split('|');
         onChange(value.map(r => 
-            (r.name === oldName && r.tier === selectedTier) ? { ...r, name: newName } : r
+            (r.name === oldName && r.tier === selectedTier && r.rarity === oldRarity) 
+            ? { ...r, name: newName, rarity: newRarity as Rarity } 
+            : r
         ));
     };
 
-    const handleQuantityChange = (runeName: string, quantity: string) => {
+    const handleQuantityChange = (runeName: string, runeRarity: Rarity, quantity: string) => {
         const numQuantity = parseInt(quantity, 10);
         const newQuantity = isNaN(numQuantity) || numQuantity < 1 ? 1 : numQuantity;
         onChange(value.map(r => 
-            (r.name === runeName && r.tier === selectedTier) ? { ...r, quantity: newQuantity } : r
+            (r.name === runeName && r.tier === selectedTier && r.rarity === runeRarity) ? { ...r, quantity: newQuantity } : r
         ));
     };
 
@@ -111,8 +116,7 @@ export function RuneForm({ className, value, onChange }: RuneFormProps) {
                    )}
                    <div className="space-y-4">
                      {runesForCurrentTier.map((rune, index) => {
-                       const runeData = availableRunes.find(ar => ar.name === rune.name);
-                       const currentRarity = runeData?.rarity || 'common';
+                       const currentRarity = rune.rarity || 'common';
                        const currentRarityColor = rarityColors[currentRarity];
                        
                        const currentSelectableRunes = [...availableRunes.filter(ar => !usedRuneNames.includes(ar.name) || ar.name === rune.name)].sort((a, b) => {
@@ -125,14 +129,14 @@ export function RuneForm({ className, value, onChange }: RuneFormProps) {
                        });
 
                        return (
-                         <div key={`${rune.tier}-${rune.name}`} className="flex items-center gap-4 p-2 rounded-lg bg-muted/30">
+                         <div key={`${rune.tier}-${rune.name}-${rune.rarity}`} className="flex items-center gap-4 p-2 rounded-lg bg-muted/30">
                            <div className="w-10 h-10 rounded-md bg-gray-800 flex items-center justify-center text-xs text-muted-foreground">
                                 Tier {rune.tier}
                             </div>
                             <div className="flex-1">
                                 <Select
-                                  value={rune.name}
-                                  onValueChange={(newName) => handleRuneChange(rune.name, newName)}
+                                  value={getRuneValue(rune)}
+                                  onValueChange={(newValue) => handleRuneChange(rune.name, rune.rarity, newValue)}
                                 >
                                     <SelectTrigger className={cn("font-medium", currentRarityColor)}>
                                         <SelectValue placeholder="Selecione um fragmento..." />
@@ -140,8 +144,9 @@ export function RuneForm({ className, value, onChange }: RuneFormProps) {
                                     <SelectContent>
                                         {currentSelectableRunes.map(ar => {
                                             const color = rarityColors[ar.rarity];
+                                            const value = getRuneValue(ar);
                                             return (
-                                                <SelectItem key={ar.name} value={ar.name} className={cn("font-medium", color)}>
+                                                <SelectItem key={value} value={value} className={cn("font-medium", color)}>
                                                     {ar.name}
                                                 </SelectItem>
                                             )
@@ -157,10 +162,10 @@ export function RuneForm({ className, value, onChange }: RuneFormProps) {
                                    min={1}
                                    placeholder="Qtde."
                                    value={rune.quantity}
-                                   onChange={(e) => handleQuantityChange(rune.name, e.target.value)}
+                                   onChange={(e) => handleQuantityChange(rune.name, rune.rarity, e.target.value)}
                                />
                             </div>
-                            <Button type="button" variant="ghost" size="icon" onClick={() => handleRemoveRune(rune.name)}>
+                            <Button type="button" variant="ghost" size="icon" onClick={() => handleRemoveRune(rune.name, rune.rarity)}>
                                 <Trash2 className="h-4 w-4 text-destructive" />
                             </Button>
                          </div>

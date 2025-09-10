@@ -1,3 +1,5 @@
+import { Rarity } from "./rune-data";
+
 export interface AttributeConfig {
     levelRange: string;
     str: number;
@@ -32,6 +34,7 @@ export interface AttributeConfig {
     name: string;
     tier: number;
     quantity: number;
+    rarity: Rarity;
   }
   
   export interface SubClass {
