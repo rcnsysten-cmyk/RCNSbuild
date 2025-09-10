@@ -201,7 +201,7 @@ export function RuneForm({ className, value, onChange }: RuneFormProps) {
                        const currentRarity = runeRarityMap[rune.name] || 'common';
                        const currentRarityColor = rarityColors[currentRarity];
                        const runeImage = availableRunes.find(ar => ar.name === rune.name)?.imagePath;
-                       const currentSelectableRunes = [...selectableRunes, { name: rune.name, imagePath: runeImage || '' }].sort((a, b) => {
+                       const currentSelectableRunes = [...availableRunes.filter(ar => !usedRuneNames.includes(ar.name) || ar.name === rune.name)].sort((a, b) => {
                             const rarityA = runeRarityMap[a.name] || "common";
                             const rarityB = runeRarityMap[b.name] || "common";
                             if(rarityA !== rarityB) {
@@ -211,7 +211,7 @@ export function RuneForm({ className, value, onChange }: RuneFormProps) {
                        });
 
                        return (
-                         <div key={`${rune.name}-${index}`} className="flex items-center gap-4 p-2 rounded-lg bg-muted/30">
+                         <div key={`${rune.tier}-${index}`} className="flex items-center gap-4 p-2 rounded-lg bg-muted/30">
                             {runeImage && (
                                 <div className="relative w-10 h-10 rounded-md overflow-hidden">
                                     <Image src={runeImage} alt={rune.name} layout="fill" unoptimized />
