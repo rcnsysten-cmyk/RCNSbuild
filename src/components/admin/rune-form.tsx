@@ -32,7 +32,9 @@ const rareRuneNames = [
     "Infiltração Ilimitada",
     "Geada Feroz",
     "Fragmento de Habilidade de Veneno",
-    "Fragmento do Tempo"
+    "Fragmento do Tempo",
+    "Fragmento do Mensageiro",
+    "Fragmento de Separação"
 ];
 
 export function RuneForm({ className, value, onChange }: RuneFormProps) {
