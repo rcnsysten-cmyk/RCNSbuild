@@ -10,6 +10,7 @@ import { RuneConfig } from '@/lib/types';
 import Image from 'next/image';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
+import { cn } from '@/lib/utils';
 
 interface AvailableRune {
     name: string;
@@ -23,6 +24,9 @@ interface RuneFormProps {
 }
 
 const TOTAL_TIERS = 10;
+
+// Hardcoded list of rare runes based on user feedback/images
+const rareRuneNames = ["Fumaça Infernal", "Tempestade de Partículas de Gelo"];
 
 export function RuneForm({ className, value, onChange }: RuneFormProps) {
     const [availableRunes, setAvailableRunes] = useState<AvailableRune[]>([]);
@@ -41,6 +45,16 @@ export function RuneForm({ className, value, onChange }: RuneFormProps) {
                     throw new Error('Falha ao buscar as runas.');
                 }
                 const data: AvailableRune[] = await response.json();
+                
+                // Sort runes to show rare ones first
+                data.sort((a, b) => {
+                    const aIsRare = rareRuneNames.includes(a.name);
+                    const bIsRare = rareRuneNames.includes(b.name);
+                    if (aIsRare && !bIsRare) return -1;
+                    if (!aIsRare && bIsRare) return 1;
+                    return a.name.localeCompare(b.name); // Then sort alphabetically
+                });
+
                 setAvailableRunes(data);
             } catch (err) {
                 setError(err instanceof Error ? err.message : "Ocorreu um erro desconhecido.");
@@ -111,8 +125,6 @@ export function RuneForm({ className, value, onChange }: RuneFormProps) {
         );
     }
 
-    // This logic assumes that the available runes apply to all tiers for this class.
-    // If specific runes are for specific tiers, the API and logic would need to be updated.
     const runesForCurrentTier = availableRunes;
 
     return (
@@ -139,24 +151,35 @@ export function RuneForm({ className, value, onChange }: RuneFormProps) {
                 </CardHeader>
                 <CardContent>
                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-6">
-                        {runesForCurrentTier.map(rune => (
-                            <div key={rune.name} className="flex items-center gap-4">
-                                <div className="relative w-12 h-12 rounded-md overflow-hidden">
-                                     <Image src={rune.imagePath} alt={rune.name} layout="fill" unoptimized />
+                        {runesForCurrentTier.map(rune => {
+                            const isRare = rareRuneNames.includes(rune.name);
+                            return (
+                                <div key={rune.name} className="flex items-center gap-4">
+                                    <div className="relative w-12 h-12 rounded-md overflow-hidden">
+                                        <Image src={rune.imagePath} alt={rune.name} layout="fill" unoptimized />
+                                    </div>
+                                    <div className="flex-1">
+                                        <Label 
+                                            htmlFor={`${rune.name}-${selectedTier}`} 
+                                            className={cn(
+                                                "text-sm font-medium",
+                                                isRare && "text-red-400"
+                                            )}
+                                        >
+                                            {rune.name}
+                                        </Label>
+                                    </div>
+                                    <Input 
+                                        id={`${rune.name}-${selectedTier}`}
+                                        type="number"
+                                        min={0}
+                                        value={getQuantityForRune(rune.name, selectedTier)}
+                                        onChange={(e) => handleQuantityChange(rune.name, selectedTier, e.target.value)}
+                                        className="w-20"
+                                    />
                                 </div>
-                                <div className="flex-1">
-                                    <Label htmlFor={`${rune.name}-${selectedTier}`} className="text-sm font-medium">{rune.name}</Label>
-                                </div>
-                                <Input 
-                                    id={`${rune.name}-${selectedTier}`}
-                                    type="number"
-                                    min={0}
-                                    value={getQuantityForRune(rune.name, selectedTier)}
-                                    onChange={(e) => handleQuantityChange(rune.name, selectedTier, e.target.value)}
-                                    className="w-20"
-                                />
-                            </div>
-                        ))}
+                            )
+                        })}
                    </div>
                 </CardContent>
             </Card>
