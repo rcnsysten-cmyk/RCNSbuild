@@ -26,7 +26,14 @@ interface RuneFormProps {
 const TOTAL_TIERS = 10;
 
 // Hardcoded list of rare runes based on user feedback/images
-const rareRuneNames = ["Fumaça Infernal", "Tempestade de Partículas de Gelo"];
+const rareRuneNames = [
+    "Fumaça Infernal", 
+    "Tempestade de Partículas de Gelo",
+    "Infiltração Ilimitada",
+    "Geada Feroz",
+    "Fragmento de Habilidade de Veneno",
+    "Fragmento do Tempo"
+];
 
 export function RuneForm({ className, value, onChange }: RuneFormProps) {
     const [availableRunes, setAvailableRunes] = useState<AvailableRune[]>([]);
