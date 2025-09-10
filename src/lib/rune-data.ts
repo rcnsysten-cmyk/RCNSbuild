@@ -40,9 +40,12 @@ const dwRunesByTier: { [tier: number]: AvailableRune[] } = {
         { name: "Fragmento de Congelar", rarity: "special" },
         { name: "Fragmento de Transição", rarity: "special" },
         { name: "Fragmento de Meteorito", rarity: "special" },
+        { name: "Fragmento de Runa do Escalão", rarity: "common" },
         { name: "Fragmento de Sombra", rarity: "common" },
         { name: "Fragmento de Proteção", rarity: "common" },
-        { name: "Fragmento de Runa do Escalão", rarity: "common" },
+        { name: "Fragmento de Artesão", rarity: "common" },
+        { name: "Fragmento Inabalável", rarity: "common" },
+        { name: "Fragmento de Ataque Poderoso", rarity: "common" },
     ],
     3: [
         { name: "Fragmento do Mensageiro", rarity: "rare" },
