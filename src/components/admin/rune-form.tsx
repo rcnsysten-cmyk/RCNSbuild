@@ -12,11 +12,8 @@ import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { cn } from '@/lib/utils';
 import { Button } from '../ui/button';
+import { AvailableRune, Rarity, getAvailableRunes, rarityColors, rarityOrder } from '@/lib/rune-data';
 
-interface AvailableRune {
-    name: string;
-    imagePath: string;
-}
 
 interface RuneFormProps {
     className: string;
@@ -26,104 +23,25 @@ interface RuneFormProps {
 
 const TOTAL_TIERS = 10;
 
-type Rarity = "rare" | "magic" | "special" | "common";
-
-const runeRarityMap: { [key: string]: Rarity } = {
-    // Red (Rare)
-    "Fumaça Infernal": "rare",
-    "Tempestade de Partículas de Gelo": "rare",
-    "Infiltração Ilimitada": "rare",
-    "Geada Feroz": "rare",
-    "Fragmento de Habilidade de Veneno": "rare",
-    "Fragmento do Tempo": "rare",
-    "Fragmento do Mensageiro": "rare",
-    "Fragmento de Separação": "rare",
-    "Fragmento de Prazer Perverso": "rare",
-    "Fragmento de Gelo": "rare",
-    "Fragmento de Iluminação": "rare",
-    "Fragmento de Injeção": "rare",
-    "Fragmento de Melodia Venenosa": "rare",
-    "Fragmento de Gelo Estilhaçado": "rare",
-    "Visão Aprimorada": "rare",
-    "Mundo de Gelo": "rare",
-    "Fragmento Divino Celestial": "rare",
-    // Purple (Magic)
-    "Fumaça": "magic",
-    "Tempestade": "magic",
-    "Infiltração": "magic",
-    "Nevasca": "magic",
-    "Percepção": "magic",
-    "Habilidade de Veneno": "magic",
-    "Habilidade de Gelo": "magic",
-    "Prazer": "magic",
-    "Tempo": "magic",
-    "Separação": "magic",
-    "Injeção": "magic",
-    "Iluminação": "magic",
-    "Melodia": "magic",
-    "Divindade": "magic",
-    "Visão": "magic",
-    "Explosão": "magic",
-    "Gelo Estilhaçado": "magic",
-    "Celestial": "magic",
-    // Green (Special)
-    "Fragmento de Fumaça": "special",
-    "Fragmento de Tempestade": "special",
-    "Fragmento de Infiltração": "special",
-    "Fragmento de Nevasca": "special",
-    "Fragmento de Percepção": "special",
-    "Fragmento de Prazer": "special",
-    // Yellow (Common)
-    "Fragmento de Runa do Escalão": "common",
-};
-
-const rarityOrder: Rarity[] = ["rare", "magic", "special", "common"];
-const rarityColors: { [key in Rarity]: string } = {
-    rare: "text-red-400",
-    magic: "text-purple-400",
-    special: "text-green-400",
-    common: "text-yellow-400",
-};
-
 
 export function RuneForm({ className, value, onChange }: RuneFormProps) {
     const [availableRunes, setAvailableRunes] = useState<AvailableRune[]>([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
     const [selectedTier, setSelectedTier] = useState<number>(1);
 
     useEffect(() => {
-        async function fetchRunes() {
-            if (!className) return;
-            setLoading(true);
-            setError(null);
-            try {
-                const response = await fetch(`/api/runas?className=${encodeURIComponent(className)}`);
-                if (!response.ok) {
-                    throw new Error('Falha ao buscar as runas.');
-                }
-                const data: AvailableRune[] = await response.json();
-                
-                data.sort((a, b) => {
-                    const rarityA = runeRarityMap[a.name] || "common";
-                    const rarityB = runeRarityMap[b.name] || "common";
-                    const indexA = rarityOrder.indexOf(rarityA);
-                    const indexB = rarityOrder.indexOf(rarityB);
-                    if (indexA !== indexB) {
-                        return indexA - indexB;
-                    }
-                    return a.name.localeCompare(b.name);
-                });
-
-                setAvailableRunes(data);
-            } catch (err) {
-                setError(err instanceof Error ? err.message : "Ocorreu um erro desconhecido.");
-                console.error(err);
-            } finally {
-                setLoading(false);
+        setLoading(true);
+        const runes = getAvailableRunes(className);
+        runes.sort((a, b) => {
+            const indexA = rarityOrder.indexOf(a.rarity);
+            const indexB = rarityOrder.indexOf(b.rarity);
+            if (indexA !== indexB) {
+                return indexA - indexB;
             }
-        }
-        fetchRunes();
+            return a.name.localeCompare(b.name);
+        });
+        setAvailableRunes(runes);
+        setLoading(false);
     }, [className]);
     
     const runesForCurrentTier = value.filter(r => r.tier === selectedTier);
@@ -160,13 +78,9 @@ export function RuneForm({ className, value, onChange }: RuneFormProps) {
     if (loading) {
         return <Skeleton className="h-64 w-full" />;
     }
-
-    if (error) {
-        return <Alert variant="destructive"><Info className="h-4 w-4" /><AlertTitle>Erro ao Carregar</AlertTitle><AlertDescription>{error}</AlertDescription></Alert>;
-    }
     
     if (availableRunes.length === 0) {
-        return <Alert variant="default" className="border-yellow-500/50 text-yellow-500 [&>svg]:text-yellow-500"><Info className="h-4 w-4" /><AlertTitle>Nenhuma Runa Encontrada</AlertTitle><AlertDescription>Nenhuma runa foi encontrada para esta classe. Adicione os arquivos de imagem na pasta `public/{className.toLowerCase().replace(' ','-')}/runas` para começar.</AlertDescription></Alert>;
+        return <Alert variant="default" className="border-yellow-500/50 text-yellow-500 [&>svg]:text-yellow-500"><Info className="h-4 w-4" /><AlertTitle>Nenhuma Runa Encontrada</AlertTitle><AlertDescription>Nenhuma runa foi encontrada para esta classe. Adicione os dados no arquivo `src/lib/rune-data.ts` para começar.</AlertDescription></Alert>;
     }
 
     return (
@@ -198,25 +112,24 @@ export function RuneForm({ className, value, onChange }: RuneFormProps) {
                    )}
                    <div className="space-y-4">
                      {runesForCurrentTier.map((rune, index) => {
-                       const currentRarity = runeRarityMap[rune.name] || 'common';
+                       const runeData = availableRunes.find(ar => ar.name === rune.name);
+                       const currentRarity = runeData?.rarity || 'common';
                        const currentRarityColor = rarityColors[currentRarity];
-                       const runeImage = availableRunes.find(ar => ar.name === rune.name)?.imagePath;
+                       
                        const currentSelectableRunes = [...availableRunes.filter(ar => !usedRuneNames.includes(ar.name) || ar.name === rune.name)].sort((a, b) => {
-                            const rarityA = runeRarityMap[a.name] || "common";
-                            const rarityB = runeRarityMap[b.name] || "common";
-                            if(rarityA !== rarityB) {
-                                return rarityOrder.indexOf(rarityA) - rarityOrder.indexOf(rarityB);
+                            const indexA = rarityOrder.indexOf(a.rarity);
+                            const indexB = rarityOrder.indexOf(b.rarity);
+                            if(indexA !== indexB) {
+                                return indexA - indexB;
                             }
                             return a.name.localeCompare(b.name);
                        });
 
                        return (
                          <div key={`${rune.tier}-${index}`} className="flex items-center gap-4 p-2 rounded-lg bg-muted/30">
-                            {runeImage && (
-                                <div className="relative w-10 h-10 rounded-md overflow-hidden">
-                                    <Image src={runeImage} alt={rune.name} layout="fill" unoptimized />
-                                </div>
-                            )}
+                           <div className="w-10 h-10 rounded-md bg-gray-800 flex items-center justify-center text-xs text-muted-foreground">
+                                Tier {rune.tier}
+                            </div>
                             <div className="flex-1">
                                 <Select
                                   value={rune.name}
@@ -227,8 +140,7 @@ export function RuneForm({ className, value, onChange }: RuneFormProps) {
                                     </SelectTrigger>
                                     <SelectContent>
                                         {currentSelectableRunes.map(ar => {
-                                            const rarity = runeRarityMap[ar.name] || 'common';
-                                            const color = rarityColors[rarity];
+                                            const color = rarityColors[ar.rarity];
                                             return (
                                                 <SelectItem key={ar.name} value={ar.name} className={cn("font-medium", color)}>
                                                     {ar.name}
