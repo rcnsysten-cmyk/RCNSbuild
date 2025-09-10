@@ -2,15 +2,16 @@
 
 import { useEffect, useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../ui/card';
 import { Skeleton } from '../ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
-import { Info } from 'lucide-react';
+import { Info, PlusCircle, Trash2 } from 'lucide-react';
 import { RuneConfig } from '@/lib/types';
 import Image from 'next/image';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { cn } from '@/lib/utils';
+import { Button } from '../ui/button';
 
 interface AvailableRune {
     name: string;
@@ -25,26 +26,65 @@ interface RuneFormProps {
 
 const TOTAL_TIERS = 10;
 
-// Hardcoded list of rare runes based on user feedback/images
-const rareRuneNames = [
-    "Fumaça Infernal", 
-    "Tempestade de Partículas de Gelo",
-    "Infiltração Ilimitada",
-    "Geada Feroz",
-    "Fragmento de Habilidade de Veneno",
-    "Fragmento do Tempo",
-    "Fragmento do Mensageiro",
-    "Fragmento de Separação",
-    "Fragmento de Prazer Perverso",
-    "Fragmento de Gelo",
-    "Fragmento de Iluminação",
-    "Fragmento de Injeção",
-    "Fragmento de Melodia Venenosa",
-    "Fragmento de Gelo Estilhaçado",
-    "Visão Aprimorada",
-    "Mundo de Gelo",
-    "Fragmento Divino Celestial"
-];
+type Rarity = "rare" | "magic" | "special" | "common";
+
+const runeRarityMap: { [key: string]: Rarity } = {
+    // Red (Rare)
+    "Fumaça Infernal": "rare",
+    "Tempestade de Partículas de Gelo": "rare",
+    "Infiltração Ilimitada": "rare",
+    "Geada Feroz": "rare",
+    "Fragmento de Habilidade de Veneno": "rare",
+    "Fragmento do Tempo": "rare",
+    "Fragmento do Mensageiro": "rare",
+    "Fragmento de Separação": "rare",
+    "Fragmento de Prazer Perverso": "rare",
+    "Fragmento de Gelo": "rare",
+    "Fragmento de Iluminação": "rare",
+    "Fragmento de Injeção": "rare",
+    "Fragmento de Melodia Venenosa": "rare",
+    "Fragmento de Gelo Estilhaçado": "rare",
+    "Visão Aprimorada": "rare",
+    "Mundo de Gelo": "rare",
+    "Fragmento Divino Celestial": "rare",
+    // Purple (Magic)
+    "Fumaça": "magic",
+    "Tempestade": "magic",
+    "Infiltração": "magic",
+    "Nevasca": "magic",
+    "Percepção": "magic",
+    "Habilidade de Veneno": "magic",
+    "Habilidade de Gelo": "magic",
+    "Prazer": "magic",
+    "Tempo": "magic",
+    "Separação": "magic",
+    "Injeção": "magic",
+    "Iluminação": "magic",
+    "Melodia": "magic",
+    "Divindade": "magic",
+    "Visão": "magic",
+    "Explosão": "magic",
+    "Gelo Estilhaçado": "magic",
+    "Celestial": "magic",
+    // Green (Special)
+    "Fragmento de Fumaça": "special",
+    "Fragmento de Tempestade": "special",
+    "Fragmento de Infiltração": "special",
+    "Fragmento de Nevasca": "special",
+    "Fragmento de Percepção": "special",
+    "Fragmento de Prazer": "special",
+    // Yellow (Common)
+    "Fragmento de Runa do Escalão": "common",
+};
+
+const rarityOrder: Rarity[] = ["rare", "magic", "special", "common"];
+const rarityColors: { [key in Rarity]: string } = {
+    rare: "text-red-400",
+    magic: "text-purple-400",
+    special: "text-green-400",
+    common: "text-yellow-400",
+};
+
 
 export function RuneForm({ className, value, onChange }: RuneFormProps) {
     const [availableRunes, setAvailableRunes] = useState<AvailableRune[]>([]);
@@ -64,13 +104,15 @@ export function RuneForm({ className, value, onChange }: RuneFormProps) {
                 }
                 const data: AvailableRune[] = await response.json();
                 
-                // Sort runes to show rare ones first
                 data.sort((a, b) => {
-                    const aIsRare = rareRuneNames.includes(a.name);
-                    const bIsRare = rareRuneNames.includes(b.name);
-                    if (aIsRare && !bIsRare) return -1;
-                    if (!aIsRare && bIsRare) return 1;
-                    return a.name.localeCompare(b.name); // Then sort alphabetically
+                    const rarityA = runeRarityMap[a.name] || "common";
+                    const rarityB = runeRarityMap[b.name] || "common";
+                    const indexA = rarityOrder.indexOf(rarityA);
+                    const indexB = rarityOrder.indexOf(rarityB);
+                    if (indexA !== indexB) {
+                        return indexA - indexB;
+                    }
+                    return a.name.localeCompare(b.name);
                 });
 
                 setAvailableRunes(data);
@@ -83,67 +125,49 @@ export function RuneForm({ className, value, onChange }: RuneFormProps) {
         }
         fetchRunes();
     }, [className]);
+    
+    const runesForCurrentTier = value.filter(r => r.tier === selectedTier);
+    const usedRuneNames = runesForCurrentTier.map(r => r.name);
+    const selectableRunes = availableRunes.filter(ar => !usedRuneNames.includes(ar.name));
 
-    const handleQuantityChange = (runeName: string, tier: number, quantity: string) => {
+    const handleAddRune = () => {
+        if (selectableRunes.length > 0) {
+            const firstAvailable = selectableRunes[0];
+            const newRune: RuneConfig = { name: firstAvailable.name, tier: selectedTier, quantity: 1 };
+            onChange([...value, newRune]);
+        }
+    };
+
+    const handleRemoveRune = (runeName: string) => {
+        onChange(value.filter(r => !(r.name === runeName && r.tier === selectedTier)));
+    };
+
+    const handleRuneChange = (oldName: string, newName: string) => {
+        onChange(value.map(r => 
+            (r.name === oldName && r.tier === selectedTier) ? { ...r, name: newName } : r
+        ));
+    };
+
+    const handleQuantityChange = (runeName: string, quantity: string) => {
         const numQuantity = parseInt(quantity, 10);
         const newQuantity = isNaN(numQuantity) ? 0 : numQuantity;
-
-        const newRunes = [...value];
-        const existingRuneIndex = newRunes.findIndex(r => r.name === runeName && r.tier === tier);
-
-        if (existingRuneIndex !== -1) {
-            // Update existing rune quantity
-            newRunes[existingRuneIndex].quantity = newQuantity;
-        } else {
-            // Add new rune
-            newRunes.push({ name: runeName, tier: tier, quantity: newQuantity });
-        }
-
-        // Filter out runes with 0 quantity before calling onChange
-        onChange(newRunes.filter(r => r.quantity > 0));
+        onChange(value.map(r => 
+            (r.name === runeName && r.tier === selectedTier) ? { ...r, quantity: newQuantity } : r
+        ));
     };
 
-    const getQuantityForRune = (runeName: string, tier: number): number => {
-        const rune = value.find(r => r.name === runeName && r.tier === tier);
-        return rune ? rune.quantity : 0;
-    };
 
     if (loading) {
-        return (
-            <Card>
-                <CardHeader>
-                    <Skeleton className="h-8 w-48" />
-                </CardHeader>
-                <CardContent>
-                    <Skeleton className="h-64 w-full" />
-                </CardContent>
-            </Card>
-        );
+        return <Skeleton className="h-64 w-full" />;
     }
 
     if (error) {
-        return (
-            <Alert variant="destructive">
-                <Info className="h-4 w-4" />
-                <AlertTitle>Erro ao Carregar</AlertTitle>
-                <AlertDescription>{error}</AlertDescription>
-            </Alert>
-        );
+        return <Alert variant="destructive"><Info className="h-4 w-4" /><AlertTitle>Erro ao Carregar</AlertTitle><AlertDescription>{error}</AlertDescription></Alert>;
     }
     
     if (availableRunes.length === 0) {
-        return (
-            <Alert variant="default" className="border-yellow-500/50 text-yellow-500 [&>svg]:text-yellow-500">
-                <Info className="h-4 w-4" />
-                <AlertTitle>Nenhuma Runa Encontrada</AlertTitle>
-                <AlertDescription>
-                    Nenhuma runa foi encontrada para esta classe. Adicione os arquivos de imagem na pasta `public/{className}/runas` para começar.
-                </AlertDescription>
-            </Alert>
-        );
+        return <Alert variant="default" className="border-yellow-500/50 text-yellow-500 [&>svg]:text-yellow-500"><Info className="h-4 w-4" /><AlertTitle>Nenhuma Runa Encontrada</AlertTitle><AlertDescription>Nenhuma runa foi encontrada para esta classe. Adicione os arquivos de imagem na pasta `public/{className}/runas` para começar.</AlertDescription></Alert>;
     }
-
-    const runesForCurrentTier = availableRunes;
 
     return (
         <div className="space-y-6">
@@ -166,39 +190,70 @@ export function RuneForm({ className, value, onChange }: RuneFormProps) {
             <Card>
                 <CardHeader>
                     <CardTitle>Fragmentos de Runa - Tier {selectedTier}</CardTitle>
+                    <CardDescription>Adicione os fragmentos de runa e suas quantidades para este tier.</CardDescription>
                 </CardHeader>
-                <CardContent>
-                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-6">
-                        {runesForCurrentTier.map(rune => {
-                            const isRare = rareRuneNames.includes(rune.name);
-                            return (
-                                <div key={rune.name} className="flex items-center gap-4">
-                                    <div className="relative w-12 h-12 rounded-md overflow-hidden">
-                                        <Image src={rune.imagePath} alt={rune.name} layout="fill" unoptimized />
-                                    </div>
-                                    <div className="flex-1">
-                                        <Label 
-                                            htmlFor={`${rune.name}-${selectedTier}`} 
-                                            className={cn(
-                                                "text-sm font-medium",
-                                                isRare && "text-red-400"
-                                            )}
-                                        >
-                                            {rune.name}
-                                        </Label>
-                                    </div>
-                                    <Input 
-                                        id={`${rune.name}-${selectedTier}`}
-                                        type="number"
-                                        min={0}
-                                        value={getQuantityForRune(rune.name, selectedTier)}
-                                        onChange={(e) => handleQuantityChange(rune.name, selectedTier, e.target.value)}
-                                        className="w-20"
-                                    />
+                <CardContent className="space-y-4">
+                   <div className="space-y-4">
+                     {runesForCurrentTier.map((rune, index) => {
+                       const currentRarity = runeRarityMap[rune.name] || 'common';
+                       const currentRarityColor = rarityColors[currentRarity];
+                       const runeImage = availableRunes.find(ar => ar.name === rune.name)?.imagePath;
+                       const currentSelectableRunes = [...selectableRunes, { name: rune.name, imagePath: runeImage || '' }].sort((a, b) => {
+                            const rarityA = runeRarityMap[a.name] || "common";
+                            const rarityB = runeRarityMap[b.name] || "common";
+                            return rarityOrder.indexOf(rarityA) - rarityOrder.indexOf(rarityB);
+                       });
+
+                       return (
+                         <div key={`${rune.name}-${index}`} className="flex items-center gap-4 p-2 rounded-lg bg-muted/30">
+                            {runeImage && (
+                                <div className="relative w-10 h-10 rounded-md overflow-hidden">
+                                    <Image src={runeImage} alt={rune.name} layout="fill" unoptimized />
                                 </div>
-                            )
-                        })}
+                            )}
+                            <div className="flex-1">
+                                <Select
+                                  value={rune.name}
+                                  onValueChange={(newName) => handleRuneChange(rune.name, newName)}
+                                >
+                                    <SelectTrigger className={cn("font-medium", currentRarityColor)}>
+                                        <SelectValue placeholder="Selecione um fragmento..." />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {currentSelectableRunes.map(ar => {
+                                            const rarity = runeRarityMap[ar.name] || 'common';
+                                            const color = rarityColors[rarity];
+                                            return (
+                                                <SelectItem key={ar.name} value={ar.name} className={cn("font-medium", color)}>
+                                                    {ar.name}
+                                                </SelectItem>
+                                            )
+                                        })}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div className="w-24">
+                               <Label htmlFor={`quantity-${index}`} className="sr-only">Quantidade</Label>
+                               <Input
+                                   id={`quantity-${index}`}
+                                   type="number"
+                                   min={1}
+                                   placeholder="Qtde."
+                                   value={rune.quantity}
+                                   onChange={(e) => handleQuantityChange(rune.name, e.target.value)}
+                               />
+                            </div>
+                            <Button variant="ghost" size="icon" onClick={() => handleRemoveRune(rune.name)}>
+                                <Trash2 className="h-4 w-4 text-destructive" />
+                            </Button>
+                         </div>
+                       )
+                     })}
                    </div>
+                   <Button variant="outline" onClick={handleAddRune} disabled={selectableRunes.length === 0}>
+                       <PlusCircle className="mr-2 h-4 w-4" />
+                       Adicionar Runa
+                   </Button>
                 </CardContent>
             </Card>
         </div>

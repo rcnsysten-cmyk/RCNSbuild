@@ -66,7 +66,7 @@ const propertyPageSchema = z.object({
 const runeConfigSchema = z.object({
     name: z.string(),
     tier: z.number(),
-    quantity: z.coerce.number().min(0).default(0),
+    quantity: z.coerce.number().min(1).default(1),
 });
 
 
@@ -316,10 +316,8 @@ export function BuildForm({ buildId, buildData, category, className, children }:
     try {
         const dataToSave = {
             ...data,
-            // Filter out skills with 0 points
             skills: data.skills.filter(skill => skill.points > 0),
-            // Filter out runes with 0 quantity
-            runes: data.runes.filter(rune => rune.quantity > 0),
+            runes: data.runes.filter(rune => rune.quantity > 0 && rune.name),
         };
 
         if (buildId) { // Editing existing build
