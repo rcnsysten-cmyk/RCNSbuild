@@ -36,7 +36,8 @@ export async function GET(request: Request) {
 
     const runes: Rune[] = [];
     const publicDir = path.join(process.cwd(), 'public');
-    const classFolder = classNameParam.toLowerCase().replace(' ', '-');
+    // Correctly use the classNameParam to build the folder path
+    const classFolder = classNameParam.toLowerCase().replace(/\s+/g, '-');
 
     try {
         const runesDir = path.join(publicDir, classFolder, 'runas');
