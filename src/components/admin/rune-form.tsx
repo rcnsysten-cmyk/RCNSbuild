@@ -11,7 +11,7 @@ import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { cn } from '@/lib/utils';
 import { Button } from '../ui/button';
-import { AvailableRune, Rarity, getAvailableRunes, rarityColors, rarityOrder } from '@/lib/rune-data';
+import { AvailableRune, getAvailableRunes, rarityColors, rarityOrder } from '@/lib/rune-data';
 
 
 interface RuneFormProps {
@@ -30,7 +30,7 @@ export function RuneForm({ className, value, onChange }: RuneFormProps) {
 
     useEffect(() => {
         setLoading(true);
-        const runes = getAvailableRunes(className);
+        const runes = getAvailableRunes(className, selectedTier);
         runes.sort((a, b) => {
             const indexA = rarityOrder.indexOf(a.rarity);
             const indexB = rarityOrder.indexOf(b.rarity);
@@ -41,7 +41,7 @@ export function RuneForm({ className, value, onChange }: RuneFormProps) {
         });
         setAvailableRunes(runes);
         setLoading(false);
-    }, [className]);
+    }, [className, selectedTier]);
     
     const runesForCurrentTier = value.filter(r => r.tier === selectedTier);
     const usedRuneNames = runesForCurrentTier.map(r => r.name);
@@ -78,8 +78,8 @@ export function RuneForm({ className, value, onChange }: RuneFormProps) {
         return <Skeleton className="h-64 w-full" />;
     }
     
-    if (availableRunes.length === 0) {
-        return <Alert variant="default" className="border-yellow-500/50 text-yellow-500 [&>svg]:text-yellow-500"><Info className="h-4 w-4" /><AlertTitle>Nenhuma Runa Encontrada</AlertTitle><AlertDescription>Nenhuma runa foi encontrada para esta classe. Adicione os dados no arquivo `src/lib/rune-data.ts` para começar.</AlertDescription></Alert>;
+    if (availableRunes.length === 0 && selectedTier > 0) {
+        return <Alert variant="default" className="border-yellow-500/50 text-yellow-500 [&>svg]:text-yellow-500"><Info className="h-4 w-4" /><AlertTitle>Nenhuma Runa Encontrada</AlertTitle><AlertDescription>Nenhuma runa foi encontrada para esta classe/tier. Adicione os dados no arquivo `src/lib/rune-data.ts` para começar.</AlertDescription></Alert>;
     }
 
     return (
@@ -125,7 +125,7 @@ export function RuneForm({ className, value, onChange }: RuneFormProps) {
                        });
 
                        return (
-                         <div key={`${rune.tier}-${index}`} className="flex items-center gap-4 p-2 rounded-lg bg-muted/30">
+                         <div key={`${rune.tier}-${rune.name}`} className="flex items-center gap-4 p-2 rounded-lg bg-muted/30">
                            <div className="w-10 h-10 rounded-md bg-gray-800 flex items-center justify-center text-xs text-muted-foreground">
                                 Tier {rune.tier}
                             </div>
