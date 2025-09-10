@@ -34,7 +34,9 @@ const rareRuneNames = [
     "Fragmento de Habilidade de Veneno",
     "Fragmento do Tempo",
     "Fragmento do Mensageiro",
-    "Fragmento de Separação"
+    "Fragmento de Separação",
+    "Fragmento de Prazer Perverso",
+    "Fragmento de Gelo"
 ];
 
 export function RuneForm({ className, value, onChange }: RuneFormProps) {
