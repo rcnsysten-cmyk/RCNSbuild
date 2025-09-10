@@ -150,7 +150,7 @@ export function RuneForm({ className, value, onChange }: RuneFormProps) {
 
     const handleQuantityChange = (runeName: string, quantity: string) => {
         const numQuantity = parseInt(quantity, 10);
-        const newQuantity = isNaN(numQuantity) ? 0 : numQuantity;
+        const newQuantity = isNaN(numQuantity) || numQuantity < 1 ? 1 : numQuantity;
         onChange(value.map(r => 
             (r.name === runeName && r.tier === selectedTier) ? { ...r, quantity: newQuantity } : r
         ));
@@ -165,8 +165,8 @@ export function RuneForm({ className, value, onChange }: RuneFormProps) {
         return <Alert variant="destructive"><Info className="h-4 w-4" /><AlertTitle>Erro ao Carregar</AlertTitle><AlertDescription>{error}</AlertDescription></Alert>;
     }
     
-    if (availableRunes.length === 0) {
-        return <Alert variant="default" className="border-yellow-500/50 text-yellow-500 [&>svg]:text-yellow-500"><Info className="h-4 w-4" /><AlertTitle>Nenhuma Runa Encontrada</AlertTitle><AlertDescription>Nenhuma runa foi encontrada para esta classe. Adicione os arquivos de imagem na pasta `public/{className}/runas` para começar.</AlertDescription></Alert>;
+    if (availableRunes.length === 0 && !loading) {
+        return <Alert variant="default" className="border-yellow-500/50 text-yellow-500 [&>svg]:text-yellow-500"><Info className="h-4 w-4" /><AlertTitle>Nenhuma Runa Encontrada</AlertTitle><AlertDescription>Nenhuma runa foi encontrada para esta classe. Adicione os arquivos de imagem na pasta `public/{className.toLowerCase().replace(' ','-')}/runas` para começar.</AlertDescription></Alert>;
     }
 
     return (
@@ -193,6 +193,9 @@ export function RuneForm({ className, value, onChange }: RuneFormProps) {
                     <CardDescription>Adicione os fragmentos de runa e suas quantidades para este tier.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                   {runesForCurrentTier.length === 0 && (
+                        <div className="text-center text-muted-foreground py-4">Nenhuma runa adicionada para este tier.</div>
+                   )}
                    <div className="space-y-4">
                      {runesForCurrentTier.map((rune, index) => {
                        const currentRarity = runeRarityMap[rune.name] || 'common';
@@ -201,7 +204,10 @@ export function RuneForm({ className, value, onChange }: RuneFormProps) {
                        const currentSelectableRunes = [...selectableRunes, { name: rune.name, imagePath: runeImage || '' }].sort((a, b) => {
                             const rarityA = runeRarityMap[a.name] || "common";
                             const rarityB = runeRarityMap[b.name] || "common";
-                            return rarityOrder.indexOf(rarityA) - rarityOrder.indexOf(rarityB);
+                            if(rarityA !== rarityB) {
+                                return rarityOrder.indexOf(rarityA) - rarityOrder.indexOf(rarityB);
+                            }
+                            return a.name.localeCompare(b.name);
                        });
 
                        return (
