@@ -165,7 +165,7 @@ export function RuneForm({ className, value, onChange }: RuneFormProps) {
         return <Alert variant="destructive"><Info className="h-4 w-4" /><AlertTitle>Erro ao Carregar</AlertTitle><AlertDescription>{error}</AlertDescription></Alert>;
     }
     
-    if (availableRunes.length === 0 && !loading) {
+    if (availableRunes.length === 0) {
         return <Alert variant="default" className="border-yellow-500/50 text-yellow-500 [&>svg]:text-yellow-500"><Info className="h-4 w-4" /><AlertTitle>Nenhuma Runa Encontrada</AlertTitle><AlertDescription>Nenhuma runa foi encontrada para esta classe. Adicione os arquivos de imagem na pasta `public/{className.toLowerCase().replace(' ','-')}/runas` para começar.</AlertDescription></Alert>;
     }
 
