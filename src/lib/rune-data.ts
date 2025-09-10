@@ -31,11 +31,11 @@ const dwRunesByTier: { [tier: number]: AvailableRune[] } = {
         { name: "Fragmento de Habilidade de Veneno", rarity: "rare" },
         { name: "Fragmento do Tempo", rarity: "rare" },
         { name: "Infiltração", rarity: "magic" },
-        { name: "Nevasca", rarity: "magic" },
+        { name: "Geada", rarity: "magic" },
         { name: "Habilidade de Veneno", rarity: "magic" },
         { name: "Tempo", rarity: "magic" },
         { name: "Fragmento de Infiltração", rarity: "special" },
-        { name: "Fragmento de Nevasca", rarity: "special" },
+        { name: "Fragmento de Geada", rarity: "special" },
         { name: "Fragmento de Runa do Escalão", rarity: "common" },
     ],
     3: [
