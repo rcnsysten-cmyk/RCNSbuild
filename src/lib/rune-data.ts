@@ -26,20 +26,28 @@ const dwRunesByTier: { [tier: number]: AvailableRune[] } = {
         { name: "Fragmento de Runa do Escalão", rarity: "common" },
     ],
     2: [
+        // Raras
         { name: "Infiltração Ilimitada", rarity: "rare" },
         { name: "Geada Feroz", rarity: "rare" },
         { name: "Fragmento de Habilidade de Veneno", rarity: "rare" },
         { name: "Fragmento do Tempo", rarity: "rare" },
+        // Mágicas
         { name: "Infiltração", rarity: "magic" },
         { name: "Geada", rarity: "magic" },
+        { name: "Habilidade de Veneno", rarity: "magic" },
+        { name: "Tempo", rarity: "magic" },
         { name: "Fragmento da Ira Celestial", rarity: "magic" },
         { name: "Fragmento de Congelar", rarity: "magic" },
+        // Especiais
+        { name: "Fragmento de Infiltração", rarity: "special" },
+        { name: "Fragmento de Geada", rarity: "special" },
         { name: "Fragmento de Maldição", rarity: "special" },
         { name: "Fragmento do Pântano Venenoso", rarity: "special" },
         { name: "Fragmento Inócuo", rarity: "special" },
         { name: "Fragmento Venenoso", rarity: "special" },
         { name: "Fragmento de Transição", rarity: "special" },
         { name: "Fragmento de Meteorito", rarity: "special" },
+        // Comuns
         { name: "Fragmento de Runa do Escalão", rarity: "common" },
         { name: "Fragmento de Sombra", rarity: "common" },
         { name: "Fragmento de Proteção", rarity: "common" },
